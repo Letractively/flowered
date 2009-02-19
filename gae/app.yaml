@@ -1,4 +1,4 @@
-application: helloworld
+application: beflowered
 version: 1
 runtime: python
 api_version: 1
@@ -15,4 +15,4 @@ handlers:
   upload: static/favicon.ico
 
 - url: /.*
-  script: flowered.py
+  script: beflowered.py
