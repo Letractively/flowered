@@ -3,12 +3,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>Geochat</title>
-    <link rel="stylesheet" href="/static/css/geochat.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA5aiSIr40CaCgAL1qdBx_URT7PEZbmam_2zAsIoWwfh3Jj6aT1RRYLlAgQv4nC1zqXhjttDcaEzPmFA"
+    <title>Be Flowered</title>
+    <link rel="stylesheet" href="/static/css/beflowered.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"
       type="text/javascript"></script>
     <script src="/static/js/jquery.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/geochat.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/beflowered.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
       GEOCHAT_VARS = {
         'auth_url': '{{ auth_url }}',
@@ -29,8 +29,8 @@
   <body>
     <div id="container">
       <div id="head">
-        <h1><a href="/">Geochat</a></h1>
-        <div id="topnav">
+        <h1><a href="/">Be Flowered</a></h1>
+        <!-- <div id="topnav">
           {% if user_email %}
           <strong>{{ user_email }}</strong> | 
           {% endif %}
@@ -39,12 +39,12 @@
           <a href="/settings">Settings</a> |
           {% endif %}
           <a href="{{ auth_url }}">{{ auth_text }}</a>
-        </div>
+        </div> -->
       </div>
       <div id="body">
         <div id="map"></div>
         {% if user_email %}
-        <div id="chat">
+        <!-- <div id="chat">
           <form id="chatform" action="#" onsubmit="say(this.chat); return false;">
             <input type="text" name="chat" size="60" maxlength="255" />
             <input type="submit" value="Chat" />
@@ -53,18 +53,18 @@
             <input type="text" name="address" id="address" size="20" />
             <input type="submit" value="Move" />
           </form>
-        </div>
+        </div> -->
         {% endif %}
-        <div id="log">
+        <!-- <div id="log">
           <h2>Chat Log</h2>
           <div id="log-entries"></div>
         </div>
         <div id="status">
           
-        </div>
+        </div> -->
       </div>
       <div id="foot">
-        &copy;2008 Google
+        &copy;2009 BeFlowered
       </div>
     </div>
   </body>

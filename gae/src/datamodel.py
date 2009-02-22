@@ -35,5 +35,3 @@ class Settings(db.Model):
   user = db.UserProperty()
   default_location = db.StringProperty(default = 'Mountain View, CA')
   default_zoom = db.IntegerProperty(default = 13)
-
-

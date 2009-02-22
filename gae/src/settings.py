@@ -1,5 +1,6 @@
 
 import datamodel
+
 from google.appengine.ext import db
 
 """Helper functions for managing user settings.
@@ -40,3 +41,4 @@ def new(user, default_location = ''):
     user_settings.default_location = str(default_location)
   user_settings.put()
   return user_settings
+  

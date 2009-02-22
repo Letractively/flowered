@@ -80,7 +80,7 @@ class MainHandler(webapp.RequestHandler):
         'initial_longitude': -122.0837,
       }
 
-    template_path = os.path.join(os.path.dirname(__file__), 'geochat.html')
+    template_path = os.path.join(os.path.dirname(__file__), 'beflowered.html')
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data))
 
