@@ -57,6 +57,12 @@ chat_cache = []
 # A list storing the move cache.
 move_cache = []
 
+# A list
+add_cache = []
+
+# A list
+delete_cache = []
+
 
 class UpdateHandler(webapp.RequestHandler):
   
@@ -180,7 +186,16 @@ class ChatHandler(webapp.RequestHandler):
 
     # Append to the chat cache, so we don't need to wait on a refresh.
     chat_cache.append(event)
+
+class AddHandler(webapp.RequestHandler):
+
+  def post(self):
+    global add_cache  
     
+class DeleteHandler(webapp.RequestHandler):
+
+  def post(self):
+    global delete_cache  
     
 def RefreshCache():
   
@@ -227,6 +242,8 @@ def main():
         ('/event/update', UpdateHandler),
         ('/event/chat', ChatHandler),
         ('/event/move', MoveHandler),
+        ('/event/add', AddHandler),
+        ('/event/delete', DeleteHandler),
       ],
       debug = True)
   run_wsgi_app(application)
