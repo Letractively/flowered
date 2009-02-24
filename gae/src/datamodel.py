@@ -35,3 +35,11 @@ class Settings(db.Model):
   user = db.UserProperty()
   default_location = db.StringProperty(default = 'Mountain View, CA')
   default_zoom = db.IntegerProperty(default = 13)
+
+
+class Mark(db.Model):
+  timestamp = db.DateTimeProperty(auto_now_add = True)
+  type = db.StringProperty()
+  latitude = db.FloatProperty()
+  longitude = db.FloatProperty() 
+
