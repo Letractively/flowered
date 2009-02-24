@@ -418,7 +418,7 @@
         user.move(point.lat(), point.lng());
         updateUserPosition();
       });
-      
+           
       // Initialize the geocoder.
       geocoder = new GClientGeocoder();
       
@@ -449,14 +449,16 @@
         map.setCenter(new GLatLng(GEOCHAT_VARS['initial_latitude'],
                                   GEOCHAT_VARS['initial_longitude']),
                                   13);
+        return;                          
+                                  
         var narrator = new Person(
-            'Googleguy',
+            'NameTag',
             GEOCHAT_VARS['user_email'], 
             GEOCHAT_VARS['initial_latitude'],
             GEOCHAT_VARS['initial_longitude']);
         map.disableDragging();
-        narrator.say('<a href="' + GEOCHAT_VARS['auth_url'] +
-            '">Sign in</a> to your Google Account to start chatting!', true);
+        // narrator.say('<a href="' + GEOCHAT_VARS['auth_url'] +
+        //    '">Sign in</a> to your Google Account to start chatting!', true);
             
       }
     }
