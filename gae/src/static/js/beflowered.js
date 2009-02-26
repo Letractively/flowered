@@ -7,8 +7,6 @@
 (function($) {
 
   var map = null;
-  var geocoder = null;
-  // var user = null;
   var lastUpdate = 0;
 
   window.people = {}
@@ -86,17 +84,6 @@
     }
   }; */
   
-  /**
-   * Move the user and map to the specified address, if found.
-   */
-  /* window.move = function(address) {
-    geocoder.getLatLng(address, function(latlng) {
-      user.move(latlng.lat(), latlng.lng());
-      map.setCenter(user.marker.getLatLng(), 13);
-      updateUserPosition();
-    });
-  }; */
-
   /**
    * Callback for updates containing chat events.
    * @param {Object} data A JSON object containing event data.
