@@ -1,6 +1,6 @@
 
 /**
- * @fileoverview Provides the core JavaScript functionality for the Geochat
+ * @fileoverview Provides the core JavaScript functionality for the Flowered
  *   application.
  */
  
@@ -12,14 +12,14 @@
   window.people = {}
 
   /**
-   * Represents each person active within Geochat.
+   * Represents each person active within Flowered.
    * @param {string} name The name of the person in question.
    * @param {string} email The person's email address.
    * @param {number} latitude The person's starting latitude.
    * @param {number} longitude The person's starting longitude.
    * @constructor
    */
-  var Person =  function(name, email, lat, lng) {
+  var Person = function(name, email, lat, lng) {
 
     var me = this;
     window.people[email] = this;
@@ -31,11 +31,10 @@
    
     map.addOverlay(this.marker);
     this.marker.setImage(GEOCHAT_IMAGES['marker-user']);
-   
-    var marker = this.marker;
-    
+      
     // Handle drop events for this Person's marker. Note that this fires off
     // an Ajax call updating the user's location.
+    var marker = this.marker;
     GEvent.addListener(this.marker, 'dragend', function() {
       updateUserPosition(marker);
     });
@@ -55,7 +54,7 @@
   };
   
   /**
-   * Makes an Ajax call to update the user's position in the Geochat DB and
+   * Makes an Ajax call to update the user's position in the Flowered DB and
    * cache.
    */
   var updateUserPosition = function(marker) {
@@ -68,7 +67,7 @@
   
   /**
    * Causes a chat event for the currently active user, including an Ajax
-   * call against the Geochat datastore.
+   * call against the Flowered datastore.
    * @param {DOM} chatInput The input field to pull chat contents from.
    */
   /* window.say = function(chatInput, marker) {
@@ -85,7 +84,7 @@
   }; */
   
   /**
-   * Callback for updates containing chat events.
+   * A callback for updates containing chat events.
    * @param {Object} data A JSON object containing event data.
    */
   window.chatCallback = function(data) {
@@ -113,7 +112,7 @@
   };
   
   /**
-   * Callback for updates containing move events.
+   * A callback for updates containing move events.
    * @param {Object} data A JSON object containing event data.
    */
   window.moveCallback = function(data) {
@@ -158,7 +157,7 @@
   }
 
   /**
-   * The main update handler, used to query the Geochat DB and cache for
+   * The main update handler, used to query the Flowered DB and cache for
    * updated events. Successful queries pass the results on to the
    * chatCallback and moveCallback functions.
    */
@@ -181,24 +180,31 @@
       error: updateError
     });
   }
-  
-  
+   
   window.onload = function() {
     if (GBrowserIsCompatible()) {
       
       // Initialize the map
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
-      map.addControl(new GMapTypeControl());
+      map.addControl(new GMapTypeControl());     
+      map.addControl(new GLargeMapControl());
+      map.addControl(new GScaleControl());
+      map.addControl(new GOverviewMapControl(new GSize(200, 150)));
+      map.enableGoogleBar();
+      // map.setMapType(G_SATELLITE_MAP);
+
+      map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
-      GEvent.addListener(map, 'dblclick', function(overlay, point) { 	    	  
-          map.setCenter(new GLatLng(latitude, longitude), 13);
+
+      GEvent.clearListeners(map.getDragObject(), 'dblclick');
+      GEvent.addListener(map, 'click', function(overlay, point) { 	    	  
           var user = new Person(
               GEOCHAT_VARS['user_nickname'],
               GEOCHAT_VARS['user_email'],
               point.lat(),
               point.lng());
-          updateUserPosition(); 	  
+          // updateUserPosition(); 	  
     	  
         // user.move(point.lat(), point.lng());
         // updateUserPosition();
@@ -207,6 +213,9 @@
       var latitude = GEOCHAT_VARS['initial_latitude'];
       var longitude = GEOCHAT_VARS['initial_longitude'];       
       map.setCenter(new GLatLng(latitude, longitude), 13);
+      
+      map.openInfoWindow(map.getCenter(),
+              document.createTextNode("Hello, world"));
       
       update();
     }
