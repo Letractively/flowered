@@ -13,19 +13,17 @@
 
   /**
    * Represents each person active within Flowered.
-   * @param {string} name The name of the person in question.
-   * @param {string} email The person's email address.
+   * @param {string} id The person's ID.
    * @param {number} latitude The person's starting latitude.
    * @param {number} longitude The person's starting longitude.
    * @constructor
    */
-  var Person = function(name, email, lat, lng) {
+  var Person = function(id, lat, lng) {
 
     var me = this;
-    window.people[email] = this;
+    window.people[id] = this;
 
-    this.name = name;
-    this.email = email;
+    this.id = id;
     this.point = new GLatLng(lat, lng);
     this.marker = new GMarker(this.point, {draggable: true});
    
@@ -34,13 +32,14 @@
       
     // Handle drop events for this Person's marker. Note that this fires off
     // an Ajax call updating the user's location.
+    var mark_id = this.id;
     var marker = this.marker;
     GEvent.addListener(this.marker, 'dragend', function() {
-      updateUserPosition(marker);
+      updateUserPosition(id, marker);
     });
     
   };
-   
+ 
   /**
    * Move this Person to the specified latitude and longitude.
    * @param {number} lat The latitude to move to.
@@ -52,17 +51,40 @@
       this.marker.setLatLng(this.point);
     }
   };
+
+  /**
+   * Move this Person to the specified latitude and longitude.
+   * @param {number} lat The latitude to move to.
+   * @param {number} lng The longitude to move to.
+   */
+  Person.prototype.add = function() {
+    $.post('/event/add', {
+    	'id': this.id,
+        'latitude': this.point.lat(),
+        'longitude': this.point.lng()
+    });
+  };  
   
   /**
    * Makes an Ajax call to update the user's position in the Flowered DB and
    * cache.
    */
-  var updateUserPosition = function(marker) {
-    $.post('/event/move', {
+  var updateUserPosition = function(id, marker) {
+    $.post('/event/blamove', {
+      'id': id,
       'latitude': marker.getLatLng().lat(),
-      'longitude': marker.getLatLng().lng(),
-      'zoom': map.getZoom()
+      'longitude': marker.getLatLng().lng()
     });
+  }
+ 
+  var createRandomKey = function(length) {
+	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	var random = 'key:';
+	for (var i = 0; i < length; i++) {
+	  var position = Math.floor(Math.random() * (chars.length - 1));
+	  random += chars.charAt(position);
+    }
+	return random;
   }
   
   /**
@@ -94,14 +116,13 @@
       var speaker = null;
       
       // Verify whether the speaker exists. If not, create them.
-      if (!window.people[events[i].user.email]) {
+      if (!window.people[events[i].user.id]) {
         speaker = new Person(
-          events[i].user.nickname,
-          events[i].user.email,
+          events[i].user.key,
           events[i].latitude,
           events[i].longitude);
       } else {
-        speaker = window.people[events[i].user.email];
+        speaker = window.people[events[i].user.id];
       }
       
       // Update the speaker's chat bubble.
@@ -119,21 +140,41 @@
     var moves = data.moves;
     for (var i = 0; i < moves.length; ++i) {
       var move = moves[i];
-      if (!window.people[move.user.email]) {
+      if (!window.people[move.id]) {
         new Person(
-           move.user.nickname,
-           move.user.email,
+           move.id,
            move.latitude,
            move.longitude);
       } else {
-        var mover = window.people[move.user.email];
-        if (mover != user) {
+        var mover = window.people[move.id];
+        //if (mover != user) {
           mover.move(move.latitude, move.longitude);        
-        }
+        //}
       }
     }
   }
 
+  window.addCallback = function(data) {
+    var events = data.adds;
+
+    for (var i = 0; i < events.length; ++i) {
+                
+      var speaker = null;
+      
+      // alert('id1=' + events[i].id);
+      
+      speaker = new Person(
+        events[i].id,
+        events[i].latitude,
+        events[i].longitude);
+      
+      // Update the speaker's chat bubble.
+      speaker.move(events[i].latitude, events[i].longitude);
+      // speaker.say(events[i].contents);
+      
+    }    
+  };
+  
   /**
    * A callback for when an update request succeeds.
    * @param {string} json JSON data to be evaluated and passed on to event
@@ -152,7 +193,7 @@
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
-    alert('An update error occured! Trying again in a bit.');
+    // alert('An update error occured! Trying again in a bit.');
     window.setTimeout(update, GEOCHAT_VARS['error_interval'])
   }
 
@@ -180,7 +221,43 @@
       error: updateError
     });
   }
-   
+
+  /**
+   * A callback for when an update request succeeds.
+   * @param {string} json JSON data to be evaluated and passed on to event
+   *   callbacks.
+   */
+  window.blaSuccess = function(json) {
+    var data = eval('(' + json + ')');
+    addCallback(data);
+  }
+  
+  /**
+   * A callback for when updates fail. Presents an error to the user and
+   * forces a lengthier delay between updates.
+   */
+  window.blaError = function() {
+    // alert('An bla error occured! Trying again in a bit.');
+  }
+  
+  window.bla = function() {
+	var bounds = map.getBounds();
+	var min = bounds.getSouthWest();
+	var max = bounds.getNorthEast();
+	$.ajax({
+	  type: 'GET',
+      url: '/event/bla',
+      data: [
+        'min_latitude=', min.lat(),
+        '&min_longitude=', min.lng(),
+        '&max_latitude=', max.lat(),
+        '&max_longitude=', max.lng()
+      ].join(''),
+      success: blaSuccess,
+      error: blaError
+    });
+  }  
+  
   window.onload = function() {
     if (GBrowserIsCompatible()) {
       
@@ -190,33 +267,30 @@
       map.addControl(new GMapTypeControl());     
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
-      map.addControl(new GOverviewMapControl(new GSize(200, 150)));
-      map.enableGoogleBar();
+      // map.addControl(new GOverviewMapControl(new GSize(200, 150)));
+      // map.enableGoogleBar();
       // map.setMapType(G_SATELLITE_MAP);
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
 
       GEvent.clearListeners(map.getDragObject(), 'dblclick');
-      GEvent.addListener(map, 'click', function(overlay, point) { 	    	  
-          var user = new Person(
-              GEOCHAT_VARS['user_nickname'],
-              GEOCHAT_VARS['user_email'],
-              point.lat(),
-              point.lng());
-          // updateUserPosition(); 	  
-    	  
-        // user.move(point.lat(), point.lng());
-        // updateUserPosition();
+      GEvent.addListener(map, 'click', function(overlay, point) {
+        var user = new Person(
+          createRandomKey(4),
+          point.lat(),
+          point.lng());
+        user.add();
       });
            
       var latitude = GEOCHAT_VARS['initial_latitude'];
       var longitude = GEOCHAT_VARS['initial_longitude'];       
       map.setCenter(new GLatLng(latitude, longitude), 13);
       
-      map.openInfoWindow(map.getCenter(),
-              document.createTextNode("Hello, world"));
+      // map.openInfoWindow(map.getCenter(),
+      //        document.createTextNode("Hello, world"));
       
+      bla();
       update();
     }
   };

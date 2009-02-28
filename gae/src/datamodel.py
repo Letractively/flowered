@@ -39,7 +39,7 @@ class Settings(db.Model):
 
 class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)
-  type = db.StringProperty()
+  id = db.StringProperty()
   latitude = db.FloatProperty()
   longitude = db.FloatProperty() 
 

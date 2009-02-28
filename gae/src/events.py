@@ -57,10 +57,10 @@ chat_cache = []
 # A list storing the move cache.
 move_cache = []
 
-# A list
+# A list storing the add cache.
 add_cache = []
 
-# A list
+# A list storing the delete cache.
 delete_cache = []
 
 
@@ -95,8 +95,7 @@ class UpdateHandler(webapp.RequestHandler):
       max_latitude = min_latitude + 1
     if (max_longitude - min_longitude) > 1:
       max_longitude = min_longitude + 1
-    
-    
+      
     chat_events = []
     move_events = []
     
@@ -110,13 +109,21 @@ class UpdateHandler(webapp.RequestHandler):
             entry.longitude < max_longitude):
           chat_events.append(entry)
       
+      #for entry in move_cache:
+      #  if (entry['timestamp'] > since_datetime and
+      #      entry['latitude'] > min_latitude and
+      #      entry['latitude'] < max_latitude and
+      #      entry['longitude'] > min_longitude and
+      #      entry['longitude'] < max_longitude):
+      #    move_events.append(entry)        
+ 
       for entry in move_cache:
-        if (entry['timestamp'] > since_datetime and
-            entry['latitude'] > min_latitude and
-            entry['latitude'] < max_latitude and
-            entry['longitude'] > min_longitude and
-            entry['longitude'] < max_longitude):
-          move_events.append(entry)        
+        if (entry.timestamp > since_datetime and
+            entry.latitude > min_latitude and
+            entry.latitude < max_latitude and
+            entry.longitude > min_longitude and
+            entry.longitude < max_longitude):
+          move_events.append(entry) 
               
     output = {
         'timestamp': time.time(),
@@ -126,7 +133,54 @@ class UpdateHandler(webapp.RequestHandler):
 
     self.response.headers['Content-Type'] = 'text/plain'
     self.response.out.write(json.encode(output));
+
+
+class BlaHandler(webapp.RequestHandler):
+  
+  """Handles user requests for updated lists of events.
+  
+  UpdateHandler only accepts "get" events, sent via web forms. It expects each
+  request to include "min_latitude", "min_longitude", "max_latitude",
+  "max_longitude", "zoom", and "since" fields.
+  """
+  
+  def get(self):
+    #global add_cache
+
+    min_latitude = float(self.request.get('min_latitude'))
+    min_longitude = float(self.request.get('min_longitude'))
+    max_latitude = float(self.request.get('max_latitude'))
+    max_longitude = float(self.request.get('max_longitude'))
     
+    # Restrict latitude/longitude to restrict bulk downloads.
+    if (max_latitude - min_latitude) > 1:
+      max_latitude = min_latitude + 1
+    if (max_longitude - min_longitude) > 1:
+      max_longitude = min_longitude + 1
+    
+    add_events = []
+    
+    # Sync the chat cache.
+    query = db.Query(datamodel.Mark)
+    query.order('timestamp')
+    #add_list = list(query.fetch(100))
+    
+    for entry in query:
+    #for entry in add_list:
+      if (entry.latitude > min_latitude and
+          entry.latitude < max_latitude and
+          entry.longitude > min_longitude and
+          entry.longitude < max_longitude):
+        add_events.append(entry)       
+              
+    output = {
+        'timestamp': time.time(),
+        'adds': add_events
+    }
+
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write(json.encode(output));
+  
 
 class MoveHandler(webapp.RequestHandler):
   
@@ -156,6 +210,36 @@ class MoveHandler(webapp.RequestHandler):
     
     # Append to the move cache, so we don't need to wait for a refresh.
     move_cache.append(event_dict)
+
+class BlaMoveHandler(webapp.RequestHandler):
+  
+  """Handles user movement events.
+  
+  MoveHandler only provides a post method for receiving new user co-ordinates,
+  and doesn't store any data to the datastore as ChatHandler does with
+  ChatEvents, instead just adding straight to the local cache.
+  """
+  
+  def post(self):
+    global move_cache
+
+    logging.info('id=' + self.request.get('id') + ' lat=' + str(float(self.request.get('latitude'))))
+
+    #
+    mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
+    if mark == None:      
+      return
+
+    #
+    mark.timestamp = datetime.datetime.now()
+    mark.latitude = float(self.request.get('latitude'))
+    mark.longitude = float(self.request.get('longitude'))
+    mark.put()
+    
+    # logging.info('mark=' + str(mark.to_xml()))
+        
+    # Append to the move cache, so we don't need to wait for a refresh.
+    move_cache.append(mark)
 
 
 class ChatHandler(webapp.RequestHandler):
@@ -190,7 +274,17 @@ class ChatHandler(webapp.RequestHandler):
 class AddHandler(webapp.RequestHandler):
 
   def post(self):
-    global add_cache  
+    global add_cache
+    
+    # Create and insert the a new chat event.
+    event = datamodel.Mark(key_name = self.request.get('id'))
+    event.id  = self.request.get('id')
+    event.latitude  = float(self.request.get('latitude'))
+    event.longitude = float(self.request.get('longitude'))
+    event.put()
+
+    # Append to the chat cache, so we don't need to wait on a refresh.
+    add_cache.append(event) 
     
 class DeleteHandler(webapp.RequestHandler):
 
@@ -227,7 +321,26 @@ def RefreshCache():
     # Trim the move cache.
     move_cache = move_cache[-100:]
     
+def BlaRefreshCache():
+  
+  """Check the freshness of chat and move caches, and refresh if necessary.
+  
+  RefreshCache relies on the globals "sync_interval" and "last_sync" to
+  determine the age of the existing cache and whether or not it should be
+  updated. All output goes to "chat_cache" and "move_cache" globals.
+  """
+  
+  global add_cache
+  
+  # Sync the chat cache.
+  query = db.Query(datamodel.Mark)
+  query.order('timestamp')
+  add_cache = list(query.fetch(100))
 
+  logging.info('Bla cache refreshed.')
+    
+  # Trim the move cache.
+  #move_cache = move_cache[-100:]
   
 def main():
   
@@ -244,6 +357,8 @@ def main():
         ('/event/move', MoveHandler),
         ('/event/add', AddHandler),
         ('/event/delete', DeleteHandler),
+        ('/event/bla', BlaHandler),
+        ('/event/blamove', BlaMoveHandler)
       ],
       debug = True)
   run_wsgi_app(application)
