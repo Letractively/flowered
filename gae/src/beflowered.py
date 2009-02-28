@@ -20,7 +20,6 @@ with several other template-driven pages that don't have any significant DB
 interaction.
 
   MainHandler: Handles requests to /
-  SettingsHandler: Handles requests to /settings
   HelpHandler: Handles requests to /help
 """
 
@@ -37,7 +36,6 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 import datamodel
 import json
-import settings
 
 
 class MainHandler(webapp.RequestHandler):
@@ -53,102 +51,24 @@ class MainHandler(webapp.RequestHandler):
 
     template_data = {}
     
-    user = users.get_current_user()
-    if user:
-      
-      user_settings = settings.get(user)
-      if user_settings == None:
-        self.redirect('/settings')
-        return
-        
-      template_data = {
-        'auth_url': users.CreateLogoutURL(self.request.uri),
-        'auth_text': 'Sign out',
-        'user_email': user.email(),
-        'user_nickname': user.nickname(),
-        'default_location': user_settings.default_location,
-        'initial_latitude': 37.4221,
-        'initial_longitude': -122.0837,
-      }
-    else:
-      template_data = {
-        'auth_url': users.CreateLoginURL(self.request.uri),
-        'auth_text': 'Sign in',
-        'user_email': '',
-        'user_nickname': '',
-        'initial_latitude': 37.4221,
-        'initial_longitude': -122.0837,
-      }
+    template_data = {
+      'auth_url': users.CreateLoginURL(self.request.uri),
+      'auth_text': 'Sign in',
+      'user_email': '',
+      'user_nickname': '',
+      'initial_latitude': 37.4221,
+      'initial_longitude': -122.0837,
+    }
 
     template_path = os.path.join(os.path.dirname(__file__), 'beflowered.html')
     self.response.headers['Content-Type'] = 'text/html'
-    self.response.out.write(template.render(template_path, template_data))
-
-
-class SettingsHandler(webapp.RequestHandler):
-  
-  """Handles requests to /settings
-  
-  SettingsHandler handles requests to /settings, serving up the template
-  found in settings.html on GET requests, and saving user settings on
-  POST requests.
-  """
-  
-  def get(self):
-
-    template_data = {}
-
-    user = users.get_current_user()
-    if user == None:      
-      self.redirect(users.CreateLoginURL(self.request.uri))
-      return
-    
-    user_settings = settings.get(user)
-    if user_settings:
-      template_data = {
-        'auth_url': users.CreateLogoutURL(self.request.uri),
-        'auth_text': 'Sign out',
-        'user_email': user.email(),
-        'user_nickname': user.nickname(),
-        'default_location': user_settings.default_location,
-        'default_zoom': user_settings.default_zoom,
-      }
-    else:
-      template_data = {
-        'auth_url': users.CreateLogoutURL(self.request.uri),
-        'auth_text': 'Sign out',
-        'user_email': user.email(),
-        'user_nickname': user.nickname(),    
-      }
-    
-    template_path = os.path.join(os.path.dirname(__file__), 'settings.html')
-    self.response.headers['Content-Type'] = 'text/html'
-    self.response.out.write(template.render(template_path, template_data))
-    
-  def post(self):
-    
-    user = users.get_current_user()
-    if user == None:      
-      self.redirect(users.CreateLoginURL(self.request.uri))
-      return
-    
-    location = self.request.get('location')
-    user_settings = settings.get(user)
-    
-    if user_settings:
-      user_settings.default_location = location
-      user_settings.put()
-    else:
-      user_settings = settings.new(user, location)
-      
-    self.redirect('/')
-    
+    self.response.out.write(template.render(template_path, template_data)) 
     
 class HelpHandler(webapp.RequestHandler):
   
   """Handles requests to /help
   
-  HelpHandler handles requests to /settings, serving up the template
+  HelpHandler handles requests to /help, serving up the template
   found in help.html.
   """
   
@@ -177,7 +97,6 @@ class HelpHandler(webapp.RequestHandler):
 
 if __name__ == '__main__':
   application = webapp.WSGIApplication([('/', MainHandler),
-                                        ('/settings', SettingsHandler),
                                         ('/help', HelpHandler),], debug = True)
 
   run_wsgi_app(application)

@@ -19,7 +19,6 @@ from google.appengine.ext import db
 
   ChatEvent: Stores user chat events.
   MoveEvent: Stores user movement events.
-  Settings: Stores various user settings not stored in the actual users API.
 """
 
 class ChatEvent(db.Model):
@@ -29,13 +28,6 @@ class ChatEvent(db.Model):
   latitude = db.FloatProperty()
   longitude = db.FloatProperty()
   zoom = db.IntegerProperty()
-
-
-class Settings(db.Model):
-  user = db.UserProperty()
-  default_location = db.StringProperty(default = 'Mountain View, CA')
-  default_zoom = db.IntegerProperty(default = 13)
-
 
 class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)

@@ -31,14 +31,12 @@ under /event.
 # TODO Spam controls.
 
 import datetime
-import settings
 import logging
 import os
 import time
 
 import datamodel
 import json
-import settings
 
 from google.appengine.api import users
 from google.appengine.ext import db
