@@ -1,5 +1,5 @@
 
-# Copyright 2008 Google Inc.
+# Copyright 2009 Daniel Schubert
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,23 +15,12 @@
 
 from google.appengine.ext import db
 
-"""Database models used in the Geochat application.
+"""Database models used in the Flowered application.
 
-  ChatEvent: Stores user chat events.
-  MoveEvent: Stores user movement events.
 """
-
-class ChatEvent(db.Model):
-  timestamp = db.DateTimeProperty(auto_now_add = True)
-  user = db.UserProperty()
-  contents = db.StringProperty()
-  latitude = db.FloatProperty()
-  longitude = db.FloatProperty()
-  zoom = db.IntegerProperty()
 
 class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)
-  id = db.StringProperty()
+  type = db.StringProperty()
   latitude = db.FloatProperty()
   longitude = db.FloatProperty() 
-
