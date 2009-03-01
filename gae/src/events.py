@@ -192,103 +192,53 @@ class MoveHandler(webapp.RequestHandler):
   def post(self):
     global move_cache
 
-    # Get the current user and return if not logged in.
-    user = users.get_current_user()
-    if user == None:      
-      return
-    
-    # Construct an ad hoc event dictionary.
-    event_dict = {
-      'user': user,
-      'timestamp': datetime.datetime.now(),
-      'latitude': float(self.request.get('latitude')),
-      'longitude': float(self.request.get('longitude')),
-      'zoom': int(self.request.get('zoom')),
-    }
-    
-    # Append to the move cache, so we don't need to wait for a refresh.
-    move_cache.append(event_dict)
-
-class BlaMoveHandler(webapp.RequestHandler):
-  
-  """Handles user movement events.
-  
-  MoveHandler only provides a post method for receiving new user co-ordinates,
-  and doesn't store any data to the datastore as ChatHandler does with
-  ChatEvents, instead just adding straight to the local cache.
-  """
-  
-  def post(self):
-    global move_cache
-
-    logging.info('id=' + self.request.get('id') + ' lat=' + str(float(self.request.get('latitude'))))
-
-    #
+    # Get the mark to modify and return if not exists.
     mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
     if mark == None:      
       return
 
-    #
+    # Update current mark's position and timestamp
     mark.timestamp = datetime.datetime.now()
     mark.latitude = float(self.request.get('latitude'))
     mark.longitude = float(self.request.get('longitude'))
     mark.put()
-    
-    # logging.info('mark=' + str(mark.to_xml()))
-        
+     
     # Append to the move cache, so we don't need to wait for a refresh.
     move_cache.append(mark)
-
-
-class ChatHandler(webapp.RequestHandler):
-
-  """Handles user chat events.
-  
-  Chathandler only provides a post method for receiving user chat contents
-  and related positioning. This data is immediately dumped to the datastore,
-  without batching, and appended to the local cache.
-  """
-
-  def post(self):
-    global chat_cache
-    
-    # Get the current user and return if not logged in.
-    user = users.get_current_User()
-    if user == None:      
-      return
-
-    # Create and insert the a new chat event.
-    event = datamodel.ChatEvent()
-    event.user      = user
-    event.contents  = self.request.get('contents')
-    event.latitude  = float(self.request.get('latitude'))
-    event.longitude = float(self.request.get('longitude'))
-    event.zoom      = int(self.request.get('zoom'))
-    event.put()
-
-    # Append to the chat cache, so we don't need to wait on a refresh.
-    chat_cache.append(event)
 
 class AddHandler(webapp.RequestHandler):
 
   def post(self):
     global add_cache
     
-    # Create and insert the a new chat event.
+    # Create and insert the a new mark event.
     event = datamodel.Mark(key_name = self.request.get('id'))
-    event.id  = self.request.get('id')
+    event.type = str(self.request.get('type'))
     event.latitude  = float(self.request.get('latitude'))
     event.longitude = float(self.request.get('longitude'))
     event.put()
 
-    # Append to the chat cache, so we don't need to wait on a refresh.
+    # Append to the add cache, so we don't need to wait on a refresh.
     add_cache.append(event) 
     
 class DeleteHandler(webapp.RequestHandler):
 
   def post(self):
     global delete_cache  
-    
+
+    # Get the mark to modify and return if not exists.
+    mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
+    if mark == None:      
+      return
+  
+    logging.info('deleted=' + str(mark))
+
+    # Delete mark from datastore
+    db.delete(mark)
+     
+    # Append to the delete cache, so we don't need to wait for a refresh.
+    delete_cache.append(mark)
+        
 def RefreshCache():
   
   """Check the freshness of chat and move caches, and refresh if necessary.
@@ -309,12 +259,12 @@ def RefreshCache():
   if last_sync < now - sync_interval:
     
     # Sync the chat cache.
-    query = db.Query(datamodel.ChatEvent)
-    query.filter('timestamp > ', now - sync_frame)
-    query.order('timestamp')
-    chat_cache = list(query.fetch(100))
-    last_sync = datetime.datetime.now()
-    logging.info('Chat cache refreshed.')
+    #query = db.Query(datamodel.ChatEvent)
+    #query.filter('timestamp > ', now - sync_frame)
+    #query.order('timestamp')
+    #chat_cache = list(query.fetch(100))
+    #last_sync = datetime.datetime.now()
+    #logging.info('Chat cache refreshed.')
     
     # Trim the move cache.
     move_cache = move_cache[-100:]
@@ -351,12 +301,10 @@ def main():
   application = webapp.WSGIApplication(
       [
         ('/event/update', UpdateHandler),
-        ('/event/chat', ChatHandler),
-        ('/event/move', MoveHandler),
         ('/event/add', AddHandler),
         ('/event/delete', DeleteHandler),
         ('/event/bla', BlaHandler),
-        ('/event/blamove', BlaMoveHandler)
+        ('/event/move', MoveHandler)
       ],
       debug = True)
   run_wsgi_app(application)

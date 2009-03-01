@@ -28,7 +28,7 @@
     this.marker = new GMarker(this.point, {draggable: true});
    
     map.addOverlay(this.marker);
-    this.marker.setImage(GEOCHAT_IMAGES['marker-user']);
+    this.marker.setImage(GEOCHAT_IMAGES['marker']);
 
     var mark_id = this.id;
     var marker = this.marker;

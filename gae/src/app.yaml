@@ -26,6 +26,6 @@ handlers:
   upload: static/favicon.ico
 
 - url: /.*
-  script: beflowered.py
+  script: flowered.py
 
 
