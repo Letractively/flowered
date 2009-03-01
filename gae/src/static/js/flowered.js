@@ -74,7 +74,7 @@
    * cache.
    */
   Marker.prototype.remove = function() {
-	$.post('/event/delete', {
+	$.post('/event/remove', {
 	    'id': this.id
 	});
   };  
@@ -263,7 +263,7 @@
       GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {
 	    if (overlay) {
 	      if (overlay instanceof GMarker) {
-	    	// fowward event to marker
+	    	// foward event to marker
 	        GEvent.trigger(overlay, 'fwd_singlerightclick');
 	      }
 	    }

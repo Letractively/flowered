@@ -49,9 +49,6 @@ sync_interval = datetime.timedelta(0, 10)
 # A datetime indicating the last time the chat cache was synced from the DB.
 last_sync = datetime.datetime.now() - sync_interval
 
-# A list storing the chat cache.
-chat_cache = []
-
 # A list storing the move cache.
 move_cache = []
 
@@ -74,7 +71,6 @@ class UpdateHandler(webapp.RequestHandler):
   def get(self):
     global sync_interval
     global last_sync
-    # global chat_cache
     global add_cache
     global move_cache
     global remove_cache
@@ -96,28 +92,12 @@ class UpdateHandler(webapp.RequestHandler):
     if (max_longitude - min_longitude) > 1:
       max_longitude = min_longitude + 1
       
-    # chat_events = []
     add_events = []
     move_events = []
     remove_events = []
     
     if since > 0:
-      RefreshCache()
-      #for entry in chat_cache:
-      #  if (entry.timestamp > since_datetime and
-      #      entry.latitude > min_latitude and
-      #      entry.latitude < max_latitude and
-      #      entry.longitude > min_longitude and
-      #      entry.longitude < max_longitude):
-      #    chat_events.append(entry)
-      
-      #for entry in move_cache:
-      #  if (entry['timestamp'] > since_datetime and
-      #      entry['latitude'] > min_latitude and
-      #      entry['latitude'] < max_latitude and
-      #      entry['longitude'] > min_longitude and
-      #      entry['longitude'] < max_longitude):
-      #    move_events.append(entry)        
+      RefreshCache()     
 
       for entry in add_cache:
         if (entry.timestamp > since_datetime and
@@ -145,7 +125,6 @@ class UpdateHandler(webapp.RequestHandler):
                         
     output = {
         'timestamp': time.time(),
-        # 'chats': chat_events,
         'adds': add_events,
         'moves': move_events,
         'removes': remove_events,
@@ -153,7 +132,6 @@ class UpdateHandler(webapp.RequestHandler):
 
     self.response.headers['Content-Type'] = 'text/plain'
     self.response.out.write(json.encode(output));
-    logging.info(str(json.encode(output)));
 
 
 class BlaHandler(webapp.RequestHandler):
@@ -329,7 +307,7 @@ def main():
       [
         ('/event/update', UpdateHandler),
         ('/event/add', AddHandler),
-        ('/event/delete', DeleteHandler),
+        ('/event/remove', DeleteHandler),
         ('/event/bla', BlaHandler),
         ('/event/move', MoveHandler)
       ],
