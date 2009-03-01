@@ -59,7 +59,7 @@ move_cache = []
 add_cache = []
 
 # A list storing the delete cache.
-delete_cache = []
+remove_cache = []
 
 
 class UpdateHandler(webapp.RequestHandler):
@@ -74,8 +74,10 @@ class UpdateHandler(webapp.RequestHandler):
   def get(self):
     global sync_interval
     global last_sync
-    global chat_cache
+    # global chat_cache
+    global add_cache
     global move_cache
+    global remove_cache
 
     min_latitude = float(self.request.get('min_latitude'))
     min_longitude = float(self.request.get('min_longitude'))
@@ -94,18 +96,20 @@ class UpdateHandler(webapp.RequestHandler):
     if (max_longitude - min_longitude) > 1:
       max_longitude = min_longitude + 1
       
-    chat_events = []
+    # chat_events = []
+    add_events = []
     move_events = []
+    remove_events = []
     
     if since > 0:
       RefreshCache()
-      for entry in chat_cache:
-        if (entry.timestamp > since_datetime and
-            entry.latitude > min_latitude and
-            entry.latitude < max_latitude and
-            entry.longitude > min_longitude and
-            entry.longitude < max_longitude):
-          chat_events.append(entry)
+      #for entry in chat_cache:
+      #  if (entry.timestamp > since_datetime and
+      #      entry.latitude > min_latitude and
+      #      entry.latitude < max_latitude and
+      #      entry.longitude > min_longitude and
+      #      entry.longitude < max_longitude):
+      #    chat_events.append(entry)
       
       #for entry in move_cache:
       #  if (entry['timestamp'] > since_datetime and
@@ -114,6 +118,14 @@ class UpdateHandler(webapp.RequestHandler):
       #      entry['longitude'] > min_longitude and
       #      entry['longitude'] < max_longitude):
       #    move_events.append(entry)        
+
+      for entry in add_cache:
+        if (entry.timestamp > since_datetime and
+            entry.latitude > min_latitude and
+            entry.latitude < max_latitude and
+            entry.longitude > min_longitude and
+            entry.longitude < max_longitude):
+          add_events.append(entry) 
  
       for entry in move_cache:
         if (entry.timestamp > since_datetime and
@@ -122,15 +134,26 @@ class UpdateHandler(webapp.RequestHandler):
             entry.longitude > min_longitude and
             entry.longitude < max_longitude):
           move_events.append(entry) 
-              
+
+      for entry in remove_cache:
+        if (entry.timestamp > since_datetime and
+            entry.latitude > min_latitude and
+            entry.latitude < max_latitude and
+            entry.longitude > min_longitude and
+            entry.longitude < max_longitude):
+          remove_events.append(entry) 
+                        
     output = {
         'timestamp': time.time(),
-        'chats': chat_events,
+        # 'chats': chat_events,
+        'adds': add_events,
         'moves': move_events,
+        'removes': remove_events,
       }
 
     self.response.headers['Content-Type'] = 'text/plain'
     self.response.out.write(json.encode(output));
+    logging.info(str(json.encode(output)));
 
 
 class BlaHandler(webapp.RequestHandler):
@@ -213,6 +236,7 @@ class AddHandler(webapp.RequestHandler):
     
     # Create and insert the a new mark event.
     event = datamodel.Mark(key_name = self.request.get('id'))
+    event.timestamp = datetime.datetime.now()
     event.type = str(self.request.get('type'))
     event.latitude  = float(self.request.get('latitude'))
     event.longitude = float(self.request.get('longitude'))
@@ -224,21 +248,20 @@ class AddHandler(webapp.RequestHandler):
 class DeleteHandler(webapp.RequestHandler):
 
   def post(self):
-    global delete_cache  
+    global remove_cache  
 
-    # Get the mark to modify and return if not exists.
+    # Get the mark to delete and return if not exists.
     mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
     if mark == None:      
       return
-  
-    logging.info('deleted=' + str(mark))
 
     # Delete mark from datastore
     db.delete(mark)
-     
+
     # Append to the delete cache, so we don't need to wait for a refresh.
-    delete_cache.append(mark)
-        
+    mark.timestamp = datetime.datetime.now()
+    remove_cache.append(mark)
+             
 def RefreshCache():
   
   """Check the freshness of chat and move caches, and refresh if necessary.
@@ -250,8 +273,10 @@ def RefreshCache():
   
   global sync_interval
   global last_sync
-  global chat_cache
+  #global chat_cache
+  global add_cache
   global move_cache
+  global remove_cache
   
   now = datetime.datetime.now()
   sync_frame = sync_interval * 2
@@ -263,11 +288,13 @@ def RefreshCache():
     #query.filter('timestamp > ', now - sync_frame)
     #query.order('timestamp')
     #chat_cache = list(query.fetch(100))
-    #last_sync = datetime.datetime.now()
-    #logging.info('Chat cache refreshed.')
+    last_sync = datetime.datetime.now()
+    # logging.info('Cache refreshed.')
     
     # Trim the move cache.
+    add_cache = add_cache[-100:]
     move_cache = move_cache[-100:]
+    remove_cache = remove_cache[-100:]
     
 def BlaRefreshCache():
   
@@ -278,14 +305,14 @@ def BlaRefreshCache():
   updated. All output goes to "chat_cache" and "move_cache" globals.
   """
   
-  global add_cache
+  #global add_cache
   
   # Sync the chat cache.
-  query = db.Query(datamodel.Mark)
-  query.order('timestamp')
-  add_cache = list(query.fetch(100))
+  #query = db.Query(datamodel.Mark)
+  #query.order('timestamp')
+  #add_cache = list(query.fetch(100))
 
-  logging.info('Bla cache refreshed.')
+  #logging.info('Bla cache refreshed.')
     
   # Trim the move cache.
   #move_cache = move_cache[-100:]

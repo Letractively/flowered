@@ -3,7 +3,7 @@
  * @fileoverview Provides the core JavaScript functionality for the Flowered
  *   application.
  */
- 
+
 (function($) {
 
   var map = null;
@@ -18,7 +18,7 @@
    * @param {number} longitude The person's starting longitude.
    * @constructor
    */
-  var Person = function(id, lat, lng) {
+  var Marker = function(id, lat, lng) {
 
     var me = this;
     window.marker[id] = this;
@@ -29,29 +29,26 @@
    
     map.addOverlay(this.marker);
     this.marker.setImage(GEOCHAT_IMAGES['marker']);
-
-    var mark_id = this.id;
-    var marker = this.marker;
-    
-    // Handle drop events for this Person's marker. Note that this fires off
+   
+    // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.
     GEvent.addListener(this.marker, 'dragend', function() {
-      updateUserPosition(id, marker);
+      me.update();
     });
     // Handle right click events for this Marks's marker. Note that this fires off
     // an Ajax call deleting the mark.   
     GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
-      map.removeOverlay(marker);
-      deleteMark(id);
+      map.removeOverlay(me.marker);
+      me.remove();
     });   
   };
  
   /**
-   * Move this Person to the specified latitude and longitude.
+   * Move this marker to the specified latitude and longitude.
    * @param {number} lat The latitude to move to.
    * @param {number} lng The longitude to move to.
    */  
-  Person.prototype.move = function(lat, lng) {
+  Marker.prototype.move = function(lat, lng) {
     if (this.point.lat() != lat || this.point.lng() != lng) {
       this.point = new GLatLng(lat, lng);
       this.marker.setLatLng(this.point);
@@ -59,39 +56,42 @@
   };
   
   /**
-   * Move this Person to the specified latitude and longitude.
-   * @param {number} lat The latitude to move to.
-   * @param {number} lng The longitude to move to.
+   * Adds this marker to the Flowered DB and cache.
+   * Makes an Ajax call to add the markers's position to the Flowered DB and
+   * cache.
    */
-  Person.prototype.add = function() {
+  Marker.prototype.add = function() {
     $.post('/event/add', {
     	'id': this.id,
         'latitude': this.point.lat(),
         'longitude': this.point.lng()
     });
   };  
-  
+
   /**
-   * Makes an Ajax call to update the user's position in the Flowered DB and
+   * Removes this marker from the Flowered DB and cache.
+   * Makes an Ajax call to remove the markers's position in the Flowered DB and
    * cache.
    */
-  var updateUserPosition = function(id, marker) {
-    $.post('/event/move', {
-        'id': id,
-        'latitude': marker.getLatLng().lat(),
-        'longitude': marker.getLatLng().lng()
-    });
-  }
- 
-  /**
-   * Deletes a marker in the Flowered DB and cache
-   */
-  var deleteMark = function(id) {
+  Marker.prototype.remove = function() {
 	$.post('/event/delete', {
-	   'id': id
-    });
-  }  
+	    'id': this.id
+	});
+  };  
 
+  /**
+   * Removes this marker from the Flowered DB and cache.
+   * Makes an Ajax call to update the markers's position from the Flowered DB and
+   * cache.
+   */
+  Marker.prototype.update = function() {
+    $.post('/event/move', {
+        'id': this.id,
+        'latitude': this.marker.getLatLng().lat(),
+        'longitude': this.marker.getLatLng().lng()
+    });
+  };    
+  
   var createRandomKey = function(length) {
 	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	var random = 'key:';
@@ -103,48 +103,20 @@
   }
   
   /**
-   * Causes a chat event for the currently active user, including an Ajax
-   * call against the Flowered datastore.
-   * @param {DOM} chatInput The input field to pull chat contents from.
-   */
-  /* window.say = function(chatInput, marker) {
-    var chat = chatInput.value;
-    if (chat) {
-      chatInput.value = '';
-      $.post('/event/chat', {
-        'contents': chat,
-        'latitude': marker.getLatLng().lat(),
-        'longitude': marker.getLatLng().lng(),
-        'zoom': map.getZoom()
-      });
-    }
-  }; */
-  
-  /**
-   * A callback for updates containing chat events.
+   * A callback for updates containing add events.
    * @param {Object} data A JSON object containing event data.
    */
-  window.chatCallback = function(data) {
-    var events = data.chats;
-    for (var i = 0; i < events.length; ++i) {
-                
-      var speaker = null;
-      
-      // Verify whether the speaker exists. If not, create them.
-      if (!window.marker[events[i].user.id]) {
-        speaker = new Person(
-          events[i].user.key,
-          events[i].latitude,
-          events[i].longitude);
-      } else {
-        speaker = window.marker[events[i].user.id];
+  window.addCallback = function(data) {	  
+    var adds = data.adds;    
+    for (var i = 0; i < adds.length; ++i) {
+      var add = adds[i];
+      if (!window.marker[add.id]) {
+        var marker = new Marker(
+          add.id,
+          add.latitude,
+          add.longitude);
       }
-      
-      // Update the speaker's chat bubble.
-      // speaker.move(events[i].latitude, events[i].longitude);
-      // speaker.say(events[i].contents);
-      
-    }    
+    }  
   };
   
   /**
@@ -156,39 +128,31 @@
     for (var i = 0; i < moves.length; ++i) {
       var move = moves[i];
       if (!window.marker[move.id]) {
-        new Person(
+        new Marker(
            move.id,
            move.latitude,
            move.longitude);
       } else {
         var mover = window.marker[move.id];
-        //if (mover != user) {
-          mover.move(move.latitude, move.longitude);        
-        //}
+        mover.move(move.latitude, move.longitude);        
       }
     }
   }
 
-  window.addCallback = function(data) {
-    var events = data.adds;
-
-    for (var i = 0; i < events.length; ++i) {
-                
-      var speaker = null;
-      
-      // alert('id1=' + events[i].id);
-      
-      speaker = new Person(
-        events[i].id,
-        events[i].latitude,
-        events[i].longitude);
-      
-      // Update the speaker's chat bubble.
-      speaker.move(events[i].latitude, events[i].longitude);
-      // speaker.say(events[i].contents);
-      
-    }    
-  };
+  /**
+   * A callback for updates containing remove events.
+   * @param {Object} data A JSON object containing event data.
+   */
+  window.removeCallback = function(data) {
+    var removes = data.removes;
+    for (var i = 0; i < removes.length; ++i) {
+      var remove = removes[i];
+      if (window.marker[remove.id]) {
+        var remover = window.marker[remove.id];
+        map.removeOverlay(remover.marker);
+      }
+    }
+  }
   
   /**
    * A callback for when an update request succeeds.
@@ -198,8 +162,9 @@
   window.updateSuccess = function(json) {
     var data = eval('(' + json + ')');
     lastUpdate = data.timestamp;
-    chatCallback(data);
+    addCallback(data);
     moveCallback(data);
+    removeCallback(data);
     window.setTimeout(update, GEOCHAT_VARS['update_interval'])
   }
   
@@ -208,7 +173,6 @@
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
-    // alert('An update error occured! Trying again in a bit.');
     window.setTimeout(update, GEOCHAT_VARS['error_interval'])
   }
 
@@ -229,7 +193,6 @@
         '&min_longitude=', min.lng(),
         '&max_latitude=', max.lat(),
         '&max_longitude=', max.lng(),
-        '&zoom=', map.getZoom(),
         '&since=', lastUpdate
       ].join(''),
       success: updateSuccess,
@@ -291,7 +254,7 @@
 
       GEvent.clearListeners(map.getDragObject(), 'dblclick');
       GEvent.addListener(map, 'click', function(overlay, point) {
-        var user = new Person(
+        var user = new Marker(
           createRandomKey(24),
           point.lat(),
           point.lng());
