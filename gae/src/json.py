@@ -26,6 +26,7 @@ provided to further simplify usage.
 import datetime
 import simplejson
 import time
+import logging
 
 from google.appengine.api import users
 from google.appengine.ext import db
@@ -56,6 +57,11 @@ class GqlEncoder(simplejson.JSONEncoder):
       output = {}
       for field, value in properties:
         output[field] = getattr(obj, field)
+      # map key name to ID field
+      key = obj.key()
+      if key.has_id_or_name():
+        output['id'] = key.id_or_name()    
+      #logging.info('output=' + str(output));
       return output
 
     elif isinstance(obj, datetime.datetime):
