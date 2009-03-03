@@ -121,8 +121,8 @@ img {
   height: 640px;
   // margin-left: 1%;
   // margin-right: 25%;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
   z-index: 2;
 }
 
@@ -161,8 +161,12 @@ img {
 }
 
 #foot {
-  margin: 1em;
-  text-align: center;
+//  margin: 1em;
+//  text-align: center;
+  text-align: right;
+  position: relative;
+//  top: 5px;
+  right: 5px;
 }
 
 #settings, #help {
@@ -185,6 +189,3 @@ img {
   font-size: 1.0em;
   margin: 0.5em;
 }
-
-
-

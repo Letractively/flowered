@@ -101,26 +101,26 @@ class UpdateHandler(webapp.RequestHandler):
 
       for entry in add_cache:
         if (entry.timestamp > since_datetime and
-            entry.latitude > min_latitude and
-            entry.latitude < max_latitude and
-            entry.longitude > min_longitude and
-            entry.longitude < max_longitude):
+            entry.geopt.lat > min_latitude and
+            entry.geopt.lat < max_latitude and
+            entry.geopt.lon > min_longitude and
+            entry.geopt.lon < max_longitude):
           add_events.append(entry) 
  
       for entry in move_cache:
         if (entry.timestamp > since_datetime and
-            entry.latitude > min_latitude and
-            entry.latitude < max_latitude and
-            entry.longitude > min_longitude and
-            entry.longitude < max_longitude):
+            entry.geopt.lat > min_latitude and
+            entry.geopt.lat < max_latitude and
+            entry.geopt.lon > min_longitude and
+            entry.geopt.lon < max_longitude):
           move_events.append(entry) 
 
       for entry in remove_cache:
         if (entry.timestamp > since_datetime and
-            entry.latitude > min_latitude and
-            entry.latitude < max_latitude and
-            entry.longitude > min_longitude and
-            entry.longitude < max_longitude):
+            entry.geopt.lat > min_latitude and
+            entry.geopt.lat < max_latitude and
+            entry.geopt.lon > min_longitude and
+            entry.geopt.lon < max_longitude):
           remove_events.append(entry) 
                         
     output = {
@@ -134,7 +134,7 @@ class UpdateHandler(webapp.RequestHandler):
     self.response.out.write(json.encode(output));
 
 
-class BlaHandler(webapp.RequestHandler):
+class InitialHandler(webapp.RequestHandler):
   
   """Handles user requests for updated lists of events.
   
@@ -144,7 +144,6 @@ class BlaHandler(webapp.RequestHandler):
   """
   
   def get(self):
-    #global add_cache
 
     min_latitude = float(self.request.get('min_latitude'))
     min_longitude = float(self.request.get('min_longitude'))
@@ -156,21 +155,16 @@ class BlaHandler(webapp.RequestHandler):
       max_latitude = min_latitude + 1
     if (max_longitude - min_longitude) > 1:
       max_longitude = min_longitude + 1
+     
+    # Sync the add cache.      
+    query = datamodel.Mark.gql('WHERE geopt > :min_geopt AND geopt < :max_geopt ',
+                               min_geopt = db.GeoPt(min_latitude, min_longitude),
+                               max_geopt = db.GeoPt(max_latitude, max_longitude))
+    add_list = list(query.fetch(100))  
     
     add_events = []
-    
-    # Sync the chat cache.
-    query = db.Query(datamodel.Mark)
-    query.order('timestamp')
-    #add_list = list(query.fetch(100))
-    
-    for entry in query:
-    #for entry in add_list:
-      if (entry.latitude > min_latitude and
-          entry.latitude < max_latitude and
-          entry.longitude > min_longitude and
-          entry.longitude < max_longitude):
-        add_events.append(entry)       
+    for entry in add_list:
+      add_events.append(entry)  
               
     output = {
         'timestamp': time.time(),
@@ -200,11 +194,13 @@ class MoveHandler(webapp.RequestHandler):
 
     # Update current mark's position and timestamp
     mark.timestamp = datetime.datetime.now()
-    mark.latitude = float(self.request.get('latitude'))
-    mark.longitude = float(self.request.get('longitude'))
+    mark.geopt = db.GeoPt(float(self.request.get('latitude')),
+                          float(self.request.get('longitude')))
     mark.put()
+    logging.info('#### move=' + str(mark.geopt))
      
     # Append to the move cache, so we don't need to wait for a refresh.
+    #add_cache.remove(mark)
     move_cache.append(mark)
 
 class AddHandler(webapp.RequestHandler):
@@ -215,9 +211,9 @@ class AddHandler(webapp.RequestHandler):
     # Create and insert the a new mark event.
     event = datamodel.Mark(key_name = self.request.get('id'))
     event.timestamp = datetime.datetime.now()
+    event.geopt = db.GeoPt(float(self.request.get('latitude')),
+                           float(self.request.get('longitude')))
     event.type = str(self.request.get('type'))
-    event.latitude  = float(self.request.get('latitude'))
-    event.longitude = float(self.request.get('longitude'))
     event.put()
 
     # Append to the add cache, so we don't need to wait on a refresh.
@@ -238,6 +234,7 @@ class DeleteHandler(webapp.RequestHandler):
 
     # Append to the delete cache, so we don't need to wait for a refresh.
     mark.timestamp = datetime.datetime.now()
+    #add_cache.remove(mark)
     remove_cache.append(mark)
              
 def RefreshCache():
@@ -259,42 +256,15 @@ def RefreshCache():
   now = datetime.datetime.now()
   sync_frame = sync_interval * 2
   
-  if last_sync < now - sync_interval:
-    
-    # Sync the chat cache.
-    #query = db.Query(datamodel.ChatEvent)
-    #query.filter('timestamp > ', now - sync_frame)
-    #query.order('timestamp')
-    #chat_cache = list(query.fetch(100))
+  if last_sync < now - sync_interval:  
     last_sync = datetime.datetime.now()
-    # logging.info('Cache refreshed.')
-    
+ 
     # Trim the move cache.
     add_cache = add_cache[-100:]
     move_cache = move_cache[-100:]
     remove_cache = remove_cache[-100:]
     
-def BlaRefreshCache():
-  
-  """Check the freshness of chat and move caches, and refresh if necessary.
-  
-  RefreshCache relies on the globals "sync_interval" and "last_sync" to
-  determine the age of the existing cache and whether or not it should be
-  updated. All output goes to "chat_cache" and "move_cache" globals.
-  """
-  
-  #global add_cache
-  
-  # Sync the chat cache.
-  #query = db.Query(datamodel.Mark)
-  #query.order('timestamp')
-  #add_cache = list(query.fetch(100))
-
-  #logging.info('Bla cache refreshed.')
-    
-  # Trim the move cache.
-  #move_cache = move_cache[-100:]
-  
+ 
 def main():
   
   """Main method called when the script is executed directly.
@@ -305,11 +275,11 @@ def main():
   
   application = webapp.WSGIApplication(
       [
-        ('/event/update', UpdateHandler),
+        ('/event/initial', InitialHandler),
         ('/event/add', AddHandler),
-        ('/event/remove', DeleteHandler),
-        ('/event/bla', BlaHandler),
-        ('/event/move', MoveHandler)
+        ('/event/move', MoveHandler),
+        ('/event/delete', DeleteHandler),
+        ('/event/update', UpdateHandler),
       ],
       debug = True)
   run_wsgi_app(application)

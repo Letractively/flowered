@@ -25,6 +25,11 @@ handlers:
   mime_type: image/ico
   upload: static/images/favicon.ico
 
+- url: /robots.txt
+  static_files: robots.txt
+  mime_type: text/plain
+  upload: robots.txt
+
 - url: /.*
   script: flowered.py
 

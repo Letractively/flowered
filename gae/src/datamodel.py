@@ -22,5 +22,4 @@ from google.appengine.ext import db
 class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)
   type = db.StringProperty()
-  latitude = db.FloatProperty()
-  longitude = db.FloatProperty() 
+  geopt = db.GeoPtProperty()

@@ -52,6 +52,13 @@ class GqlEncoder(simplejson.JSONEncoder):
     if isinstance(obj, db.GqlQuery):
       return list(obj)
 
+    elif isinstance(obj, db.GeoPt):
+      output = {}
+      fields = ['lat', 'lon']
+      for field in fields:
+        output[field] = getattr(obj, field)     
+      return output
+      
     elif isinstance(obj, db.Model):
       properties = obj.properties().items()
       output = {}
@@ -61,20 +68,20 @@ class GqlEncoder(simplejson.JSONEncoder):
       key = obj.key()
       if key.has_id_or_name():
         output['id'] = key.id_or_name()    
-      #logging.info('output=' + str(output));
       return output
 
     elif isinstance(obj, datetime.datetime):
-      output = {}
-      fields = ['day', 'hour', 'microsecond', 'minute', 'month', 'second',
-          'year']
-      methods = ['ctime', 'isocalendar', 'isoformat', 'isoweekday',
-          'timetuple']
-      for field in fields:
-        output[field] = getattr(obj, field)
-      for method in methods:
-        output[method] = getattr(obj, method)()
-      output['epoch'] = time.mktime(obj.timetuple())
+    #  output = {}
+    #  fields = ['day', 'hour', 'microsecond', 'minute', 'month', 'second',
+    #      'year']
+    #  methods = ['ctime', 'isocalendar', 'isoformat', 'isoweekday',
+    #      'timetuple']
+    #  for field in fields:
+    #    output[field] = getattr(obj, field)
+    #  for method in methods:
+    #    output[method] = getattr(obj, method)()
+    #  output['epoch'] = time.mktime(obj.timetuple())
+      output = time.mktime(obj.timetuple())
       return output
 
     elif isinstance(obj, time.struct_time):
@@ -88,7 +95,6 @@ class GqlEncoder(simplejson.JSONEncoder):
       return output
 
     return simplejson.JSONEncoder.default(self, obj)
-
 
 def encode(input):
   """Encode an input GQL object as JSON

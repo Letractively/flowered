@@ -26,9 +26,10 @@
     this.id = id;
     this.point = new GLatLng(lat, lng);
     this.marker = new GMarker(this.point, {draggable: true});
+    // this.type = 'f00';
    
     map.addOverlay(this.marker);
-    this.marker.setImage(GEOCHAT_IMAGES['marker']);
+    this.marker.setImage(GEOCHAT_IMAGES['f00']);
    
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.
@@ -39,6 +40,7 @@
     // an Ajax call deleting the mark.   
     GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
       map.removeOverlay(me.marker);
+      // window.marker.splice(id, 1);
       me.remove();
     });   
   };
@@ -64,7 +66,8 @@
     $.post('/event/add', {
     	'id': this.id,
         'latitude': this.point.lat(),
-        'longitude': this.point.lng()
+        'longitude': this.point.lng(),
+        //'type': this.type
     });
   };  
 
@@ -74,7 +77,7 @@
    * cache.
    */
   Marker.prototype.remove = function() {
-	$.post('/event/remove', {
+	$.post('/event/delete', {
 	    'id': this.id
 	});
   };  
@@ -113,8 +116,8 @@
       if (!window.marker[add.id]) {
         var marker = new Marker(
           add.id,
-          add.latitude,
-          add.longitude);
+          add.geopt.lat,
+          add.geopt.lon);
       }
     }  
   };
@@ -130,11 +133,11 @@
       if (!window.marker[move.id]) {
         new Marker(
            move.id,
-           move.latitude,
-           move.longitude);
+           move.geopt.lat,
+           move.geopt.lon);
       } else {
         var mover = window.marker[move.id];
-        mover.move(move.latitude, move.longitude);        
+        mover.move(move.geopt.lat, move.geopt.lon);        
       }
     }
   }
@@ -150,6 +153,7 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
+        //window.marker.splice(remove.id, 1);
       }
     }
   }
@@ -173,6 +177,7 @@
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
+	alert('bla!')
     window.setTimeout(update, GEOCHAT_VARS['error_interval'])
   }
 
@@ -205,7 +210,7 @@
    * @param {string} json JSON data to be evaluated and passed on to event
    *   callbacks.
    */
-  window.blaSuccess = function(json) {
+  window.initialSuccess = function(json) {
     var data = eval('(' + json + ')');
     addCallback(data);
   }
@@ -214,25 +219,24 @@
    * A callback for when updates fail. Presents an error to the user and
    * forces a lengthier delay between updates.
    */
-  window.blaError = function() {
-    // alert('An bla error occured! Trying again in a bit.');
+  window.initialError = function() {
   }
   
-  window.bla = function() {
+  window.initial = function() {
 	var bounds = map.getBounds();
 	var min = bounds.getSouthWest();
 	var max = bounds.getNorthEast();
 	$.ajax({
 	  type: 'GET',
-      url: '/event/bla',
+      url: '/event/initial',
       data: [
         'min_latitude=', min.lat(),
         '&min_longitude=', min.lng(),
         '&max_latitude=', max.lat(),
         '&max_longitude=', max.lng()
       ].join(''),
-      success: blaSuccess,
-      error: blaError
+      success: initialSuccess,
+      error: initialError
     });
   }  
   
@@ -259,16 +263,19 @@
           point.lat(),
           point.lng());
         user.add();
-      });
+      });     
       GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {
-	    if (overlay) {
+    	if (overlay) {
 	      if (overlay instanceof GMarker) {
-	    	// foward event to marker
+	    	// forward event to marker
 	        GEvent.trigger(overlay, 'fwd_singlerightclick');
 	      }
 	    }
 	  });
-           
+      GEvent.addListener(map, 'moveend', function(point, src, overlay) {
+    	  initial();
+  	  });
+      
       var latitude = GEOCHAT_VARS['initial_latitude'];
       var longitude = GEOCHAT_VARS['initial_longitude'];       
       map.setCenter(new GLatLng(latitude, longitude), 13);
@@ -276,7 +283,6 @@
       // map.openInfoWindow(map.getCenter(),
       //        document.createTextNode("Hello, world"));
       
-      bla();
       update();
     }
   };
