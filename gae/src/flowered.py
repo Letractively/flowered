@@ -52,10 +52,6 @@ class MainHandler(webapp.RequestHandler):
     template_data = {}
     
     template_data = {
-      'auth_url': users.CreateLoginURL(self.request.uri),
-      'auth_text': 'Sign in',
-      'user_email': '',
-      'user_nickname': '',
       'initial_latitude': 37.4221,
       'initial_longitude': -122.0837,
     }
@@ -63,41 +59,10 @@ class MainHandler(webapp.RequestHandler):
     template_path = os.path.join(os.path.dirname(__file__), 'flowered.html')
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data)) 
-    
-class HelpHandler(webapp.RequestHandler):
-  
-  """Handles requests to /help
-  
-  HelpHandler handles requests to /help, serving up the template
-  found in help.html.
-  """
-  
-  def get(self):
-
-    template_data = {}
-
-    user = users.get_current_user()
-    if user:
-      template_data = {
-        'auth_url': users.CreateLogoutURL(self.request.uri),
-        'auth_text': 'Sign out',
-        'user_email': user.email(),
-      }
-    else:
-      template_data = {
-        'auth_url': users.CreateLoginURL(self.request.uri),
-        'auth_text': 'Sign in',
-        'user_email': '',
-      }
-        
-    template_path = os.path.join(os.path.dirname(__file__), 'help.html')
-    self.response.headers['Content-Type'] = 'text/html'
-    self.response.out.write(template.render(template_path, template_data))
 
 
 if __name__ == '__main__':
-  application = webapp.WSGIApplication([('/', MainHandler),
-                                        ('/help', HelpHandler),], debug = True)
+  application = webapp.WSGIApplication([('/', MainHandler)], debug = True)
 
   run_wsgi_app(application)
 

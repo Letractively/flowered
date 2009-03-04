@@ -18,18 +18,18 @@
    * @param {number} longitude The person's starting longitude.
    * @constructor
    */
-  var Marker = function(id, lat, lng) {
+  var Marker = function(id, lat, lng, type) {
 
     var me = this;
     window.marker[id] = this;
 
     this.id = id;
     this.point = new GLatLng(lat, lng);
+    this.type = type;
     this.marker = new GMarker(this.point, {draggable: true});
-    // this.type = 'f00';
    
     map.addOverlay(this.marker);
-    this.marker.setImage(GEOCHAT_IMAGES['f00']);
+    this.marker.setImage(GEOCHAT_IMAGES[this.type]);
    
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.
@@ -40,7 +40,7 @@
     // an Ajax call deleting the mark.   
     GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
       map.removeOverlay(me.marker);
-      // window.marker.splice(id, 1);
+      window.marker.splice(id, 1);
       me.remove();
     });   
   };
@@ -67,7 +67,7 @@
     	'id': this.id,
         'latitude': this.point.lat(),
         'longitude': this.point.lng(),
-        //'type': this.type
+        'type': this.type
     });
   };  
 
@@ -117,7 +117,8 @@
         var marker = new Marker(
           add.id,
           add.geopt.lat,
-          add.geopt.lon);
+          add.geopt.lon,
+          add.type);
       }
     }  
   };
@@ -134,7 +135,8 @@
         new Marker(
            move.id,
            move.geopt.lat,
-           move.geopt.lon);
+           move.geopt.lon,
+           move.type);
       } else {
         var mover = window.marker[move.id];
         mover.move(move.geopt.lat, move.geopt.lon);        
@@ -153,7 +155,7 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
-        //window.marker.splice(remove.id, 1);
+        window.marker.splice(remove.id, 1);
       }
     }
   }
@@ -177,7 +179,6 @@
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
-	alert('bla!')
     window.setTimeout(update, GEOCHAT_VARS['error_interval'])
   }
 
@@ -261,7 +262,8 @@
         var user = new Marker(
           createRandomKey(24),
           point.lat(),
-          point.lng());
+          point.lng(),
+          'f00');
         user.add();
       });     
       GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {

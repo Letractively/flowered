@@ -21,5 +21,5 @@ from google.appengine.ext import db
 
 class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)
-  type = db.StringProperty()
   geopt = db.GeoPtProperty()
+  type = db.StringProperty()
