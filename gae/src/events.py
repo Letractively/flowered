@@ -197,7 +197,7 @@ class MoveHandler(webapp.RequestHandler):
     mark.geopt = db.GeoPt(float(self.request.get('latitude')),
                           float(self.request.get('longitude')))
     mark.put()
-    logging.info('#### move=' + str(mark.geopt))
+    #logging.info('#### move=' + str(mark.geopt))
      
     # Append to the move cache, so we don't need to wait for a refresh.
     #add_cache.remove(mark)

@@ -27,21 +27,30 @@
     this.point = new GLatLng(lat, lng);
     this.type = type;
     this.marker = new GMarker(this.point, {draggable: true});
-   
+    this.name = id;
+    
     map.addOverlay(this.marker);
     this.marker.setImage(GEOCHAT_IMAGES[this.type]);
    
+    this.nametag = new NameTag(this);
+    map.addOverlay(this.nametag);
+ 
+    // Handle drag events for this Marker's marker.
+    GEvent.addListener(this.marker, 'drag', function() {
+       me.nametag.redraw();
+    });
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.
     GEvent.addListener(this.marker, 'dragend', function() {
       me.update();
+      me.nametag.redraw();
     });
     // Handle right click events for this Marks's marker. Note that this fires off
     // an Ajax call deleting the mark.   
     GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
       map.removeOverlay(me.marker);
-      window.marker.splice(id, 1);
       me.remove();
+      // window.marker.splice(id, 1);
     });   
   };
  
@@ -94,6 +103,55 @@
         'longitude': this.marker.getLatLng().lng()
     });
   };    
+
+  /**
+   * The name tag associated with a given person, typically displayed
+   * underneath their map marker.
+   * @param {Person} The Person object to associate this chat bubble with.
+   * @constructor
+   * @extends GOverlay
+   */
+  function NameTag(person) {
+    this.person = person;
+  };
+  NameTag.prototype = new GOverlay();
+  
+  /**
+   * Initializes the NameTag, injecting its DOM elements on demand.
+   * @param {GMap2} The map to initialize the NameTag on.
+   */
+  NameTag.prototype.initialize = function(map) {
+    this.nameTagDiv = $('<div />').addClass('nametag');
+    this.nameSpan = $('<span>' + this.person.name + '</span>');
+    this.nameTagDiv.append(this.nameSpan);
+    $(map.getPane(G_MAP_FLOAT_PANE)).append(this.nameTagDiv);
+    var me = this;
+  };
+  
+  /**
+   * Redraws the ChatBubble, typically used during map interaction.
+   * @param {boolean} force Whether to force a redraw.
+   */  
+  NameTag.prototype.redraw = function(force) {
+    var point = map.fromLatLngToDivPixel(this.person.marker.getPoint());
+    this.nameTagDiv.css('left', point.x);
+    this.nameTagDiv.css('top', point.y);
+    this.nameTagDiv.css('z-index', 150 + point.y);
+  };
+  
+  /**
+   * Show this NameTag.
+   */
+  NameTag.prototype.show = function() {
+    this.nameTagDiv.show();
+  };
+  
+  /**
+   * Hide this NameTag.
+   */
+  NameTag.prototype.hide = function() {
+    this.nameTagDiv.hide();
+  };  
   
   var createRandomKey = function(length) {
 	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -155,7 +213,7 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
-        window.marker.splice(remove.id, 1);
+        //window.marker.splice(remove.id, 1);
       }
     }
   }
