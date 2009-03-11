@@ -13,6 +13,7 @@ namespace Flowered.UI.SimpleClient
     public partial class FormMain : Form
     {
         private ScreenManager screenManager;
+        //private bool cursorVisible = true;
 
         public FormMain()
         {
@@ -36,12 +37,54 @@ namespace Flowered.UI.SimpleClient
         private void ToogleFullScreenMode(Form form)
         {
             screenManager.ToogleFullScreenMode(this);
+            /* if (screenManager.Fullscreen)
+            {
+                Cursor.Hide();
+            }
+            else
+            {
+                Cursor.Show();
+            } */
+            //cursorVisible = !screenManager.Fullscreen;
             menuStrip.Visible = !screenManager.Fullscreen;
         }
 
         private void miFullscreen_Click(object sender, EventArgs e)
         {
             ToogleFullScreenMode(this);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ToogleFullScreenMode(this);
+        }
+
+        private void tmrCursor_Tick(object sender, EventArgs e)
+        {
+            //tmrCursor.Stop();
+
+            //if (cursorVisible)
+            //{
+            //    Cursor.Hide();
+            //    cursorVisible = false;
+            //}
+        }
+
+        private void FormMain_MouseMove(object sender, MouseEventArgs e)
+        {
+            //tmrCursor.Start();
+            //tmrCursor.Enabled = false;
+
+            //if (!cursorVisible)
+            //{
+            //    Cursor.Show();
+            //    cursorVisible = true;
+            //}
+        }
+
+        private void miExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
