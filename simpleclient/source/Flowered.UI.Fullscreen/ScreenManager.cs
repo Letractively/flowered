@@ -42,6 +42,8 @@ namespace Flowered.UI.Fullscreen
                 form.WindowState = FormWindowState.Maximized;
                 form.FormBorderStyle = FormBorderStyle.None;
                 form.TopMost = true;
+
+                NativeMethods.SetWinFullScreen(form.Handle);
             }
         }
 

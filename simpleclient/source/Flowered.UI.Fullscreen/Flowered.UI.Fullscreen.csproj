@@ -38,6 +38,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NativeConstants.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="ScreenManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
