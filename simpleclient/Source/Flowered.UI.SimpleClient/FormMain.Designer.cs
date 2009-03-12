@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miFile = new System.Windows.Forms.ToolStripMenuItem();
             this.miExit = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +66,7 @@
             // miExit
             // 
             this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Size = new System.Drawing.Size(103, 22);
             this.miExit.Text = "&Exit";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -140,6 +141,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.webBrowser);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FormMain";
             this.Text = "Flowered";
