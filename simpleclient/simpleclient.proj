@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!-- ===================================================== -->
+	<!-- Imports -->
+	<!-- ===================================================== -->
+
+	<PropertyGroup>
+		<Project>SimpleClient</Project>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+		
+		<ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
+		<MSBuildCommunityTasksPath>$(ProjectRoot)\Tasks</MSBuildCommunityTasksPath>
+		<SourceRoot>$(ProjectRoot)\Source</SourceRoot>
+		<VersionFile>$(ProjectRoot)\Version.txt</VersionFile>
+		<VersionUpdateFile>$(SourceRoot)\Flowered.UI.SimpleClient\Properties\AssemblyInfo.cs</VersionUpdateFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Solution Include="$(SourceRoot)\Flowered.UI.SimpleClient.sln" />
+	</ItemGroup>
+	
+	<Import Project=".\Tasks\MSBuild.Community.Tasks.Targets"/>
+		
+	<!-- ===================================================== -->
+	<!-- Targets -->
+	<!-- ===================================================== -->
+	
+	<Target Name="Clean">
+		<Message Text="===========================================================================" />
+		<Message Text="Clean &quot;$(Project)&quot;, Configuration &quot;$(Configuration)&quot;"/>
+		<Message Text="===========================================================================" />
+
+		<RemoveDir Directories="@(Clean)" />
+		<MSBuild Projects="@(Solution)" Targets="Clean" Properties="Configuration=$(Configuration)" />
+	</Target>
+	
+	<Target Name="Version" DependsOnTargets="Clean">
+		<Message Text="===========================================================================" />
+		<Message Text="Version &quot;$(Project)&quot;, Configuration &quot;$(Configuration)&quot;"/>
+		<Message Text="===========================================================================" />
+		
+		<Version VersionFile="$(VersionFile)" BuildType="Increment">
+			<Output TaskParameter="Major" PropertyName="Major" />
+			<Output TaskParameter="Minor" PropertyName="Minor" />
+			<Output TaskParameter="Build" PropertyName="Build" />
+			<Output TaskParameter="Revision" PropertyName="Revision" />
+		</Version>
+	
+		<CreateProperty Value="$(Major).$(Minor).$(Build).$(Revision)">
+            <Output
+				TaskParameter="Value"
+				PropertyName="Version" />
+        </CreateProperty>
+		
+		<CreateProperty Value="(\d+).(\d+).(\d+).(\d+)">
+            <Output
+				TaskParameter="Value"
+				PropertyName="VersionRegex" />
+        </CreateProperty>
+			
+		<FileUpdate Files="$(VersionUpdateFile)" Regex="AssemblyVersion\(&quot;$(VersionRegex)&quot;\)" 
+            ReplacementText="AssemblyVersion(&quot;$(Version)&quot;)" >
+		</FileUpdate>			
+
+		<FileUpdate Files="$(VersionUpdateFile)" Regex="AssemblyFileVersion\(&quot;$(VersionRegex)&quot;\)" 
+            ReplacementText="AssemblyFileVersion(&quot;$(Version)&quot;)" >
+		</FileUpdate>
+		
+		<Message Text="Version: $(Version)"/>
+	</Target>
+	
+	<Target Name="Build" DependsOnTargets="Version">
+		<Message Text="===========================================================================" />
+		<Message Text="Build &quot;$(Project)&quot;, Configuration &quot;$(Configuration)&quot;"/>
+		<Message Text="===========================================================================" />
+			
+		<MSBuild Projects="@(Solution)" Properties="Configuration=$(Configuration)" >
+			<Output TaskParameter="TargetOutputs" ItemName="targetOutputs"/>
+		</MSBuild>		
+	</Target>
+	
+</Project>
