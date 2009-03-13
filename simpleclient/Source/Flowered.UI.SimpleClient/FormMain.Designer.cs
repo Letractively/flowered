@@ -51,7 +51,7 @@
             this.miHelp});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(292, 24);
+            this.menuStrip.Size = new System.Drawing.Size(555, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -113,7 +113,7 @@
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
             this.webBrowser.ScrollBarsEnabled = false;
-            this.webBrowser.Size = new System.Drawing.Size(292, 217);
+            this.webBrowser.Size = new System.Drawing.Size(555, 356);
             this.webBrowser.TabIndex = 1;
             this.webBrowser.Url = new System.Uri("http://www.beflowered.net", System.UriKind.Absolute);
             this.webBrowser.WebBrowserShortcutsEnabled = false;
@@ -137,7 +137,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 273);
+            this.ClientSize = new System.Drawing.Size(555, 412);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.webBrowser);
             this.Controls.Add(this.menuStrip);
