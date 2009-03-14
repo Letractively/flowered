@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Merge" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<!-- ================================================== -->
 	<!-- Imports -->
@@ -26,6 +26,7 @@
 		<BinRoot>$(SourceRoot)\$(RootNamespace)\bin\$(Configuration)</BinRoot>
 		<TargetDirectory>$(ProjectRoot)\Target</TargetDirectory>
         <AssemblyName>$(RootNamespace).exe</AssemblyName>		
+		<InstallerBaseName>Flowered_Setup</InstallerBaseName>
 	</PropertyGroup>
 	
 	<!-- ================================================== -->
@@ -34,7 +35,7 @@
 	
 	<ItemGroup>
 		<Solution Include="$(SourceRoot)\$(RootNamespace).sln" />
-		<Clean Include="$(TargetDirectory)" />
+		<Clean Include="$(TargetDirectory)/bin" />
 	</ItemGroup>
 		
 	<!-- ================================================== -->
@@ -121,12 +122,12 @@
 			<Output TaskParameter="Include" ItemName="InputAssemblies" />
 		</CreateItem>
 		
-		<MakeDir Directories="$(TargetDirectory)\Merged" >
-			<Output TaskParameter="DirectoriesCreated" PropertyName="MergedDir" />
+		<MakeDir Directories="$(TargetDirectory)\Temp" >
+			<Output TaskParameter="DirectoriesCreated" PropertyName="TemporaryDir" />
 		</MakeDir>
 		
 		<ILMerge InputAssemblies="@(InputAssemblies)" 
-			OutputFile="&quot;$(MergedDir)\$(AssemblyName)&quot;"
+			OutputFile="&quot;$(TemporaryDir)\$(AssemblyName)&quot;"
 			LogFile="ILMerge.log"
 			Closed="true"
 			CopyAttributes="true"
@@ -134,10 +135,21 @@
 			TargetKind="SameAsPrimaryAssembly" >
 		</ILMerge>
 		
-		<!-- <Delete Files="@(InputAssemblies)" /> -->
-		<!-- <Copy SourceFiles="$(MergedDir)\$(AssemblyName)" -->
-		<!-- 	DestinationFiles="$(TargetDirectory)\Bin\$(AssemblyName)" /> -->
-		<!-- <RemoveDir Directories="$(MergedDir)" /> -->
+		<Delete Files="@(InputAssemblies)" />
+		<Copy SourceFiles="$(TemporaryDir)\$(AssemblyName)"
+		 	DestinationFiles="$(TargetDirectory)\Bin\$(AssemblyName)" />
+		<RemoveDir Directories="$(TemporaryDir)" />
+	</Target>
+
+	<Target Name="Setup" DependsOnTargets="Merge">
+		<Message Text="=============================================================================" />
+		<Message Text="Setup &quot;$(Project)&quot;, Configuration &quot;$(Configuration)&quot;"/>
+		<Message Text="=============================================================================" />
+	
+		<InnoSetup 
+			ScriptFile="$(Project).iss"
+			OutputFileName="..\Installer\$(InstallerBaseName)_$(Version)"
+			Quiet="false" />
 	</Target>
 	
 </Project>

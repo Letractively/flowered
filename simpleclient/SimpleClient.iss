@@ -6,10 +6,12 @@ FloweredAppExe=Flowered.UI.SimpleClient.exe
 [Setup]
 AppName={cm:FloweredAppName}
 AppVerName={cm:FloweredAppName} {cm:FloweredAppVersion}
+VersionInfoDescription=Flowered Standalone Application
+VersionInfoProductName={cm:FloweredAppName}
 DefaultDirName={pf}\{cm:FloweredAppName}
 DefaultGroupName={cm:FloweredAppName}
 UninstallDisplayIcon={app}\{cm:FloweredAppExe}
-OutputDir=..\Target\Install
+OutputDir=.\Target\Installer
 OutputBaseFilename=Flowered_Setup
 AppID={cm:FloweredAppName}
 Uninstallable=true
@@ -18,7 +20,7 @@ Compression=lzma/max
 SolidCompression=true
 
 [Files]
-Source: "..\Target\Merged\*"; Excludes: "*.xml,*.pdb,*.log"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ".\Target\Bin\*"; Excludes: "*.xml,*.pdb,*.log"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{cm:FloweredAppName}"; Filename: "{app}\{cm:FloweredAppExe}"; IconIndex: 0
