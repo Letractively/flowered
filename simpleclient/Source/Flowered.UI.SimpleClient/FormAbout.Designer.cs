@@ -36,7 +36,7 @@
             // 
             this.bntOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bntOk.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bntOk.Location = new System.Drawing.Point(109, 238);
+            this.bntOk.Location = new System.Drawing.Point(97, 219);
             this.bntOk.Name = "bntOk";
             this.bntOk.Size = new System.Drawing.Size(75, 23);
             this.bntOk.TabIndex = 1;
@@ -49,7 +49,7 @@
             this.AcceptButton = this.bntOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 273);
+            this.ClientSize = new System.Drawing.Size(268, 254);
             this.Controls.Add(this.bntOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

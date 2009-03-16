@@ -48,6 +48,7 @@ namespace Flowered.UI.Controls
             if (enabled)
             {
                 timer.Enabled = true;
+                timer.Start();
             }
             if (!this.showMouse)
             {
@@ -61,6 +62,7 @@ namespace Flowered.UI.Controls
             if (enabled)
             {
                 timer.Enabled = false;
+                timer.Stop();
 
                 if (showMouse)
                 {

@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using Flowered.App.Standalone;
+using Flowered.UI.Controls;
 using Flowered.UI.Fullscreen;
 
 namespace Flowered.UI.SimpleClient
@@ -13,7 +15,7 @@ namespace Flowered.UI.SimpleClient
     public partial class FormMain : Form
     {
         private ScreenManager screenManager;
-        //private bool cursorVisible = true;
+        private TimedCursor timeCursor;
 
         public FormMain()
         {
@@ -24,29 +26,14 @@ namespace Flowered.UI.SimpleClient
         private void InitializeHelpers()
         {
             screenManager = new ScreenManager();
-        }
-
-        private void FormMain_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.F11)
-            {
-                ToogleFullScreenMode(this);
-            }
+            timeCursor = new TimedCursor();
         }
 
         private void ToogleFullScreenMode(Form form)
         {
             screenManager.ToogleFullScreenMode(this);
-            /* if (screenManager.Fullscreen)
-            {
-                Cursor.Hide();
-            }
-            else
-            {
-                Cursor.Show();
-            } */
-            //cursorVisible = !screenManager.Fullscreen;
             menuStrip.Visible = !screenManager.Fullscreen;
+            timeCursor.Enabled = screenManager.Fullscreen;
         }
 
         private void miFullscreen_Click(object sender, EventArgs e)
@@ -54,37 +41,124 @@ namespace Flowered.UI.SimpleClient
             ToogleFullScreenMode(this);
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ToogleFullScreenMode(this);
-        }
-
-        private void tmrCursor_Tick(object sender, EventArgs e)
-        {
-            //tmrCursor.Stop();
-
-            //if (cursorVisible)
-            //{
-            //    Cursor.Hide();
-            //    cursorVisible = false;
-            //}
-        }
-
-        private void FormMain_MouseMove(object sender, MouseEventArgs e)
-        {
-            //tmrCursor.Start();
-            //tmrCursor.Enabled = false;
-
-            //if (!cursorVisible)
-            //{
-            //    Cursor.Show();
-            //    cursorVisible = true;
-            //}
-        }
-
         private void miExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void miRefresh_Click(object sender, EventArgs e)
+        {
+            webBrowser.Refresh();
+        }
+
+        private void webBrowser_DocumentCompleted(object sender,
+            WebBrowserDocumentCompletedEventArgs e)
+        {
+            this.Focus();
+        }
+
+        private void miAbout_Click(object sender, EventArgs e)
+        {
+            FormAbout formAbout = new FormAbout();
+            formAbout.ShowDialog(this);
+        }
+
+        private void miSetUrl_Click(object sender, EventArgs e)
+        {
+            SetUrl(webBrowser.Url.ToString());
+        }
+
+        private void SetUrl(string address)
+        {
+            FormSetUrl formAddUrl = new FormSetUrl();
+            formAddUrl.Url = address;
+            DialogResult dialogResult = formAddUrl.ShowDialog(this);
+            if (dialogResult == DialogResult.OK)
+            {
+                Navigate(formAddUrl.Url);
+
+                if (formAddUrl.Url.Length > 0)
+                {
+                    StoreUrl(formAddUrl.Url);
+                }
+                else
+                {
+                    Application.UserAppDataRegistry.DeleteValue("Address");
+                }
+            }
+        }
+
+        // Navigates to the given URL if it is valid.
+        // @see: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.url.aspx#
+        private void Navigate(string address)
+        {
+            if (String.IsNullOrEmpty(address))
+            {
+                return;
+            }
+            if (address.Equals("about:blank"))
+            {
+                return;
+            }
+            if (!address.StartsWith("http://") &&
+                !address.StartsWith("https://"))
+            {
+                address = "http://" + address;
+            }
+
+            try
+            {
+                webBrowser.Navigate(new Uri(address));
+            }
+            catch (System.UriFormatException)
+            {
+                return;
+            }
+        }
+
+        private void StoreUrl(string address)
+        {
+            try
+            {
+                // Save the connection string to the registry, if it has changed.
+                Application.UserAppDataRegistry.SetValue("Address", address);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ReadUrl()
+        {
+            try
+            {
+                // Get the connection string from the registry.
+                if (Application.UserAppDataRegistry.GetValue("Address") != null)
+                {
+                    string address =
+                        Application.UserAppDataRegistry.GetValue("Address").ToString();
+                    Navigate(address);
+                }
+                else
+                {
+                    SetUrl("http://");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            ReadUrl();
+        }
+
+        private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            timeCursor.Show();
         }
     }
 }
