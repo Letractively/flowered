@@ -42,7 +42,6 @@
             this.bntOk.TabIndex = 1;
             this.bntOk.Text = "&OK";
             this.bntOk.UseVisualStyleBackColor = true;
-            this.bntOk.Click += new System.EventHandler(this.bntOk_Click);
             // 
             // FormAbout
             // 

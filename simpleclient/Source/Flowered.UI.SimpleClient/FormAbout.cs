@@ -14,10 +14,5 @@ namespace Flowered.App.Standalone
         {
             InitializeComponent();
         }
-
-        private void bntOk_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
