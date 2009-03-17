@@ -79,7 +79,7 @@ namespace Flowered.UI.SimpleClient
 
                 if (formAddUrl.Url.Length > 0)
                 {
-                    StoreUrl(formAddUrl.Url);
+                    StoreAddress(formAddUrl.Url);
                 }
                 else
                 {
@@ -100,8 +100,7 @@ namespace Flowered.UI.SimpleClient
             {
                 return;
             }
-            if (!address.StartsWith("http://") &&
-                !address.StartsWith("https://"))
+            if (!address.StartsWith("http://") && !address.StartsWith("https://"))
             {
                 address = "http://" + address;
             }
@@ -116,7 +115,7 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
-        private void StoreUrl(string address)
+        private void StoreAddress(string address)
         {
             try
             {
@@ -129,7 +128,7 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
-        private void ReadUrl()
+        private void ReadAddress()
         {
             try
             {
@@ -153,7 +152,7 @@ namespace Flowered.UI.SimpleClient
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            ReadUrl();
+            ReadAddress();
         }
 
         private void transparentPanel_MouseMove(object sender, MouseEventArgs e)

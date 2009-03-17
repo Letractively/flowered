@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Application.ico" />
+    <None Include="Resources\sunflowered_banner.png" />
     <None Include="Resources\world_edit.png" />
     <None Include="Resources\add.png" />
     <None Include="Resources\delete.png" />

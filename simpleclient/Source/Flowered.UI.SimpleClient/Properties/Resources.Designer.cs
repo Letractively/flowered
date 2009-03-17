@@ -60,13 +60,6 @@ namespace Flowered.App.Standalone.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap add {
-            get {
-                object obj = ResourceManager.GetObject("add", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap application {
             get {
                 object obj = ResourceManager.GetObject("application", resourceCulture);
@@ -81,13 +74,6 @@ namespace Flowered.App.Standalone.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap delete {
-            get {
-                object obj = ResourceManager.GetObject("delete", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap door_out {
             get {
                 object obj = ResourceManager.GetObject("door_out", resourceCulture);
@@ -98,6 +84,13 @@ namespace Flowered.App.Standalone.Properties {
         internal static System.Drawing.Bitmap information {
             get {
                 object obj = ResourceManager.GetObject("information", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap sunflowered_banner {
+            get {
+                object obj = ResourceManager.GetObject("sunflowered_banner", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
