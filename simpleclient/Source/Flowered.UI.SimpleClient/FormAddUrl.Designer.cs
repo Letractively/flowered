@@ -38,7 +38,8 @@
             // 
             this.btnSet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSet.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnSet.Location = new System.Drawing.Point(124, 52);
+            this.btnSet.Enabled = false;
+            this.btnSet.Location = new System.Drawing.Point(116, 52);
             this.btnSet.Name = "btnSet";
             this.btnSet.Size = new System.Drawing.Size(75, 23);
             this.btnSet.TabIndex = 0;
@@ -49,7 +50,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(205, 52);
+            this.btnCancel.Location = new System.Drawing.Point(197, 52);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -60,8 +61,9 @@
             // 
             this.tbUrl.Location = new System.Drawing.Point(50, 12);
             this.tbUrl.Name = "tbUrl";
-            this.tbUrl.Size = new System.Drawing.Size(230, 20);
+            this.tbUrl.Size = new System.Drawing.Size(222, 20);
             this.tbUrl.TabIndex = 2;
+            this.tbUrl.TextChanged += new System.EventHandler(this.tbUrl_TextChanged);
             // 
             // lblSetUrl
             // 
@@ -83,12 +85,15 @@
             this.Controls.Add(this.tbUrl);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSet);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormSetUrl";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Set URL";
+            this.Load += new System.EventHandler(this.FormSetUrl_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

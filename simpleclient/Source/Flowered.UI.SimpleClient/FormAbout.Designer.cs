@@ -66,8 +66,8 @@
             this.lblVersion.Size = new System.Drawing.Size(174, 104);
             this.lblVersion.TabIndex = 4;
             this.lblVersion.Text = "Flowered, Version {version}\r\n[.Net Framework, Version {runtime}]\r\n\r\nCopyright © 2" +
-                "009 Daniel Schubert.\r\nAll rights reserved.\r\n\r\nSunflower Gfx\r\nCopyright © 2009 An" +
-                "dré Werner.";
+                "009 Daniel Schubert.\r\nAll rights reserved.\r\n\r\nSunflower Graphics\r\nCopyright © 20" +
+                "09 André Werner.";
             // 
             // groupBox
             // 

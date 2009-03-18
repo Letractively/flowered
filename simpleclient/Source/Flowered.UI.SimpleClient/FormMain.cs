@@ -135,8 +135,7 @@ namespace Flowered.UI.SimpleClient
                 // Get the connection string from the registry.
                 if (Application.UserAppDataRegistry.GetValue("Address") != null)
                 {
-                    string address =
-                        Application.UserAppDataRegistry.GetValue("Address").ToString();
+                    string address = Application.UserAppDataRegistry.GetValue("Address").ToString();
                     Navigate(address);
                 }
                 else
