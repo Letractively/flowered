@@ -1,18 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-
-namespace Flowered.App.Standalone
+﻿namespace Flowered.App.Standalone
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Drawing;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
     public partial class FormSetUrl : Form
     {
+        #region Fields
+
         private static ErrorProvider errorProvider = new ErrorProvider();
+
         private string validationExpression = @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
+
+        #endregion Fields
+
+        #region Constructors
 
         public FormSetUrl()
         {
@@ -20,27 +27,25 @@ namespace Flowered.App.Standalone
             InitializeValidatingHandler();
         }
 
-        private void InitializeValidatingHandler()
-        {
-            tbUrl.Validating += new CancelEventHandler(ValidatingHandler);
-        }
+        #endregion Constructors
 
-        private void ValidatingHandler(object sender, CancelEventArgs e)
-        {
-            Validate();
-        }
+        #region Properties
 
-        protected bool EvaluateIsValid()
+        public string Url
         {
-            if (tbUrl.Text.Trim() == string.Empty)
+            get
             {
-                return true;
+                return tbUrl.Text;
             }
-            string field = tbUrl.Text.Trim();
-            bool isMatch = Regex.IsMatch(field, validationExpression.Trim());
-
-            return isMatch;
+            set
+            {
+                tbUrl.Text = value;
+            }
         }
+
+        #endregion Properties
+
+        #region Methods
 
         public new void Validate()
         {
@@ -56,19 +61,29 @@ namespace Flowered.App.Standalone
             btnSet.Enabled = isValid;
         }
 
-        public string Url
+        protected bool EvaluateIsValid()
         {
-            get
+            if (tbUrl.Text.Trim() == string.Empty)
             {
-                return tbUrl.Text;
+                return true;
             }
-            set
-            {
-                tbUrl.Text = value;
-            }
+            string field = tbUrl.Text.Trim();
+            bool isMatch = Regex.IsMatch(field, validationExpression.Trim());
+
+            return isMatch;
         }
 
         private void FormSetUrl_Load(object sender, EventArgs e)
+        {
+            Validate();
+        }
+
+        private void InitializeValidatingHandler()
+        {
+            tbUrl.Validating += new CancelEventHandler(ValidatingHandler);
+        }
+
+        private void ValidatingHandler(object sender, CancelEventArgs e)
         {
             Validate();
         }
@@ -77,5 +92,7 @@ namespace Flowered.App.Standalone
         {
             Validate();
         }
+
+        #endregion Methods
     }
 }

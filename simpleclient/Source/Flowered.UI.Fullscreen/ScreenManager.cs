@@ -1,35 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-
-namespace Flowered.UI.Fullscreen
+﻿namespace Flowered.UI.Fullscreen
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Text;
+    using System.Windows.Forms;
+
     public class ScreenManager
     {
-        private bool fullscreen = false;
+        #region Fields
+
         private Rectangle bounds;
-        private FormWindowState formWindowState;
         private FormBorderStyle formBorderStyle;
+        private FormWindowState formWindowState;
+        private bool fullscreen = false;
         private bool topMost;
 
-        private void Save(Form form)
+        #endregion Fields
+
+        #region Properties
+
+        public bool Fullscreen
         {
-            bounds = form.Bounds;
-            formWindowState = form.WindowState;
-            formBorderStyle = form.FormBorderStyle;
-            topMost = form.TopMost;
+            set
+            {
+                fullscreen = value;
+            }
+            get
+            {
+                return fullscreen;
+            }
         }
 
-        private void Restore(Form form)
-        {
-            form.Bounds = bounds;
-            form.WindowState = formWindowState;
-            form.FormBorderStyle = formBorderStyle;
-            form.TopMost = topMost;
+        #endregion Properties
 
-            fullscreen = false;
+        #region Methods
+
+        public void ToogleFullScreenMode(Form form)
+        {
+            if (!fullscreen)
+            {
+                Maximize(form);
+            }
+            else
+            {
+                Restore(form);
+            }
         }
 
         private void Maximize(Form form)
@@ -47,28 +63,24 @@ namespace Flowered.UI.Fullscreen
             }
         }
 
-        public void ToogleFullScreenMode(Form form)
+        private void Restore(Form form)
         {
-            if (!fullscreen)
-            {
-                Maximize(form);
-            }
-            else
-            {
-                Restore(form);
-            }
+            form.Bounds = bounds;
+            form.WindowState = formWindowState;
+            form.FormBorderStyle = formBorderStyle;
+            form.TopMost = topMost;
+
+            fullscreen = false;
         }
 
-        public bool Fullscreen
+        private void Save(Form form)
         {
-            set
-            {
-                fullscreen = value;
-            }
-            get
-            {
-                return fullscreen;
-            }
+            bounds = form.Bounds;
+            formWindowState = form.WindowState;
+            formBorderStyle = form.FormBorderStyle;
+            topMost = form.TopMost;
         }
+
+        #endregion Methods
     }
 }

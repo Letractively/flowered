@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
-namespace Flowered.UI.SimpleClient
+﻿namespace Flowered.UI.SimpleClient
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Forms;
+
     static class Program
     {
+        #region Methods
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -16,5 +18,7 @@ namespace Flowered.UI.SimpleClient
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain());
         }
+
+        #endregion Methods
     }
 }

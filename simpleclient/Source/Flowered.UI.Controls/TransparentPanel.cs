@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-
-namespace Flowered.UI.Controls
+﻿namespace Flowered.UI.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Windows.Forms;
+
     public class TransparentPanel : Panel
     {
+        #region Constructors
+
         public TransparentPanel()
         {
         }
+
+        #endregion Constructors
+
+        #region Properties
 
         protected override CreateParams CreateParams
         {
@@ -21,9 +27,15 @@ namespace Flowered.UI.Controls
             }
         }
 
+        #endregion Properties
+
+        #region Methods
+
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             // Do not paint background.
         }
+
+        #endregion Methods
     }
 }

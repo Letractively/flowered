@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-
-namespace Flowered.UI.Controls
+﻿namespace Flowered.UI.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Windows.Forms;
+
     public class TimedCursor
     {
-        private Timer timer = new Timer();
-        private bool showMouse = true;
+        #region Fields
+
         private bool enabled = false;
+        private bool showMouse = true;
+        private Timer timer = new Timer();
+
+        #endregion Fields
+
+        #region Constructors
 
         public TimedCursor()
         {
@@ -17,6 +23,10 @@ namespace Flowered.UI.Controls
             timer.Interval = 2000;
             timer.Tick += new System.EventHandler(timer_Tick);
         }
+
+        #endregion Constructors
+
+        #region Properties
 
         public bool Enabled
         {
@@ -42,6 +52,10 @@ namespace Flowered.UI.Controls
                 timer.Interval = value;
             }
         }
+
+        #endregion Properties
+
+        #region Methods
 
         public void Show()
         {
@@ -71,5 +85,7 @@ namespace Flowered.UI.Controls
                 }
             }
         }
+
+        #endregion Methods
     }
 }
