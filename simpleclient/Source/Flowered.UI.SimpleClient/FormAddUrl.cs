@@ -12,18 +12,6 @@ namespace Flowered.App.Standalone
     public partial class FormSetUrl : Form
     {
         private static ErrorProvider errorProvider = new ErrorProvider();
-        // http://www.silentdave.com/regex.htm
-        /* private string validationExpression = @"(?#WebOrIP)((?#protocol)((http|https):\/\/)?(?#subDomain)" + 
-            @"(([a-zA-Z0-9]+\.(?#domain)[a-zA-Z0-9\-]+(?#TLD)(\.[a-zA-Z]+){1,2})|(?#IPAddress)" + 
-            @"((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])" + 
-            @"\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)" + 
-            @"\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)" + 
-            @"\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])))" +
-            @"+(?#Port)(:[1-9][0-9]*)?)+(?#Path)((\/((?#dirOrFileName)" +
-            @"[a-zA-Z0-9_\-\%\~\+]+)?)*)?(?#extension)(\.([a-zA-Z0-9_]+))?(?#parameters)" +
-            @"(\?([a-zA-Z0-9_\-]+\=[a-z-A-Z0-9_\-\%\~\+]+)?(?#additionalParameters)" +
-            @"(\&([a-zA-Z0-9_\-]+\=[a-z-A-Z0-9_\-\%\~\+]+)?)*)?"; */
-
         private string validationExpression = @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
 
         public FormSetUrl()

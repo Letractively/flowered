@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,6 +17,8 @@ namespace Flowered.UI.SimpleClient
     {
         private ScreenManager screenManager;
         private TimedCursor timeCursor;
+        private RegistryKey registryKey = Application.UserAppDataRegistry;
+        private const string addressName = "Address";
 
         public FormMain()
         {
@@ -65,25 +68,36 @@ namespace Flowered.UI.SimpleClient
 
         private void miSetUrl_Click(object sender, EventArgs e)
         {
-            SetUrl(webBrowser.Url.ToString());
+            string url = webBrowser.Url.ToString();
+            if (url == "about:blank")
+            {
+                url = "http://";
+            }
+            SetUrl(url);
         }
 
         private void SetUrl(string address)
         {
             FormSetUrl formAddUrl = new FormSetUrl();
             formAddUrl.Url = address;
+            
             DialogResult dialogResult = formAddUrl.ShowDialog(this);
             if (dialogResult == DialogResult.OK)
             {
-                Navigate(formAddUrl.Url);
+                string url = formAddUrl.Url;
+                Navigate(url);
 
-                if (formAddUrl.Url.Length > 0)
+                // check for url to delete
+                if (url.Length > 0)
                 {
-                    StoreAddress(formAddUrl.Url);
+                    StoreAddress(url);
                 }
                 else
                 {
-                    Application.UserAppDataRegistry.DeleteValue("Address");
+                    if (registryKey.GetValue(addressName) != null)
+                    {
+                        registryKey.DeleteValue(addressName);
+                    }
                 }
             }
         }
@@ -92,17 +106,9 @@ namespace Flowered.UI.SimpleClient
         // @see: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.url.aspx#
         private void Navigate(string address)
         {
-            if (String.IsNullOrEmpty(address))
-            {
-                return;
-            }
             if (address.Equals("about:blank"))
             {
                 return;
-            }
-            if (!address.StartsWith("http://") && !address.StartsWith("https://"))
-            {
-                address = "http://" + address;
             }
 
             try
@@ -120,7 +126,7 @@ namespace Flowered.UI.SimpleClient
             try
             {
                 // Save the connection string to the registry, if it has changed.
-                Application.UserAppDataRegistry.SetValue("Address", address);
+                registryKey.SetValue(addressName, address);
             }
             catch (Exception ex)
             {
@@ -133,9 +139,9 @@ namespace Flowered.UI.SimpleClient
             try
             {
                 // Get the connection string from the registry.
-                if (Application.UserAppDataRegistry.GetValue("Address") != null)
+                if (registryKey.GetValue(addressName) != null)
                 {
-                    string address = Application.UserAppDataRegistry.GetValue("Address").ToString();
+                    string address = registryKey.GetValue(addressName).ToString();
                     Navigate(address);
                 }
                 else
