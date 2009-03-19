@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Data;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.Reflection;
     using System.Text;
     using System.Windows.Forms;
@@ -44,6 +45,51 @@
         }
 
         /// <summary>
+        /// Gets a new address from user.
+        /// </summary>
+        /// <param name="oldAddress"></param>
+        private string GetNewAddress(string oldAddress)
+        {
+            string newAddress = string.Empty;
+            FormSetAddress formAddAddress = new FormSetAddress();
+            formAddAddress.Address = oldAddress;
+
+            DialogResult dialogResult = formAddAddress.ShowDialog(this);
+            if (dialogResult == DialogResult.OK)
+            {
+                newAddress = formAddAddress.Address;
+                if (newAddress != oldAddress)
+                {
+                    // store address for next session(s)
+                    settings.Address = newAddress;
+                    settings.Save();
+                }
+            }
+
+            return newAddress;
+        }
+
+        /// <summary>
+        /// Gets a snapshoot from the current webpage and saves it to a file.
+        /// </summary>
+        private void GetSnapshot()
+        {
+            using (Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width,
+                webBrowser.ClientSize.Height))
+            {
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
+                        new Point(0, 0), webBrowser.ClientSize,CopyPixelOperation.SourceCopy);
+                    DateTime nowUtc = DateTime.Now.ToUniversalTime();
+                    string now = nowUtc.ToString("yyyyMMdd_HHmmss");
+                    string filename = string.Format(@".\Snapshots\flowered_{0}.png", now);
+                    bitmap.Save(filename, ImageFormat.Png);
+                }
+            }
+        }
+
+        /// <summary>
         /// Navigates to the given URL if it is valid.
         /// </summary>
         /// <param name="form"></param>
@@ -67,6 +113,7 @@
         /// <summary>
         ///
         /// </summary>
+        /// <param name="address"></param>
         private void ProcessAddress(string address)
         {
             try
@@ -78,7 +125,11 @@
                 }
                 else
                 {
-                    GetNewAddress("http://");
+                    string newAddress = GetNewAddress("http://");
+                    if (newAddress != string.Empty)
+                    {
+                        Navigate(newAddress);
+                    }
                 }
             }
             catch (Exception ex)
@@ -109,30 +160,6 @@
             // timer settings
             tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
             tmrRefresh.Interval = 1000 * settings.RefreshInterval;
-        }
-
-        /// <summary>
-        /// Gets a new address from user.
-        /// </summary>
-        /// <param name="oldAddress"></param>
-        private void GetNewAddress(string oldAddress)
-        {
-            FormSetAddress formAddAddress = new FormSetAddress();
-            formAddAddress.Address = oldAddress;
-
-            DialogResult dialogResult = formAddAddress.ShowDialog(this);
-            if (dialogResult == DialogResult.OK)
-            {
-                string newAddress = formAddAddress.Address;
-                if (newAddress != oldAddress)
-                {
-                    Navigate(newAddress);
-
-                    // store address for next session(s)
-                    settings.Address = newAddress;
-                    settings.Save();
-                }
-            }
         }
 
         /// <summary>
@@ -169,12 +196,16 @@
 
         private void miSetUrl_Click(object sender, EventArgs e)
         {
-            string address = webBrowser.Url.ToString();
-            if (address == "about:blank")
+            string oldAddress = webBrowser.Url.ToString();
+            if (oldAddress == "about:blank")
             {
-                address = "http://";
+                oldAddress = "http://";
             }
-            GetNewAddress(address);
+            string newAddress = GetNewAddress(oldAddress);
+            if (newAddress != string.Empty)
+            {
+                Navigate(newAddress);
+            }
         }
 
         private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
