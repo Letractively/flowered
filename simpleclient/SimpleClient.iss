@@ -2,8 +2,11 @@
 FloweredAppName=Flowered
 FloweredAppVersion=1.0
 FloweredAppExe=Flowered.UI.SimpleClient.exe
+FloweredAppLogPath=Logs
+FloweredAppSnapshootPath=Snapshoots
 
 [Setup]
+AppID={cm:FloweredAppName}
 AppName={cm:FloweredAppName}
 AppVerName={cm:FloweredAppName} {cm:FloweredAppVersion}
 VersionInfoDescription=Flowered Standalone Application
@@ -13,11 +16,15 @@ DefaultGroupName={cm:FloweredAppName}
 UninstallDisplayIcon={app}\{cm:FloweredAppExe}
 OutputDir=.\Target\Installer
 OutputBaseFilename=Flowered_Setup
-AppID={cm:FloweredAppName}
 Uninstallable=true
 MinVersion=5.01,5.01.2600sp2
 Compression=lzma/max
 SolidCompression=true
+PrivilegesRequired=admin
+
+[Dirs]
+Name: "{app}\{cm:FloweredAppLogPath}"
+Name: "{app}\{cm:FloweredAppSnapshootPath}"
 
 [Files]
 Source: ".\Target\Bin\*"; Excludes: "*.xml,*.pdb,*.log"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -25,6 +32,8 @@ Source: ".\Target\Bin\*"; Excludes: "*.xml,*.pdb,*.log"; DestDir: "{app}"; Flags
 [Icons]
 Name: "{group}\{cm:FloweredAppName}"; Filename: "{app}\{cm:FloweredAppExe}"; IconIndex: 0
 Name: "{group}\{cm:UninstallProgram,{cm:FloweredAppName}}"; Filename: {uninstallexe}
+Name: "{group}\Log Files"; Filename: "{app}\{cm:FloweredAppLogPath}"; Flags: foldershortcut
+Name: "{group}\Snapshoots"; Filename: "{app}\{cm:FloweredAppSnapshootPath}"; Flags: foldershortcut
 Name: "{userdesktop}\{cm:FloweredAppName}"; Filename: "{app}\{cm:FloweredAppExe}"; Tasks: desktopicon
 Name: "{userstartup}\{cm:FloweredAppName}"; Filename: "{app}\{cm:FloweredAppExe}"; IconIndex: 0
 
@@ -42,4 +51,3 @@ Name: {app}; Type: filesandordirs;
 
 [UninstallDelete]
 Name: {app}; Type: filesandordirs;
-
