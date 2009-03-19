@@ -9,7 +9,7 @@
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
 
-    public partial class FormSetUrl : Form
+    public partial class FormSetAddress : Form
     {
         #region Fields
 
@@ -21,7 +21,7 @@
 
         #region Constructors
 
-        public FormSetUrl()
+        public FormSetAddress()
         {
             InitializeComponent();
             InitializeValidatingHandler();
@@ -31,7 +31,7 @@
 
         #region Properties
 
-        public string Url
+        public string Address
         {
             get
             {

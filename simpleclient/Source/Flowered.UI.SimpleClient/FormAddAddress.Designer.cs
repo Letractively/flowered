@@ -1,6 +1,6 @@
 ﻿namespace Flowered.App.Standalone
 {
-    partial class FormSetUrl
+    partial class FormSetAddress
     {
         /// <summary>
         /// Required designer variable.
