@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,6 +43,8 @@
             this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.transparentPanel = new Flowered.UI.Controls.TransparentPanel();
+            this.tmrSnapshot = new System.Windows.Forms.Timer(this.components);
+            this.tmrRefresh = new System.Windows.Forms.Timer(this.components);
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -200,6 +203,8 @@
         private System.Windows.Forms.ToolStripMenuItem miSetUrl;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private Flowered.UI.Controls.TransparentPanel transparentPanel;
+        private System.Windows.Forms.Timer tmrSnapshot;
+        private System.Windows.Forms.Timer tmrRefresh;
     }
 }
 

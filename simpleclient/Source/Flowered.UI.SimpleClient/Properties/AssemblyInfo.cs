@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Flowered.App.Standalone")]
 [assembly: AssemblyDescription("Flowered Project Standalone Application")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Be Flowered!")]
+[assembly: AssemblyCompany("BeFlowered")]
 [assembly: AssemblyProduct("Flowered.App.Standalone")]
 [assembly: AssemblyCopyright("Copyright © 2009 Daniel Schubert")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyFileVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]

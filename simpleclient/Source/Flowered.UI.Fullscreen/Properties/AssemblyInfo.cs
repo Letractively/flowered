@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Flowered.UI.Fullscreen")]
 [assembly: AssemblyDescription("Fullscreen Manager")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Be Flowered!")]
+[assembly: AssemblyCompany("BeFlowered")]
 [assembly: AssemblyProduct("Flowered.UI.Fullscreen")]
 [assembly: AssemblyCopyright("Copyright © 2009 Daniel Schubert")]
 [assembly: AssemblyTrademark("")]

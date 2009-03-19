@@ -5,14 +5,14 @@
     using System.ComponentModel;
     using System.Data;
     using System.Drawing;
+    using System.Reflection;
     using System.Text;
     using System.Windows.Forms;
 
     using Flowered.App.Standalone;
+    using Flowered.App.Standalone.Properties;
     using Flowered.UI.Controls;
     using Flowered.UI.Fullscreen;
-
-    using Microsoft.Win32;
 
     public partial class FormMain : Form
     {
@@ -20,9 +20,9 @@
 
         private const string addressName = "Address";
 
-        private RegistryKey registryKey = Application.UserAppDataRegistry;
-        private ScreenManager screenManager;
-        private TimedCursor timeCursor;
+        private ScreenManager screenManager = new ScreenManager();
+        private Settings settings = Flowered.App.Standalone.Properties.Settings.Default;
+        private TimedCursor timedCursor = new TimedCursor();
 
         #endregion Fields
 
@@ -31,7 +31,6 @@
         public FormMain()
         {
             InitializeComponent();
-            InitializeHelpers();
         }
 
         #endregion Constructors
@@ -40,17 +39,14 @@
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            ReadAddress();
+            ReadSettings();
+            ProcessAddress(settings.Address);
         }
 
-        private void InitializeHelpers()
-        {
-            screenManager = new ScreenManager();
-            timeCursor = new TimedCursor();
-        }
-
-        // Navigates to the given URL if it is valid.
-        // @see: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.url.aspx#
+        /// <summary>
+        /// Navigates to the given URL if it is valid.
+        /// </summary>
+        /// <param name="form"></param>
         private void Navigate(string address)
         {
             if (address.Equals("about:blank"))
@@ -68,19 +64,21 @@
             }
         }
 
-        private void ReadAddress()
+        /// <summary>
+        ///
+        /// </summary>
+        private void ProcessAddress(string address)
         {
             try
             {
                 // Get the connection string from the registry.
-                if (registryKey.GetValue(addressName) != null)
+                if (address != string.Empty)
                 {
-                    string address = registryKey.GetValue(addressName).ToString();
                     Navigate(address);
                 }
                 else
                 {
-                    SetUrl("http://");
+                    GetNewAddress("http://");
                 }
             }
             catch (Exception ex)
@@ -89,50 +87,63 @@
             }
         }
 
-        private void SetUrl(string address)
+        /// <summary>
+        ///
+        /// </summary>
+        private void ReadSettings()
         {
-            FormSetUrl formAddUrl = new FormSetUrl();
-            formAddUrl.Url = address;
+            // upgrade user settings from old settings
+            if (settings.Initialized == false)
+            {
+                settings.Upgrade();
+                settings.Initialized = true;
+                settings.Save();
+            }
 
-            DialogResult dialogResult = formAddUrl.ShowDialog(this);
+            // fullscreen mode settings
+            if (settings.FullscreenMode)
+            {
+                ToogleFullScreenMode(this);
+            }
+
+            // timer settings
+            tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
+            tmrRefresh.Interval = 1000 * settings.RefreshInterval;
+        }
+
+        /// <summary>
+        /// Gets a new address from user.
+        /// </summary>
+        /// <param name="oldAddress"></param>
+        private void GetNewAddress(string oldAddress)
+        {
+            FormSetAddress formAddAddress = new FormSetAddress();
+            formAddAddress.Address = oldAddress;
+
+            DialogResult dialogResult = formAddAddress.ShowDialog(this);
             if (dialogResult == DialogResult.OK)
             {
-                string url = formAddUrl.Url;
-                Navigate(url);
+                string newAddress = formAddAddress.Address;
+                if (newAddress != oldAddress)
+                {
+                    Navigate(newAddress);
 
-                // check for url to delete
-                if (url.Length > 0)
-                {
-                    StoreAddress(url);
-                }
-                else
-                {
-                    if (registryKey.GetValue(addressName) != null)
-                    {
-                        registryKey.DeleteValue(addressName);
-                    }
+                    // store address for next session(s)
+                    settings.Address = newAddress;
+                    settings.Save();
                 }
             }
         }
 
-        private void StoreAddress(string address)
-        {
-            try
-            {
-                // Save the connection string to the registry, if it has changed.
-                registryKey.SetValue(addressName, address);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
+        /// <summary>
+        /// Toggles from windows mode into fullscreen mode and vice versa.
+        /// </summary>
+        /// <param name="form"></param>
         private void ToogleFullScreenMode(Form form)
         {
             screenManager.ToogleFullScreenMode(this);
             menuStrip.Visible = !screenManager.Fullscreen;
-            timeCursor.Enabled = screenManager.Fullscreen;
+            timedCursor.Enabled = screenManager.Fullscreen;
         }
 
         private void miAbout_Click(object sender, EventArgs e)
@@ -158,17 +169,17 @@
 
         private void miSetUrl_Click(object sender, EventArgs e)
         {
-            string url = webBrowser.Url.ToString();
-            if (url == "about:blank")
+            string address = webBrowser.Url.ToString();
+            if (address == "about:blank")
             {
-                url = "http://";
+                address = "http://";
             }
-            SetUrl(url);
+            GetNewAddress(address);
         }
 
         private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            timeCursor.Show();
+            timedCursor.Show();
         }
 
         private void webBrowser_DocumentCompleted(object sender,

@@ -46,11 +46,11 @@
     <Compile Include="FormAbout.Designer.cs">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormAddUrl.cs">
+    <Compile Include="FormAddAddress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormAddUrl.Designer.cs">
-      <DependentUpon>FormAddUrl.cs</DependentUpon>
+    <Compile Include="FormAddAddress.designer.cs">
+      <DependentUpon>FormAddAddress.cs</DependentUpon>
     </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
@@ -64,8 +64,8 @@
       <DependentUpon>FormAbout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormAddUrl.resx">
-      <DependentUpon>FormAddUrl.cs</DependentUpon>
+    <EmbeddedResource Include="FormAddAddress.resx">
+      <DependentUpon>FormAddAddress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Application.ico" />
+    <None Include="app.config" />
     <None Include="Resources\sunflowered_banner.png" />
     <None Include="Resources\world_edit.png" />
     <None Include="Resources\add.png" />
