@@ -167,6 +167,10 @@
             this.transparentPanel.TabIndex = 1;
             this.transparentPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.transparentPanel_MouseMove);
             // 
+            // tmrSnapshot
+            // 
+            this.tmrSnapshot.Tick += new System.EventHandler(this.tmrSnapshot_Tick);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

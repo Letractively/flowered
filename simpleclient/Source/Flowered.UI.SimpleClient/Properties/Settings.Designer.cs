@@ -82,5 +82,17 @@ namespace Flowered.App.Standalone.Properties {
                 this["FullscreenMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int MinimumFreeSpaceMb {
+            get {
+                return ((int)(this["MinimumFreeSpaceMb"]));
+            }
+            set {
+                this["MinimumFreeSpaceMb"] = value;
+            }
+        }
     }
 }

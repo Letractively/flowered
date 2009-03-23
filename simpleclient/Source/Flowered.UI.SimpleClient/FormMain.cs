@@ -1,17 +1,16 @@
 ﻿// Copyright ©2009 Daniel Schubert
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //    http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 namespace Flowered.UI.SimpleClient
 {
     using System;
@@ -20,6 +19,7 @@ namespace Flowered.UI.SimpleClient
     using System.Data;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.IO;
     using System.Reflection;
     using System.Text;
     using System.Windows.Forms;
@@ -28,6 +28,8 @@ namespace Flowered.UI.SimpleClient
     using Flowered.App.Standalone.Properties;
     using Flowered.UI.Controls;
     using Flowered.UI.Fullscreen;
+
+    using log4net;
 
     public partial class FormMain : Form
     {
@@ -56,6 +58,8 @@ namespace Flowered.UI.SimpleClient
         {
             ReadSettings();
             ProcessAddress(settings.Address);
+
+            tmrSnapshot.Enabled = true;
         }
 
         /// <summary>
@@ -81,26 +85,6 @@ namespace Flowered.UI.SimpleClient
             }
 
             return newAddress;
-        }
-
-        /// <summary>
-        /// Gets a snapshoot from the current webpage and saves it to a file.
-        /// </summary>
-        private void GetSnapshot()
-        {
-            using (Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width,
-                webBrowser.ClientSize.Height))
-            {
-                using (Graphics graphics = Graphics.FromImage(bitmap))
-                {
-                    graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
-                        new Point(0, 0), webBrowser.ClientSize,CopyPixelOperation.SourceCopy);
-                    DateTime nowUtc = DateTime.Now.ToUniversalTime();
-                    string now = nowUtc.ToString("yyyyMMdd_HHmmss");
-                    string filename = string.Format(@".\Snapshots\flowered_{0}.png", now);
-                    bitmap.Save(filename, ImageFormat.Png);
-                }
-            }
         }
 
         /// <summary>
@@ -153,6 +137,49 @@ namespace Flowered.UI.SimpleClient
         }
 
         /// <summary>
+        /// Gets a snapshoot from the current webpage and saves it to a file.
+        /// </summary>
+        private void ProcessSnapshot()
+        {
+            const string path = @".\Snapshots\";
+            const string format = @"yyyyMMdd_HHmmss";
+
+            // check for snapshot path before
+            bool pathExists = Directory.Exists(path);
+            if (!pathExists)
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            // check free disk space
+            FileInfo fileInfo = new FileInfo(path);
+            DriveInfo driveInfo = new DriveInfo(fileInfo.FullName);
+            if (driveInfo.IsReady == true)
+            {
+                long availableFreeSpaceMb = driveInfo.AvailableFreeSpace / 1024 / 1024;
+                if (availableFreeSpaceMb < settings.MinimumFreeSpaceMb)
+                {
+                    return;
+                }
+            }
+
+            // grab and save snapshot
+            using (Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width,
+                webBrowser.ClientSize.Height))
+            {
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
+                        new Point(0, 0), webBrowser.ClientSize,CopyPixelOperation.SourceCopy);
+                    DateTime nowUtc = DateTime.Now.ToUniversalTime();
+                    string now = nowUtc.ToString(format);
+                    string filename = string.Format(path + "flowered_{0}.png", now);
+                    bitmap.Save(filename, ImageFormat.Png);
+                }
+            }
+        }
+
+        /// <summary>
         ///
         /// </summary>
         private void ReadSettings()
@@ -172,7 +199,7 @@ namespace Flowered.UI.SimpleClient
             }
 
             // timer settings
-            tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
+            tmrSnapshot.Interval = 1000; // *settings.SnapshotInterval;
             tmrRefresh.Interval = 1000 * settings.RefreshInterval;
         }
 
@@ -185,6 +212,7 @@ namespace Flowered.UI.SimpleClient
             screenManager.ToogleFullScreenMode(this);
             menuStrip.Visible = !screenManager.Fullscreen;
             timedCursor.Enabled = screenManager.Fullscreen;
+            tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ? screenManager.Fullscreen : false;
         }
 
         private void miAbout_Click(object sender, EventArgs e)
@@ -222,6 +250,11 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
+        private void tmrSnapshot_Tick(object sender, EventArgs e)
+        {
+            ProcessSnapshot();
+        }
+
         private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
         {
             timedCursor.Show();
@@ -230,7 +263,7 @@ namespace Flowered.UI.SimpleClient
         private void webBrowser_DocumentCompleted(object sender,
             WebBrowserDocumentCompletedEventArgs e)
         {
-            this.Focus();
+            Focus();
         }
 
         #endregion Methods

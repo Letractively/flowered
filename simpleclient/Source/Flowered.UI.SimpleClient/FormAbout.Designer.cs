@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout));
             this.bntOk = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.lblVersion = new System.Windows.Forms.Label();
             this.groupBox = new System.Windows.Forms.GroupBox();
+            this.rtbCredits = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -40,7 +40,7 @@
             // 
             this.bntOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bntOk.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bntOk.Location = new System.Drawing.Point(110, 219);
+            this.bntOk.Location = new System.Drawing.Point(110, 282);
             this.bntOk.Name = "bntOk";
             this.bntOk.Size = new System.Drawing.Size(75, 23);
             this.bntOk.TabIndex = 1;
@@ -58,35 +58,39 @@
             this.pictureBox.TabIndex = 2;
             this.pictureBox.TabStop = false;
             // 
-            // lblVersion
-            // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(12, 90);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(174, 104);
-            this.lblVersion.TabIndex = 4;
-            this.lblVersion.Text = "Flowered, Version {version}\r\n[.Net Framework, Version {runtime}]\r\n\r\nCopyright © 2" +
-                "009 Daniel Schubert.\r\nAll rights reserved.\r\n\r\nSunflower Graphics\r\nCopyright © 20" +
-                "09 André Werner.";
-            // 
             // groupBox
             // 
             this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox.Location = new System.Drawing.Point(12, 211);
+            this.groupBox.Location = new System.Drawing.Point(12, 274);
             this.groupBox.Name = "groupBox";
             this.groupBox.Size = new System.Drawing.Size(270, 2);
             this.groupBox.TabIndex = 5;
             this.groupBox.TabStop = false;
+            // 
+            // rtbCredits
+            // 
+            this.rtbCredits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbCredits.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.rtbCredits.Location = new System.Drawing.Point(9, 93);
+            this.rtbCredits.Margin = new System.Windows.Forms.Padding(0);
+            this.rtbCredits.Name = "rtbCredits";
+            this.rtbCredits.ReadOnly = true;
+            this.rtbCredits.Size = new System.Drawing.Size(273, 178);
+            this.rtbCredits.TabIndex = 7;
+            this.rtbCredits.Text = resources.GetString("rtbCredits.Text");
+            this.rtbCredits.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtbCredits_LinkClicked);
             // 
             // FormAbout
             // 
             this.AcceptButton = this.bntOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(294, 254);
+            this.ClientSize = new System.Drawing.Size(294, 317);
+            this.Controls.Add(this.rtbCredits);
             this.Controls.Add(this.groupBox);
-            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.bntOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -108,7 +112,7 @@
 
         private System.Windows.Forms.Button bntOk;
         private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.GroupBox groupBox;
+        private System.Windows.Forms.RichTextBox rtbCredits;
     }
 }
