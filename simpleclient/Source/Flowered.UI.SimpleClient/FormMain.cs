@@ -54,12 +54,20 @@ namespace Flowered.UI.SimpleClient
 
         #region Methods
 
+        private void BuryBrowser(bool interactive)
+        {
+            webBrowser.Buried = (settings.Interactive == true) ? false : true;
+        }
+
         private void FormMain_Shown(object sender, EventArgs e)
         {
             ReadSettings();
             ProcessAddress(settings.Address);
 
-            tmrSnapshot.Enabled = true;
+            miInteractive.Checked = settings.Interactive;
+            BuryBrowser(settings.Interactive);
+
+            // tmrSnapshot.Enabled = true;
         }
 
         /// <summary>
@@ -141,8 +149,7 @@ namespace Flowered.UI.SimpleClient
         /// </summary>
         private void ProcessSnapshot()
         {
-            const string path = @".\Snapshots\";
-            const string format = @"yyyyMMdd_HHmmss";
+            const string path = @".\Snapshots";
 
             // check for snapshot path before
             bool pathExists = Directory.Exists(path);
@@ -164,19 +171,10 @@ namespace Flowered.UI.SimpleClient
             }
 
             // grab and save snapshot
-            using (Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width,
-                webBrowser.ClientSize.Height))
-            {
-                using (Graphics graphics = Graphics.FromImage(bitmap))
-                {
-                    graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
-                        new Point(0, 0), webBrowser.ClientSize,CopyPixelOperation.SourceCopy);
-                    DateTime nowUtc = DateTime.Now.ToUniversalTime();
-                    string now = nowUtc.ToString(format);
-                    string filename = string.Format(path + "flowered_{0}.png", now);
-                    bitmap.Save(filename, ImageFormat.Png);
-                }
-            }
+            DateTime nowUtc = DateTime.Now.ToUniversalTime();
+            string now = nowUtc.ToString(@"yyyyMMdd_HHmmss");
+            string filename = string.Format(@"flowered_{0}.png", now);
+            webBrowser.Snapshot(path + @"\" + filename, ImageFormat.Png);
         }
 
         /// <summary>
@@ -199,7 +197,7 @@ namespace Flowered.UI.SimpleClient
             }
 
             // timer settings
-            tmrSnapshot.Interval = 1000; // *settings.SnapshotInterval;
+            tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
             tmrRefresh.Interval = 1000 * settings.RefreshInterval;
         }
 
@@ -211,8 +209,13 @@ namespace Flowered.UI.SimpleClient
         {
             screenManager.ToogleFullScreenMode(this);
             menuStrip.Visible = !screenManager.Fullscreen;
-            timedCursor.Enabled = screenManager.Fullscreen;
-            tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ? screenManager.Fullscreen : false;
+
+            miInteractive.Checked = settings.Interactive;
+            if (!settings.Interactive)
+            {
+                timedCursor.Enabled = screenManager.Fullscreen;
+                tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ? screenManager.Fullscreen : false;
+            }
         }
 
         private void miAbout_Click(object sender, EventArgs e)
@@ -229,6 +232,16 @@ namespace Flowered.UI.SimpleClient
         private void miFullscreen_Click(object sender, EventArgs e)
         {
             ToogleFullScreenMode(this);
+        }
+
+        private void miInteractive_Click(object sender, EventArgs e)
+        {
+            miInteractive.Checked = !miInteractive.Checked;
+
+            settings.Interactive = miInteractive.Checked;
+            settings.Save();
+
+            BuryBrowser(settings.Interactive);
         }
 
         private void miRefresh_Click(object sender, EventArgs e)
@@ -250,6 +263,11 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
+        private void miSnapshot_Click(object sender, EventArgs e)
+        {
+            ProcessSnapshot();
+        }
+
         private void tmrSnapshot_Tick(object sender, EventArgs e)
         {
             ProcessSnapshot();
@@ -260,10 +278,12 @@ namespace Flowered.UI.SimpleClient
             timedCursor.Show();
         }
 
-        private void webBrowser_DocumentCompleted(object sender,
-            WebBrowserDocumentCompletedEventArgs e)
+        private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            Focus();
+            if (e.KeyCode == Keys.F11)
+            {
+                ToogleFullScreenMode(this);
+            }
         }
 
         #endregion Methods

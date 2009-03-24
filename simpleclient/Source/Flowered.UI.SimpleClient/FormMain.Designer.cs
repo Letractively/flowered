@@ -32,19 +32,22 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.miFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.miSetUrl = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSnapshot = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.miExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.miEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSetUrl = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.miInteractive = new System.Windows.Forms.ToolStripMenuItem();
             this.miView = new System.Windows.Forms.ToolStripMenuItem();
             this.miRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.miFullscreen = new System.Windows.Forms.ToolStripMenuItem();
             this.miHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.webBrowser = new System.Windows.Forms.WebBrowser();
-            this.transparentPanel = new Flowered.UI.Controls.TransparentPanel();
             this.tmrSnapshot = new System.Windows.Forms.Timer(this.components);
             this.tmrRefresh = new System.Windows.Forms.Timer(this.components);
+            this.webBrowser = new Flowered.UI.Controls.BuriedWebBrowser();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +55,7 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miFile,
+            this.miEdit,
             this.miView,
             this.miHelp});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -63,33 +67,63 @@
             // miFile
             // 
             this.miFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miSetUrl,
+            this.miSnapshot,
             this.toolStripSeparator2,
             this.miExit});
             this.miFile.Name = "miFile";
             this.miFile.Size = new System.Drawing.Size(35, 20);
             this.miFile.Text = "&File";
             // 
-            // miSetUrl
+            // miSnapshot
             // 
-            this.miSetUrl.Image = global::Flowered.App.Standalone.Properties.Resources.world_edit;
-            this.miSetUrl.Name = "miSetUrl";
-            this.miSetUrl.Size = new System.Drawing.Size(135, 22);
-            this.miSetUrl.Text = "Set URL...";
-            this.miSetUrl.Click += new System.EventHandler(this.miSetUrl_Click);
+            this.miSnapshot.Name = "miSnapshot";
+            this.miSnapshot.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.miSnapshot.Size = new System.Drawing.Size(149, 22);
+            this.miSnapshot.Text = "&Snapshot";
+            this.miSnapshot.Click += new System.EventHandler(this.miSnapshot_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(132, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
             // 
             // miExit
             // 
             this.miExit.Image = global::Flowered.App.Standalone.Properties.Resources.door_out;
             this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(135, 22);
+            this.miExit.Size = new System.Drawing.Size(149, 22);
             this.miExit.Text = "&Exit";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
+            // 
+            // miEdit
+            // 
+            this.miEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miSetUrl,
+            this.toolStripSeparator3,
+            this.miInteractive});
+            this.miEdit.Name = "miEdit";
+            this.miEdit.Size = new System.Drawing.Size(37, 20);
+            this.miEdit.Text = "&Edit";
+            // 
+            // miSetUrl
+            // 
+            this.miSetUrl.Image = global::Flowered.App.Standalone.Properties.Resources.world_edit;
+            this.miSetUrl.Name = "miSetUrl";
+            this.miSetUrl.Size = new System.Drawing.Size(138, 22);
+            this.miSetUrl.Text = "Set &URL...";
+            this.miSetUrl.Click += new System.EventHandler(this.miSetUrl_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(135, 6);
+            // 
+            // miInteractive
+            // 
+            this.miInteractive.Name = "miInteractive";
+            this.miInteractive.Size = new System.Drawing.Size(138, 22);
+            this.miInteractive.Text = "&Interactive";
+            this.miInteractive.Click += new System.EventHandler(this.miInteractive_Click);
             // 
             // miView
             // 
@@ -140,43 +174,26 @@
             this.miAbout.Text = "&About...";
             this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
             // 
-            // webBrowser
-            // 
-            this.webBrowser.AllowWebBrowserDrop = false;
-            this.webBrowser.CausesValidation = false;
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser.Location = new System.Drawing.Point(0, 24);
-            this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.ScriptErrorsSuppressed = true;
-            this.webBrowser.ScrollBarsEnabled = false;
-            this.webBrowser.Size = new System.Drawing.Size(555, 388);
-            this.webBrowser.TabIndex = 0;
-            this.webBrowser.TabStop = false;
-            this.webBrowser.Url = new System.Uri("", System.UriKind.Relative);
-            this.webBrowser.WebBrowserShortcutsEnabled = false;
-            this.webBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser_DocumentCompleted);
-            // 
-            // transparentPanel
-            // 
-            this.transparentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.transparentPanel.Location = new System.Drawing.Point(0, 24);
-            this.transparentPanel.Name = "transparentPanel";
-            this.transparentPanel.Size = new System.Drawing.Size(555, 388);
-            this.transparentPanel.TabIndex = 1;
-            this.transparentPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.transparentPanel_MouseMove);
-            // 
             // tmrSnapshot
             // 
             this.tmrSnapshot.Tick += new System.EventHandler(this.tmrSnapshot_Tick);
+            // 
+            // webBrowser
+            // 
+            this.webBrowser.Buried = true;
+            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser.Location = new System.Drawing.Point(0, 24);
+            this.webBrowser.Name = "webBrowser";
+            this.webBrowser.Size = new System.Drawing.Size(555, 388);
+            this.webBrowser.TabIndex = 1;
+            this.webBrowser.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser.PreviewKeyDown += new Flowered.UI.Controls.PreviewKeyDownHandler(this.webBrowser_PreviewKeyDown);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(555, 412);
-            this.Controls.Add(this.transparentPanel);
             this.Controls.Add(this.webBrowser);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -203,12 +220,15 @@
         private System.Windows.Forms.ToolStripMenuItem miFullscreen;
         private System.Windows.Forms.ToolStripMenuItem miRefresh;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.WebBrowser webBrowser;
-        private System.Windows.Forms.ToolStripMenuItem miSetUrl;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private Flowered.UI.Controls.TransparentPanel transparentPanel;
         private System.Windows.Forms.Timer tmrSnapshot;
         private System.Windows.Forms.Timer tmrRefresh;
+        private Flowered.UI.Controls.BuriedWebBrowser webBrowser;
+        private System.Windows.Forms.ToolStripMenuItem miEdit;
+        private System.Windows.Forms.ToolStripMenuItem miSetUrl;
+        private System.Windows.Forms.ToolStripMenuItem miSnapshot;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem miInteractive;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 

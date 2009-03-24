@@ -94,5 +94,17 @@ namespace Flowered.App.Standalone.Properties {
                 this["MinimumFreeSpaceMb"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Interactive {
+            get {
+                return ((bool)(this["Interactive"]));
+            }
+            set {
+                this["Interactive"] = value;
+            }
+        }
     }
 }
