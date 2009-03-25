@@ -1,4 +1,4 @@
-﻿// Copyright ©2009 Daniel Schubert
+﻿// Copyright (c) 2009 Daniel Schubert
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace Flowered.UI.SimpleClient
 {
     using System;
@@ -24,8 +26,8 @@ namespace Flowered.UI.SimpleClient
     using System.Text;
     using System.Windows.Forms;
 
-    using Flowered.App.Standalone;
-    using Flowered.App.Standalone.Properties;
+    using Flowered.App.SimpleClient;
+    using Flowered.App.SimpleClient.Properties;
     using Flowered.UI.Controls;
     using Flowered.UI.Fullscreen;
 
@@ -35,10 +37,13 @@ namespace Flowered.UI.SimpleClient
     {
         #region Fields
 
+        private static readonly ILog log = 
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private const string addressName = "Address";
 
         private ScreenManager screenManager = new ScreenManager();
-        private Settings settings = Flowered.App.Standalone.Properties.Settings.Default;
+        private Settings settings = Flowered.App.SimpleClient.Properties.Settings.Default;
         private TimedCursor timedCursor = new TimedCursor();
 
         #endregion Fields
@@ -54,18 +59,13 @@ namespace Flowered.UI.SimpleClient
 
         #region Methods
 
-        private void BuryBrowser(bool interactive)
-        {
-            webBrowser.Buried = (settings.Interactive == true) ? false : true;
-        }
-
         private void FormMain_Shown(object sender, EventArgs e)
         {
             ReadSettings();
             ProcessAddress(settings.Address);
 
             miInteractive.Checked = settings.Interactive;
-            BuryBrowser(settings.Interactive);
+            webBrowser.Buried = !settings.Interactive;
 
             // tmrSnapshot.Enabled = true;
         }
@@ -110,9 +110,10 @@ namespace Flowered.UI.SimpleClient
             {
                 webBrowser.Navigate(new Uri(address));
             }
-            catch (System.UriFormatException)
+            catch (UriFormatException exception)
             {
-                return;
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Exception(methodName, exception);
             }
         }
 
@@ -138,9 +139,10 @@ namespace Flowered.UI.SimpleClient
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                MessageBox.Show(ex.Message);
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Exception(methodName, exception);
             }
         }
 
@@ -149,32 +151,47 @@ namespace Flowered.UI.SimpleClient
         /// </summary>
         private void ProcessSnapshot()
         {
-            const string path = @".\Snapshots";
-
-            // check for snapshot path before
-            bool pathExists = Directory.Exists(path);
-            if (!pathExists)
+            try
             {
-                Directory.CreateDirectory(path);
-            }
+                const string path = @".\Snapshots";
 
-            // check free disk space
-            FileInfo fileInfo = new FileInfo(path);
-            DriveInfo driveInfo = new DriveInfo(fileInfo.FullName);
-            if (driveInfo.IsReady == true)
-            {
-                long availableFreeSpaceMb = driveInfo.AvailableFreeSpace / 1024 / 1024;
-                if (availableFreeSpaceMb < settings.MinimumFreeSpaceMb)
+                // check for snapshot path before
+                bool pathExists = Directory.Exists(path);
+                if (!pathExists)
                 {
-                    return;
+                    Directory.CreateDirectory(path);
+                }
+
+                // check free disk space
+                FileInfo fileInfo = new FileInfo(path);
+                DriveInfo driveInfo = new DriveInfo(fileInfo.FullName);
+                if (driveInfo.IsReady == true)
+                {
+                    long availableFreeSpaceMb = driveInfo.AvailableFreeSpace / 1024 / 1024;
+                    if (availableFreeSpaceMb < settings.MinimumFreeSpaceMb)
+                    {
+                        return;
+                    }
+                }
+
+                // grab and save snapshot
+                DateTime nowUtc = DateTime.Now.ToUniversalTime();
+                string now = nowUtc.ToString(@"yyyyMMdd_HHmmss");
+                string filename = string.Format(@"flowered_{0}.png", now);
+
+                using (Bitmap bitmap = webBrowser.Snapshot())
+                {
+                    if (bitmap != null)
+                    {
+                        bitmap.Save(path + @"\" + filename, ImageFormat.Png);
+                    }
                 }
             }
-
-            // grab and save snapshot
-            DateTime nowUtc = DateTime.Now.ToUniversalTime();
-            string now = nowUtc.ToString(@"yyyyMMdd_HHmmss");
-            string filename = string.Format(@"flowered_{0}.png", now);
-            webBrowser.Snapshot(path + @"\" + filename, ImageFormat.Png);
+            catch (Exception exception)
+            {
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Exception(methodName, exception);
+            }
         }
 
         /// <summary>
@@ -241,7 +258,7 @@ namespace Flowered.UI.SimpleClient
             settings.Interactive = miInteractive.Checked;
             settings.Save();
 
-            BuryBrowser(settings.Interactive);
+            webBrowser.Buried = !settings.Interactive;
         }
 
         private void miRefresh_Click(object sender, EventArgs e)

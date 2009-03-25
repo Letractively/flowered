@@ -89,7 +89,7 @@
             // 
             // miExit
             // 
-            this.miExit.Image = global::Flowered.App.Standalone.Properties.Resources.door_out;
+            this.miExit.Image = global::Flowered.App.SimpleClient.Properties.Resources.door_out;
             this.miExit.Name = "miExit";
             this.miExit.Size = new System.Drawing.Size(149, 22);
             this.miExit.Text = "&Exit";
@@ -107,7 +107,7 @@
             // 
             // miSetUrl
             // 
-            this.miSetUrl.Image = global::Flowered.App.Standalone.Properties.Resources.world_edit;
+            this.miSetUrl.Image = global::Flowered.App.SimpleClient.Properties.Resources.world_edit;
             this.miSetUrl.Name = "miSetUrl";
             this.miSetUrl.Size = new System.Drawing.Size(138, 22);
             this.miSetUrl.Text = "Set &URL...";
@@ -137,7 +137,7 @@
             // 
             // miRefresh
             // 
-            this.miRefresh.Image = global::Flowered.App.Standalone.Properties.Resources.arrow_refresh;
+            this.miRefresh.Image = global::Flowered.App.SimpleClient.Properties.Resources.arrow_refresh;
             this.miRefresh.Name = "miRefresh";
             this.miRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.miRefresh.Size = new System.Drawing.Size(158, 22);
@@ -151,7 +151,7 @@
             // 
             // miFullscreen
             // 
-            this.miFullscreen.Image = global::Flowered.App.Standalone.Properties.Resources.application;
+            this.miFullscreen.Image = global::Flowered.App.SimpleClient.Properties.Resources.application;
             this.miFullscreen.Name = "miFullscreen";
             this.miFullscreen.ShortcutKeys = System.Windows.Forms.Keys.F11;
             this.miFullscreen.Size = new System.Drawing.Size(158, 22);
@@ -168,7 +168,7 @@
             // 
             // miAbout
             // 
-            this.miAbout.Image = global::Flowered.App.Standalone.Properties.Resources.information;
+            this.miAbout.Image = global::Flowered.App.SimpleClient.Properties.Resources.information;
             this.miAbout.Name = "miAbout";
             this.miAbout.Size = new System.Drawing.Size(126, 22);
             this.miAbout.Text = "&About...";

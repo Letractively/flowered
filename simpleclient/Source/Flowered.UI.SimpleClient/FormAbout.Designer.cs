@@ -1,4 +1,4 @@
-﻿namespace Flowered.App.Standalone
+﻿namespace Flowered.App.SimpleClient
 {
     partial class FormAbout
     {
@@ -49,7 +49,7 @@
             // 
             // pictureBox
             // 
-            this.pictureBox.Image = global::Flowered.App.Standalone.Properties.Resources.sunflowered_banner;
+            this.pictureBox.Image = global::Flowered.App.SimpleClient.Properties.Resources.sunflowered_banner;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";

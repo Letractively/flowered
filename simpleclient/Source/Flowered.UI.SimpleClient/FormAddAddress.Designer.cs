@@ -1,4 +1,4 @@
-﻿namespace Flowered.App.Standalone
+﻿namespace Flowered.App.SimpleClient
 {
     partial class FormSetAddress
     {

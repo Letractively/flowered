@@ -1,4 +1,4 @@
-﻿// Copyright ©2009 Daniel Schubert
+﻿// Copyright (c) 2009 Daniel Schubert
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 namespace Flowered.UI.Controls
 {
     using System;
@@ -86,19 +85,17 @@ namespace Flowered.UI.Controls
             webBrowser.Refresh(opt);
         }
 
-        public void Snapshot(string filename, ImageFormat imageFormat)
+        public Bitmap Snapshot()
         {
             // grab and save snapshot
-            using (Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width,
-                webBrowser.ClientSize.Height))
+            Bitmap bitmap = new Bitmap(webBrowser.ClientSize.Width, webBrowser.ClientSize.Height);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                using (Graphics graphics = Graphics.FromImage(bitmap))
-                {
-                    graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
-                        new Point(0, 0), webBrowser.ClientSize, CopyPixelOperation.SourceCopy);
-                    bitmap.Save(filename, imageFormat);
-                }
+                graphics.CopyFromScreen(webBrowser.Parent.PointToScreen(webBrowser.Location),
+                    new Point(0, 0), webBrowser.ClientSize, CopyPixelOperation.SourceCopy);
             }
+
+            return bitmap;
         }
 
         protected new void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
