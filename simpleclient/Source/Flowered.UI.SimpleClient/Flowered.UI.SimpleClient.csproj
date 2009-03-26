@@ -112,8 +112,6 @@
     <None Include="app.config" />
     <None Include="Resources\sunflowered_banner.png" />
     <None Include="Resources\world_edit.png" />
-    <None Include="Resources\add.png" />
-    <None Include="Resources\delete.png" />
     <None Include="Resources\information.png" />
     <None Include="Resources\application.png" />
     <None Include="Resources\arrow_refresh.png" />

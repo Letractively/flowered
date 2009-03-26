@@ -1,4 +1,6 @@
-﻿// Copyright (c) 2009 Daniel Schubert
+﻿#region Header
+
+// Copyright (c) 2009 Daniel Schubert
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +13,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+#endregion Header
+
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace Flowered.UI.SimpleClient
@@ -66,8 +71,6 @@ namespace Flowered.UI.SimpleClient
 
             miInteractive.Checked = settings.Interactive;
             webBrowser.Buried = !settings.Interactive;
-
-            // tmrSnapshot.Enabled = true;
         }
 
         /// <summary>
@@ -290,11 +293,6 @@ namespace Flowered.UI.SimpleClient
             ProcessSnapshot();
         }
 
-        private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
-        {
-            timedCursor.Show();
-        }
-
         private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.F11)
@@ -304,5 +302,10 @@ namespace Flowered.UI.SimpleClient
         }
 
         #endregion Methods
+
+        private void webBrowser_MouseMove(object sender, MouseEventArgs e)
+        {
+            timedCursor.Show();
+        }
     }
 }

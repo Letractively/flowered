@@ -1,6 +1,6 @@
 ﻿#region Header
 
-// Copyright ©2009 Daniel Schubert
+// Copyright (c) 2009 Daniel Schubert
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

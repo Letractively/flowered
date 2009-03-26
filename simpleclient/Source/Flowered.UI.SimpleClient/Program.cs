@@ -1,4 +1,6 @@
-﻿// Copyright (c) 2009 Daniel Schubert
+﻿#region Header
+
+// Copyright (c) 2009 Daniel Schubert
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +13,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+#endregion Header
+
 namespace Flowered.UI.SimpleClient
 {
     using System;

@@ -57,6 +57,7 @@
             this.transparentPanel.Name = "transparentPanel";
             this.transparentPanel.Size = new System.Drawing.Size(150, 150);
             this.transparentPanel.TabIndex = 0;
+            this.transparentPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.transparentPanel_MouseMove);
             // 
             // BuriedWebBrowser
             // 

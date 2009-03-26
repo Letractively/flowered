@@ -188,6 +188,7 @@
             this.webBrowser.TabIndex = 1;
             this.webBrowser.Url = new System.Uri("about:blank", System.UriKind.Absolute);
             this.webBrowser.PreviewKeyDown += new Flowered.UI.Controls.PreviewKeyDownHandler(this.webBrowser_PreviewKeyDown);
+            this.webBrowser.MouseMove += new System.Windows.Forms.MouseEventHandler(this.webBrowser_MouseMove);
             // 
             // FormMain
             // 
