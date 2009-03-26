@@ -219,6 +219,8 @@ namespace Flowered.UI.SimpleClient
             // timer settings
             tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
             tmrRefresh.Interval = 1000 * settings.RefreshInterval;
+
+            SetMode(settings.Interactive);
         }
 
         /// <summary>
@@ -230,7 +232,6 @@ namespace Flowered.UI.SimpleClient
             screenManager.ToogleFullScreenMode(this);
             menuStrip.Visible = !screenManager.Fullscreen;
 
-            miInteractive.Checked = settings.Interactive;
             if (!settings.Interactive)
             {
                 timedCursor.Enabled = screenManager.Fullscreen;
@@ -261,7 +262,7 @@ namespace Flowered.UI.SimpleClient
             settings.Interactive = miInteractive.Checked;
             settings.Save();
 
-            webBrowser.Buried = !settings.Interactive;
+            SetMode(settings.Interactive);
         }
 
         private void miRefresh_Click(object sender, EventArgs e)
@@ -306,6 +307,14 @@ namespace Flowered.UI.SimpleClient
         private void webBrowser_MouseMove(object sender, MouseEventArgs e)
         {
             timedCursor.Show();
+        }
+
+        private void SetMode(bool intercative)
+        {
+            webBrowser.Buried = !intercative;
+
+            Text = string.Format("{1} {0}", Application.ProductName,
+                intercative ? "Interactive" : "Non-interactive");
         }
     }
 }

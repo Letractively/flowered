@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Flowered Project SimpleClient Application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BeFlowered")]
-[assembly: AssemblyProduct("Flowered.App.SimpleClient")]
+[assembly: AssemblyProduct("Flowered")]
 [assembly: AssemblyCopyright("Copyright © 2009 Daniel Schubert")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
