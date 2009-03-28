@@ -130,7 +130,6 @@
 			OutputFile="&quot;$(TemporaryDir)\$(AssemblyName)&quot;"
 			LogFile="ILMerge.log"
 			Closed="true"
-			CopyAttributes="true"
 			DebugInfo="false"
 			TargetKind="SameAsPrimaryAssembly" >
 		</ILMerge>
