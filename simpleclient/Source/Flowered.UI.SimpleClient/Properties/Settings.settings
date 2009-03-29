@@ -8,11 +8,11 @@
     <Setting Name="Address" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SnapshotInterval" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">60</Value>
+    <Setting Name="SnapshotIntervalS" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">900</Value>
     </Setting>
-    <Setting Name="RefreshInterval" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">7200</Value>
+    <Setting Name="RefreshIntervalS" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">14400</Value>
     </Setting>
     <Setting Name="FullscreenMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -22,6 +22,9 @@
     </Setting>
     <Setting Name="Interactive" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MouseIntervalMs" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

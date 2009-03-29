@@ -49,13 +49,21 @@ namespace Flowered.UI.SimpleClient
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FormMain());
+                Application.Run(Program.CreateMainForm());
             }
             catch (Exception exception)
             {
                 string methodName = MethodBase.GetCurrentMethod().Name;
                 Logger.Exception(methodName, exception);
             }
+        }
+
+        static FormMain CreateMainForm()
+        {
+            FormMain formMain = new FormMain();
+            Application.ApplicationExit += new EventHandler(formMain.OnApplicationExit);
+
+            return formMain;
         }
 
         #endregion Methods

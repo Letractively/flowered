@@ -178,6 +178,10 @@
             // 
             this.tmrSnapshot.Tick += new System.EventHandler(this.tmrSnapshot_Tick);
             // 
+            // tmrRefresh
+            // 
+            this.tmrRefresh.Tick += new System.EventHandler(this.tmrRefresh_Tick);
+            // 
             // webBrowser
             // 
             this.webBrowser.Buried = true;

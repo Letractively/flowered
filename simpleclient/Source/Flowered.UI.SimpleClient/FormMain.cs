@@ -42,9 +42,6 @@ namespace Flowered.UI.SimpleClient
     {
         #region Fields
 
-        private static readonly ILog log = 
-            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
         private const string addressName = "Address";
 
         private ScreenManager screenManager = new ScreenManager();
@@ -67,10 +64,8 @@ namespace Flowered.UI.SimpleClient
         private void FormMain_Shown(object sender, EventArgs e)
         {
             ReadSettings();
+            SetMode(settings.Interactive);
             ProcessAddress(settings.Address);
-
-            miInteractive.Checked = settings.Interactive;
-            webBrowser.Buried = !settings.Interactive;
         }
 
         /// <summary>
@@ -92,6 +87,9 @@ namespace Flowered.UI.SimpleClient
                     // store address for next session(s)
                     settings.Address = newAddress;
                     settings.Save();
+
+                    string methodName = MethodBase.GetCurrentMethod().Name;
+                    Logger.Info(methodName, string.Format("\"{0}\"", newAddress));
                 }
             }
 
@@ -217,10 +215,10 @@ namespace Flowered.UI.SimpleClient
             }
 
             // timer settings
-            tmrSnapshot.Interval = 1000 * settings.SnapshotInterval;
-            tmrRefresh.Interval = 1000 * settings.RefreshInterval;
-
-            SetMode(settings.Interactive);
+            tmrSnapshot.Interval = 1000 * settings.SnapshotIntervalS;
+            tmrRefresh.Interval = 1000 * settings.RefreshIntervalS;
+            tmrRefresh.Enabled = (tmrRefresh.Interval > 0) ? true : false;
+            timedCursor.Timeout = settings.MouseIntervalMs;
         }
 
         /// <summary>
@@ -312,9 +310,29 @@ namespace Flowered.UI.SimpleClient
         private void SetMode(bool intercative)
         {
             webBrowser.Buried = !intercative;
+            miInteractive.Checked = settings.Interactive;
 
             Text = string.Format("{1} {0}", Application.ProductName,
                 intercative ? "Interactive" : "Non-interactive");
+        }
+
+        private void tmrRefresh_Tick(object sender, EventArgs e)
+        {
+            webBrowser.Refresh(WebBrowserRefreshOption.IfExpired);
+        }
+
+        public void OnApplicationExit(object sender, EventArgs e)
+        {
+            try
+            {
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Info(methodName, "Application shut down");
+            }
+            catch (NotSupportedException exception)
+            {
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Exception(methodName, exception);
+            }
         }
     }
 }

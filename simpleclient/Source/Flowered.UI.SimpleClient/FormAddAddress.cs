@@ -33,7 +33,8 @@ namespace Flowered.App.SimpleClient
 
         private static ErrorProvider errorProvider = new ErrorProvider();
 
-        private string validationExpression = @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
+        private string validationExpression =
+            @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
 
         #endregion Fields
 
@@ -67,9 +68,8 @@ namespace Flowered.App.SimpleClient
 
         public new void Validate()
         {
-            bool isValid = EvaluateIsValid();
-
             string errorMessage = string.Empty;
+            bool isValid = EvaluateIsValid();
             if (!isValid)
             {
                 errorMessage = "Input is not a valid URL!";

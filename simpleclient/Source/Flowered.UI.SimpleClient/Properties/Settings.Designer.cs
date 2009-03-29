@@ -49,25 +49,25 @@ namespace Flowered.App.SimpleClient.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int SnapshotInterval {
+        [global::System.Configuration.DefaultSettingValueAttribute("900")]
+        public int SnapshotIntervalS {
             get {
-                return ((int)(this["SnapshotInterval"]));
+                return ((int)(this["SnapshotIntervalS"]));
             }
             set {
-                this["SnapshotInterval"] = value;
+                this["SnapshotIntervalS"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7200")]
-        public int RefreshInterval {
+        [global::System.Configuration.DefaultSettingValueAttribute("14400")]
+        public int RefreshIntervalS {
             get {
-                return ((int)(this["RefreshInterval"]));
+                return ((int)(this["RefreshIntervalS"]));
             }
             set {
-                this["RefreshInterval"] = value;
+                this["RefreshIntervalS"] = value;
             }
         }
         
@@ -104,6 +104,18 @@ namespace Flowered.App.SimpleClient.Properties {
             }
             set {
                 this["Interactive"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3000")]
+        public int MouseIntervalMs {
+            get {
+                return ((int)(this["MouseIntervalMs"]));
+            }
+            set {
+                this["MouseIntervalMs"] = value;
             }
         }
     }
