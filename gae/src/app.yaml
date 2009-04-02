@@ -5,6 +5,16 @@ api_version: 1
 
 handlers:
 
+- url: /robots.txt
+  static_files: robots.txt
+  mime_type: text/plain
+  upload: robots.txt
+  
+- url: /favicon.ico
+  static_files: static/images/favicon.ico
+  mime_type: image/ico
+  upload: static/images/favicon.ico
+
 - url: /static/css
   static_dir: static/css
   mime_type: text/css
@@ -20,17 +30,13 @@ handlers:
 - url: /event/.*
   script: events.py
 
-- url: /favicon.ico
-  static_files: static/images/favicon.ico
-  mime_type: image/ico
-  upload: static/images/favicon.ico
-
-- url: /robots.txt
-  static_files: robots.txt
-  mime_type: text/plain
-  upload: robots.txt
-
 - url: /.*
   script: flowered.py
 
-
+- url: /standalone/.*
+  script: flowered.py
+  
+- url: /admin/.*
+  script: $PYTHON_LIB/google/appengine/ext/admin
+  login: admin
+  
