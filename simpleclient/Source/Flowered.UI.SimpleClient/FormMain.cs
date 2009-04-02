@@ -235,6 +235,8 @@ namespace Flowered.UI.SimpleClient
                 timedCursor.Enabled = screenManager.Fullscreen;
                 tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ? screenManager.Fullscreen : false;
             }
+
+            webBrowser.Refresh(WebBrowserRefreshOption.Completely);
         }
 
         private void miAbout_Click(object sender, EventArgs e)
@@ -265,7 +267,7 @@ namespace Flowered.UI.SimpleClient
 
         private void miRefresh_Click(object sender, EventArgs e)
         {
-            webBrowser.Refresh();
+            webBrowser.Refresh(WebBrowserRefreshOption.Completely);
         }
 
         private void miSetUrl_Click(object sender, EventArgs e)
