@@ -8,6 +8,7 @@
 
   var map = null;
   var lastUpdate = 0;
+  var num = 0;
 
   window.marker = {}
 
@@ -27,31 +28,34 @@
     this.point = new GLatLng(lat, lng);
     this.type = type;
     this.marker = new GMarker(this.point, {draggable: true});
-    this.name = id;
     
     map.addOverlay(this.marker);
-    this.marker.setImage(GEOCHAT_IMAGES[this.type]);
-   
-    this.nametag = new NameTag(this);
-    map.addOverlay(this.nametag);
+    //this.marker.setImage(FLOWERED_IMAGES[this.type]);
+    this.marker.setImage('/static/images/f00.png');
+
+//    this.name = num++;
+//    this.nametag = new NameTag(this);
+//    map.addOverlay(this.nametag);
  
     // Handle drag events for this Marker's marker.
-    GEvent.addListener(this.marker, 'drag', function() {
-       me.nametag.redraw();
-    });
+//    GEvent.addListener(this.marker, 'drag', function() {
+//       me.nametag.redraw();
+//    });
+
     // Handle drop events for this marker's marker. Note that this fires off
-    // an Ajax call updating the user's location.
+    // an Ajax call updating the user's location.    
     GEvent.addListener(this.marker, 'dragend', function() {
-      me.update();
-      me.nametag.redraw();
-    });
-    // Handle right click events for this Marks's marker. Note that this fires off
-    // an Ajax call deleting the mark.   
-    GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
-      map.removeOverlay(me.marker);
-      me.remove();
-      // window.marker.splice(id, 1);
-    });   
+	  me.update();
+	  // me.nametag.redraw();
+	});
+	// Handle right click events for this Marks's marker. Note that this fires off
+	// an Ajax call deleting the mark.   
+	GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
+	  map.removeOverlay(me.marker);
+	  // map.removeOverlay(me.nametag);
+	  me.remove();
+	  // window.marker.splice(id, 1);
+	});
   };
  
   /**
@@ -71,14 +75,38 @@
    * Makes an Ajax call to add the markers's position to the Flowered DB and
    * cache.
    */
+//  Marker.prototype.add = function() {
+//    $.post('/event/add', {
+//    	'id': this.id,
+//        'latitude': this.point.lat(),
+//        'longitude': this.point.lng(),
+//        'type': this.type
+//    });
+//  };
+
+  /**
+   * Adds this marker to the Flowered DB and cache.
+   * Makes an Ajax call to add the markers's position to the Flowered DB and
+   * cache.
+   */
   Marker.prototype.add = function() {
-    $.post('/event/add', {
-    	'id': this.id,
-        'latitude': this.point.lat(),
-        'longitude': this.point.lng(),
-        'type': this.type
-    });
-  };  
+    $.ajax({
+    	type: 'POST',
+    	//async: false,
+    	url: '/event/add', 
+    	data: {
+    	  'id': this.id,
+          'latitude': this.point.lat(),
+          'longitude': this.point.lng(),
+          'type': this.type
+        },
+        timeout: 5000
+//        error: function() { 
+//    	  // alert('fail!');
+//          this.add();
+//    	}
+     });
+  }; 
 
   /**
    * Removes this marker from the Flowered DB and cache.
@@ -91,6 +119,11 @@
 	});
   };  
 
+  /* $("#msg").ajaxError(function(event, request, settings){
+    $(this).append("<li>Error requesting page " + settings.url + "</li>");
+    alert();
+  }); */
+  
   /**
    * Removes this marker from the Flowered DB and cache.
    * Makes an Ajax call to update the markers's position from the Flowered DB and
@@ -105,54 +138,58 @@
   };    
 
   /**
-   * The name tag associated with a given person, typically displayed
-   * underneath their map marker.
-   * @param {Person} The Person object to associate this chat bubble with.
+   * The name tag associated with a given marker, typically displayed
+   * underneath its map marker.
+   * @param {marker} The Marker object to associate this chat bubble with.
    * @constructor
    * @extends GOverlay
    */
-  function NameTag(person) {
-    this.person = person;
-  };
-  NameTag.prototype = new GOverlay();
+//  function NameTag(marker) {
+//    this.marker = marker;
+//  };
+//  NameTag.prototype = new GOverlay();
   
   /**
    * Initializes the NameTag, injecting its DOM elements on demand.
-   * @param {GMap2} The map to initialize the NameTag on.
+   * @param {map} The map to initialize the NameTag on.
    */
-  NameTag.prototype.initialize = function(map) {
-    this.nameTagDiv = $('<div />').addClass('nametag');
-    this.nameSpan = $('<span>' + this.person.name + '</span>');
-    this.nameTagDiv.append(this.nameSpan);
-    $(map.getPane(G_MAP_FLOAT_PANE)).append(this.nameTagDiv);
-    var me = this;
-  };
+//  NameTag.prototype.initialize = function(map) {
+//    this.nameTagDiv = $('<div />').addClass('nametag');
+//    this.nameSpan = $('<span>' + this.marker.name + '</span>');
+//    this.nameTagDiv.append(this.nameSpan);
+//    $(map.getPane(G_MAP_FLOAT_PANE)).append(this.nameTagDiv);
+//    var me = this;
+//  };
   
   /**
-   * Redraws the ChatBubble, typically used during map interaction.
+   * Redraws the NameTag, typically used during map interaction.
    * @param {boolean} force Whether to force a redraw.
    */  
-  NameTag.prototype.redraw = function(force) {
-    var point = map.fromLatLngToDivPixel(this.person.marker.getPoint());
-    this.nameTagDiv.css('left', point.x);
-    this.nameTagDiv.css('top', point.y);
-    this.nameTagDiv.css('z-index', 150 + point.y);
-  };
+//  NameTag.prototype.redraw = function(force) {
+//    var point = map.fromLatLngToDivPixel(this.marker.marker.getPoint());
+//    this.nameTagDiv.css('left', point.x);
+//    this.nameTagDiv.css('top', point.y);
+//    this.nameTagDiv.css('z-index', 150 + point.y);
+//  };
   
   /**
    * Show this NameTag.
    */
-  NameTag.prototype.show = function() {
-    this.nameTagDiv.show();
-  };
+//  NameTag.prototype.show = function() {
+//    this.nameTagDiv.show();
+//  };
   
   /**
    * Hide this NameTag.
    */
-  NameTag.prototype.hide = function() {
-    this.nameTagDiv.hide();
-  };  
+//  NameTag.prototype.hide = function() {
+//    this.nameTagDiv.hide();
+//  };  
   
+  /**
+   * Creates a random key.
+   * @param {length} length of the key to create plus 4 additional tokens.
+   */
   var createRandomKey = function(length) {
 	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	var random = 'key:';
@@ -213,6 +250,7 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
+        map.removeOverlay(remover.nametag);
         //window.marker.splice(remove.id, 1);
       }
     }
@@ -229,7 +267,7 @@
     addCallback(data);
     moveCallback(data);
     removeCallback(data);
-    window.setTimeout(update, GEOCHAT_VARS['update_interval'])
+    window.setTimeout(update, FLOWERED_VARS['update_interval'])
   }
   
   /**
@@ -237,7 +275,7 @@
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
-    window.setTimeout(update, GEOCHAT_VARS['error_interval'])
+    window.setTimeout(update, FLOWERED_VARS['error_interval'])
   }
 
   /**
@@ -298,8 +336,9 @@
       error: initialError
     });
   }  
-  
-  window.onload = function() {
+   
+  // window.onload = function() { 
+  $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
       
       // Initialize the map
@@ -308,6 +347,7 @@
       map.addControl(new GMapTypeControl());     
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
+      
       // map.addControl(new GOverviewMapControl(new GSize(200, 150)));
       // map.enableGoogleBar();
       // map.setMapType(G_SATELLITE_MAP);
@@ -317,12 +357,12 @@
 
       GEvent.clearListeners(map.getDragObject(), 'dblclick');
       GEvent.addListener(map, 'click', function(overlay, point) {
-        var user = new Marker(
+        var marker = new Marker(
           createRandomKey(24),
           point.lat(),
           point.lng(),
           'f00');
-        user.add();
+        marker.add();
       });     
       GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {
     	if (overlay) {
@@ -336,17 +376,42 @@
     	  initial();
   	  });
       
-      var latitude = GEOCHAT_VARS['initial_latitude'];
-      var longitude = GEOCHAT_VARS['initial_longitude'];       
-      map.setCenter(new GLatLng(latitude, longitude), 13);
+      var latitude = FLOWERED_VARS['initial_latitude'];
+      var longitude = FLOWERED_VARS['initial_longitude'];       
+      map.setCenter(new GLatLng(latitude, longitude), FLOWERED_VARS['initial_zoom']);
       
       // map.openInfoWindow(map.getCenter(),
-      //        document.createTextNode("Hello, world"));
+      // 	document.createTextNode("Hello, world"));
       
       update();
     }
+    // display a warning if the browser was not compatible 
+    else { 
+      alert("Sorry, the Google Maps API is not compatible with this browser"); 
+    } 
   };
   
+  $.fn.initializeStandaloneMap = function() {
+    if (GBrowserIsCompatible()) {
+
+    	// Initialize the map
+      var mapDiv = document.getElementById('map');
+      map = new GMap2(mapDiv);
+      map.setMapType(G_SATELLITE_MAP);
+     
+      var latitude = FLOWERED_VARS['initial_latitude'];
+      var longitude = FLOWERED_VARS['initial_longitude'];       
+      map.setCenter(new GLatLng(latitude, longitude), FLOWERED_VARS['initial_zoom']);
+      
+      initial();
+      update();
+    }
+    // display a warning if the browser was not compatible 
+    else { 
+      alert("Sorry, the Google Maps API is not compatible with this browser"); 
+    } 
+  };  
+ 
   window.onunload = function() {
     GUnload();
   };
