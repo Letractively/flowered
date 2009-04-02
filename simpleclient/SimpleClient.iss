@@ -43,6 +43,8 @@ Name: "{app}\{cm:FloweredAppSnapshootPath}"
 
 [Files]
 Source: ".\Target\Bin\*"; Excludes: "*.xml,*.pdb,*.log"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "CHANGES.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{cm:FloweredAppName}"; Filename: "{app}\{cm:FloweredAppExe}"; IconIndex: 0
