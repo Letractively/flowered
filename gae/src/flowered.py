@@ -13,14 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""The main Geochat application.
+"""The main Flowered application.
 
 Contains the MainHandler, which handles root requests to the server, along
 with several other template-driven pages that don't have any significant DB
 interaction.
 
   MainHandler: Handles requests to /
-  HelpHandler: Handles requests to /help
+  StandaloneHandler: Handles requests to /standalone
 """
 
 import datetime
@@ -43,7 +43,7 @@ class MainHandler(webapp.RequestHandler):
   """Handles requests to /
   
   MainHandler handles requests for the server root, presenting the main user
-  interface for Geochat. It relies on the geochat.html template, with most
+  interface for Flowered. It relies on the flowered.html template, with most
   of the heavy lifting occuring client-side through JavaScript linked there.
   """
 
@@ -52,8 +52,10 @@ class MainHandler(webapp.RequestHandler):
     template_data = {}
     
     template_data = {
-      'initial_latitude': 37.4221,
-      'initial_longitude': -122.0837,
+      'initial_latitude': 53.625706,
+      'initial_longitude': 11.416855,
+      'initial_zoom': 13,
+      ## 'flowered_id': 'schwerin',
     }
 
     template_path = os.path.join(os.path.dirname(__file__), 'flowered.html')
@@ -61,9 +63,37 @@ class MainHandler(webapp.RequestHandler):
     self.response.out.write(template.render(template_path, template_data)) 
 
 
-if __name__ == '__main__':
-  application = webapp.WSGIApplication([('/', MainHandler)], debug = True)
+class StandaloneHandler(webapp.RequestHandler):
+  
+  """Handles requests to /standalone
+  
+  MainHandler handles requests for the server root, presenting the main user
+  interface for Flowered. It relies on the flowered.html template, with most
+  of the heavy lifting occuring client-side through JavaScript linked there.
+  """
 
+  def get(self):
+
+    template_data = {}
+    
+    template_data = {
+      'initial_latitude': 53.625706,
+      'initial_longitude': 11.416855,
+      'initial_zoom': 13,
+      ## 'flowered_id': 'schwerin',
+    }
+
+    template_path = os.path.join(os.path.dirname(__file__), 'standalone.html')
+    self.response.headers['Content-Type'] = 'text/html'
+    self.response.out.write(template.render(template_path, template_data)) 
+
+if __name__ == '__main__':
+  application = webapp.WSGIApplication(
+      [
+        ('/', MainHandler),
+        ('/standalone/', StandaloneHandler),
+      ],
+      debug = True)
   run_wsgi_app(application)
 
 
