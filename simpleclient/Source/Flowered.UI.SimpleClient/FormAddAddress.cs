@@ -76,7 +76,7 @@ namespace Flowered.App.SimpleClient
                 errorProvider.Icon = new Icon(typeof(ErrorProvider), "Error.ico");
             }
             errorProvider.SetError(tbUrl, errorMessage);
-            btnSet.Enabled = isValid;
+            btnSet.Enabled = true; // isValid;
         }
 
         protected bool EvaluateIsValid()
