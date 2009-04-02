@@ -1,0 +1,7 @@
+============================================================================
+Changelog
+Beflowered Standalone Desktop Client
+============================================================================
+
+Version 1.0.3.0
+* Fixed page refresh if triggered manually and after fullscreen mode change
