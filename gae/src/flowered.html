@@ -5,20 +5,34 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Be Flowered</title>
     <link rel="stylesheet" href="/static/css/flowered.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g" type="text/javascript"></script>
-    <script src="/static/js/jquery.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/flowered.js" type="text/javascript" charset="utf-8"></script> 
+    <!-- <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g" type="text/javascript"></script> -->
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script> -->
+   
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
+	<script>
+		google.load('maps', '2');
+		google.load('jquery', '1.3.2');
+	</script>
+
     <script type="text/javascript">
-      GEOCHAT_VARS = {
+      FLOWERED_VARS = {
         'initial_latitude': '{{ initial_latitude }}',
         'initial_longitude': '{{ initial_longitude }}',
+        'initial_zoom': 15,
         'update_interval': 5000,
         'error_interval': 30000
       };
-      GEOCHAT_IMAGES = {
+      FLOWERED_IMAGES = {
         'f00': '/static/images/f00.png'
       };
     </script>
+	
+    <script src="/static/js/flowered.js" type="text/javascript" charset="utf-8"></script> 
+    <script>
+		$(document).ready(function() {
+			$().initializeInteractiveMap();
+		});
+    </script>   
   </head>
   <body>
     <div id="container">
@@ -28,9 +42,13 @@
       </div>
       <div id="body">
         <div id="map"></div>
+        <noscript><b>JavaScript must be enabled in order for you to use BeFlowered.</b> 
+	      However, it seems JavaScript is either disabled or not supported by your browser. 
+	      To view BeFlowered, enable JavaScript by changing your browser options, and then 
+	      try again.
+	    </noscript> 
       </div>
       <div id="foot">
-        <!-- &copy;2009 BeFlowered -->
         <a href="">Blog</a> |
         <a href="">Help</a> |
         <a href="">Impress</a>
