@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Be Flowered</title>
+    <!-- <link rel="stylesheet" href="/static/css/flowered.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
+    <!-- <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g" type="text/javascript"></script> -->
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script> -->
+   
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
+	<script>
+		google.load('maps', '2');
+		google.load('jquery', '1.3.2');
+	</script>
+
+    <script type="text/javascript">
+      FLOWERED_VARS = {
+        'initial_latitude': '{{ initial_latitude }}',
+        'initial_longitude': '{{ initial_longitude }}',
+        'initial_zoom': 15,
+        'update_interval': 5000,
+        'error_interval': 30000
+      };
+      FLOWERED_IMAGES = {
+        'f00': '/static/images/f00.png'
+      };
+    </script>
+	
+    <script src="/static/js/flowered.js" type="text/javascript" charset="utf-8"></script> 
+    <script>
+		$(document).ready(function() {
+			$().initializeStandaloneMap();
+		});
+    </script>   
+  </head>
+  <body style="height:100%;margin:0">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+    <noscript><b>JavaScript must be enabled in order for you to use BeFlowered.</b> 
+      However, it seems JavaScript is either disabled or not supported by your browser. 
+      To view BeFlowered, enable JavaScript by changing your browser options, and then 
+      try again.
+    </noscript> 
+  </body>
+</html>
