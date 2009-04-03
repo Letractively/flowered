@@ -33,8 +33,21 @@ namespace Flowered.App.SimpleClient
 
         private static ErrorProvider errorProvider = new ErrorProvider();
 
+        // see: http://geekswithblogs.net/casualjim/archive/2005/12/01/61722.aspx
         private string validationExpression =
-            @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
+            // @"^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?" +
+            @"^(?#Protocol)(?:http(?:s?)\:\/\/|~/|/)?" +
+            @"(?#Username:Password)(?:\w+:\w+@)?" +
+            @"(?#Domains)((?:\w+)|" +
+            @"(?#Subdomains)(?:(?:[-\w]+\.)+" +
+            @"(?#TopLevel Domains)" +
+            @"(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2})))" +
+            @"(?#Port)(?::[\d]{1,5})?" +
+            @"(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?" +
+            @"(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|" +
+            @"%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|" +
+            @"%[a-f\d]{2})*)*)*" +
+            @"(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$";
 
         #endregion Fields
 
@@ -76,7 +89,7 @@ namespace Flowered.App.SimpleClient
                 errorProvider.Icon = new Icon(typeof(ErrorProvider), "Error.ico");
             }
             errorProvider.SetError(tbUrl, errorMessage);
-            btnSet.Enabled = true; // isValid;
+            btnSet.Enabled = isValid;
         }
 
         protected bool EvaluateIsValid()
