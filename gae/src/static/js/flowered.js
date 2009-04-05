@@ -27,12 +27,48 @@
     this.id = id;
     this.point = new GLatLng(lat, lng);
     this.type = type;
-    this.marker = new GMarker(this.point, {draggable: true});
+    // this.marker = new GMarker(this.point, {draggable: true});
     
-    map.addOverlay(this.marker);
-    //this.marker.setImage(FLOWERED_IMAGES[this.type]);
-    this.marker.setImage('/static/images/f00.png');
+    // console.log('path=%s', FLOWERED_IMAGES[this.type].marker);
+    
+    // map.addOverlay(this.marker);
+    // this.marker.setImage(FLOWERED_IMAGES[this.type].marker);
+    
+//    var flower = FLOWERED_IMAGES[this.type];  
+//    var icon = new GIcon();
+//    icon.image = flower.image;
+//    icon.shadow = flower.shadow;
+//    icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
+//    icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
+//    icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
+//        
+//    this.marker = new GMarker(this.point, {draggable: true, icon: this.icon});
+//    map.addOverlay(this.marker);
 
+    var flower = FLOWERED_IMAGES[this.type]; 
+    var icon = new GIcon();
+    icon.image = flower.image;
+    icon.shadow = flower.shadow;
+    icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
+    icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
+    icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
+     
+    var markerOptions = {
+      icon: icon,
+      draggable: true,
+      dragCrossMove: true,
+      bounceGravity: 0.6,
+    };
+    
+    this.marker = new GMarker(this.point, markerOptions);
+    map.addOverlay(this.marker);
+    
+    // map.addOverlay(new GMarker(this.point, icon));
+    
+//    this.marker = new GMarker(this.point, {draggable: true});
+//    map.addOverlay(this.marker);
+//    this.marker.setIcon(this.icon);
+    
 //    this.name = num++;
 //    this.nametag = new NameTag(this);
 //    map.addOverlay(this.nametag);
