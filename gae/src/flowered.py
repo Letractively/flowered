@@ -1,4 +1,5 @@
 
+# Copyright 2009 Daniel Schubert
 # Copyright 2008 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,6 +57,7 @@ class MainHandler(webapp.RequestHandler):
       'initial_longitude': 11.416855,
       'initial_zoom': 13,
       ## 'flowered_id': 'schwerin',
+      'current_version_id' : os.getenv('CURRENT_VERSION_ID')
     }
 
     template_path = os.path.join(os.path.dirname(__file__), 'flowered.html')
@@ -87,13 +89,27 @@ class StandaloneHandler(webapp.RequestHandler):
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data)) 
 
+class RedirectHandler(webapp.RequestHandler):
+
+  """Handles requests to /
+
+  RedirectHandler handles requests for the server root, presenting the main user
+  interface for Flowered and redirects the user to the appropiate sub project
+  """
+
+  def get(self):
+    
+    self.redirect('/schwerin')
+
+
 if __name__ == '__main__':
+  # logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication(
       [
+        #('/', RedirectHandler),
         ('/', MainHandler),
         ('/standalone/', StandaloneHandler),
       ],
       debug = True)
   run_wsgi_app(application)
-
-
+  
