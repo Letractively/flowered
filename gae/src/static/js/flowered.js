@@ -111,16 +111,16 @@
    */
   Marker.prototype.add = function() {
     $.ajax({
-    	type: 'POST',
-    	//async: false,
-    	url: '/event/add', 
-    	data: {
-    	  'id': this.id,
-          'latitude': this.point.lat(),
-          'longitude': this.point.lng(),
-          'type': this.type
-        },
-        timeout: 5000
+       type: 'POST',
+       url: '/event/add',
+       cache: false,
+       data: {
+    	 'id': this.id,
+         'latitude': this.point.lat(),
+         'longitude': this.point.lng(),
+         'type': this.type
+       },
+       timeout: 5000
 //        error: function() { 
 //    	  // alert('fail!');
 //          this.add();
@@ -134,9 +134,18 @@
    * cache.
    */
   Marker.prototype.remove = function() {
-	$.post('/event/delete', {
-	    'id': this.id
-	});
+	//$.post('/event/delete', {
+	//    'id': this.id
+	//});
+    $.ajax({
+       type: 'POST',
+       url: '/event/delete',
+       cache: false,
+       data: {
+         'id': this.id
+       },
+       timeout: 5000
+    });
   };  
 
   /* $("#msg").ajaxError(function(event, request, settings){
@@ -150,10 +159,21 @@
    * cache.
    */
   Marker.prototype.update = function() {
-    $.post('/event/move', {
-        'id': this.id,
-        'latitude': this.marker.getLatLng().lat(),
-        'longitude': this.marker.getLatLng().lng()
+    // $.post('/event/move', {
+    //    'id': this.id,
+    //    'latitude': this.marker.getLatLng().lat(),
+    //    'longitude': this.marker.getLatLng().lng()
+    // });
+    $.ajax({
+       type: 'POST',
+       url: '/event/move',
+       cache: false,
+       data: {
+         'id': this.id,
+         'latitude': this.marker.getLatLng().lat(),
+         'longitude': this.marker.getLatLng().lng()
+       },
+       timeout: 5000
     });
   };    
 
@@ -310,6 +330,7 @@
     $.ajax({
       type: 'GET',
       url: '/event/update',
+      cache: false,
       data: [
         'min_latitude=', min.lat(),
         '&min_longitude=', min.lng(),
@@ -317,6 +338,7 @@
         '&max_longitude=', max.lng(),
         '&since=', lastUpdate
       ].join(''),
+      timeout: 5000,
       success: updateSuccess,
       error: updateError
     });
@@ -346,12 +368,14 @@
 	$.ajax({
 	  type: 'GET',
       url: '/event/initial',
+      cache: false,
       data: [
         'min_latitude=', min.lat(),
         '&min_longitude=', min.lng(),
         '&max_latitude=', max.lat(),
         '&max_longitude=', max.lng()
       ].join(''),
+      timeout: 5000,
       success: initialSuccess,
       error: initialError
     });
@@ -394,8 +418,9 @@
   	  });
       
       var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];       
-      map.setCenter(new GLatLng(latitude, longitude), FLOWERED_VARS['initial_zoom']);
+      var longitude = FLOWERED_VARS['initial_longitude'];
+      var zoom = FLOWERED_VARS['initial_zoom'];
+      map.setCenter(new GLatLng(latitude, longitude), zoom);
             
       update();
     }
@@ -414,8 +439,9 @@
       map.setMapType(G_SATELLITE_MAP);
      
       var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];       
-      map.setCenter(new GLatLng(latitude, longitude), FLOWERED_VARS['initial_zoom']);
+      var longitude = FLOWERED_VARS['initial_longitude'];    
+      var zoom = FLOWERED_VARS['initial_zoom'];
+      map.setCenter(new GLatLng(latitude, longitude), zoom);
       
       initial();
       update();
@@ -424,7 +450,11 @@
     else { 
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
-  };  
+  };
+  
+  // $("#msg").ajaxError(function(event, request, settings){
+  //   $(this).append("<li>Error requesting page " + settings.url + "</li>");
+  // });
  
   window.onunload = function() {
     GUnload();
