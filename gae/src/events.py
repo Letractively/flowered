@@ -1,4 +1,5 @@
 
+# Copyright 2009 Daniel Schubert
 # Copyright 2008 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,9 +27,6 @@ under /event.
   RefreshCache(): Checks the age of the cache, and updates if necessary.
 """
 
-# TODO Cache sync problems.
-# TODO Problem with duplicate messages.
-# TODO Spam controls.
 
 import datetime
 import logging
@@ -49,11 +47,11 @@ sync_interval = datetime.timedelta(0, 10)
 # A datetime indicating the last time the chat cache was synced from the DB.
 last_sync = datetime.datetime.now() - sync_interval
 
-# A list storing the move cache.
-move_cache = []
-
 # A list storing the add cache.
 add_cache = []
+
+# A list storing the move cache.
+move_cache = []
 
 # A list storing the delete cache.
 remove_cache = []
@@ -222,7 +220,7 @@ class AddHandler(webapp.RequestHandler):
 class DeleteHandler(webapp.RequestHandler):
 
   def post(self):
-    global remove_cache  
+    global remove_cache
 
     # Get the mark to delete and return if not exists.
     mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
@@ -248,7 +246,6 @@ def RefreshCache():
   
   global sync_interval
   global last_sync
-  #global chat_cache
   global add_cache
   global move_cache
   global remove_cache
@@ -272,7 +269,7 @@ def main():
   This method is called each time the script is launched, and also has the
   effect of enabling caching for global variables.
   """
-  
+  # logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication(
       [
         ('/event/initial', InitialHandler),
