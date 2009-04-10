@@ -27,42 +27,26 @@
     this.id = id;
     this.point = new GLatLng(lat, lng);
     this.type = type;
-    // this.marker = new GMarker(this.point, {draggable: true});
+       
+    // var icon = new GIcon(G_DEFAULT_ICON);
+    // this.marker = new GMarker(this.point, { icon: icon, draggable: true });
+    this.marker = new GMarker(this.point, { draggable: true }); 
+    // console.log('path=%s', FLOWERED_IMAGES[this.type].marker);    
+    map.addOverlay(this.marker);
+    this.marker.setImage('/static/images/f00.png');
     
-    // console.log('path=%s', FLOWERED_IMAGES[this.type].marker);
-    
-    // map.addOverlay(this.marker);
-    // this.marker.setImage(FLOWERED_IMAGES[this.type].marker);
-    
-//    var flower = FLOWERED_IMAGES[this.type];  
-//    var icon = new GIcon();
-//    icon.image = flower.image;
-//    icon.shadow = flower.shadow;
-//    icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
-//    icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
-//    icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
-//        
-//    this.marker = new GMarker(this.point, {draggable: true, icon: this.icon});
-//    map.addOverlay(this.marker);
-
-    var flower = FLOWERED_IMAGES[this.type]; 
-    var icon = new GIcon();
+    /* var flower = FLOWERED_IMAGES[this.type]; 
+    var icon = new GIcon(G_DEFAULT_ICON);
     icon.image = flower.image;
     icon.shadow = flower.shadow;
     icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
     icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
     icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
      
-    var markerOptions = {
-      icon: icon,
-      draggable: true,
-      dragCrossMove: true,
-      bounceGravity: 0.6,
-    };
-    
+    var markerOptions = { icon: icon, draggable: true};
     this.marker = new GMarker(this.point, markerOptions);
-    map.addOverlay(this.marker);
-    
+    map.addOverlay(this.marker); */
+  
     // map.addOverlay(new GMarker(this.point, icon));
     
 //    this.marker = new GMarker(this.point, {draggable: true});
@@ -251,7 +235,7 @@
           add.geopt.lon,
           add.type);
       }
-    }  
+    }
   };
   
   /**
@@ -286,7 +270,7 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
-        map.removeOverlay(remover.nametag);
+        // map.removeOverlay(remover.nametag);
         //window.marker.splice(remove.id, 1);
       }
     }
@@ -383,9 +367,6 @@
       map.addControl(new GMapTypeControl());     
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
-      
-      // map.addControl(new GOverviewMapControl(new GSize(200, 150)));
-      // map.enableGoogleBar();
       // map.setMapType(G_SATELLITE_MAP);
 
       map.enableContinuousZoom();     
@@ -415,10 +396,7 @@
       var latitude = FLOWERED_VARS['initial_latitude'];
       var longitude = FLOWERED_VARS['initial_longitude'];       
       map.setCenter(new GLatLng(latitude, longitude), FLOWERED_VARS['initial_zoom']);
-      
-      // map.openInfoWindow(map.getCenter(),
-      // 	document.createTextNode("Hello, world"));
-      
+            
       update();
     }
     // display a warning if the browser was not compatible 
