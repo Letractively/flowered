@@ -1,7 +1,14 @@
 ============================================================================
-Changelog
-Beflowered Standalone Desktop Client
+Changelog - Flowered Standalone Desktop Client
 ============================================================================
+
+Version 1.0.5.0
+* Flowered initially starts in fullscreen mode
+* Decoupled page refresh from GUI thread
+* Adjusted application settings
+
+Version 1.0.4.0
+* Fixed broken URL validation
 
 Version 1.0.3.0
 * Fixed page refresh if triggered manually and after fullscreen mode change
