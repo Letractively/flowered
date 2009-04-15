@@ -54,6 +54,9 @@ namespace Flowered.UI.Fullscreen
 
         #region Methods
 
+        /// <summary>
+        ///
+        /// </summary>
         public void ToogleFullScreenMode(Form form)
         {
             if (!fullscreen)
@@ -66,6 +69,9 @@ namespace Flowered.UI.Fullscreen
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void Maximize(Form form)
         {
             if (!fullscreen)
@@ -81,6 +87,9 @@ namespace Flowered.UI.Fullscreen
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void Restore(Form form)
         {
             form.Bounds = bounds;
@@ -91,6 +100,9 @@ namespace Flowered.UI.Fullscreen
             fullscreen = false;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void Save(Form form)
         {
             bounds = form.Bounds;

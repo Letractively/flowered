@@ -80,16 +80,25 @@ namespace Flowered.UI.Controls
 
         #region Methods
 
+        /// <summary>
+        ///
+        /// </summary>
         public void Navigate(Uri url)
         {
             webBrowser.Navigate(url);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public void Refresh(WebBrowserRefreshOption opt)
         {
             webBrowser.Refresh(opt);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public Bitmap Snapshot()
         {
             // grab and save snapshot
@@ -103,6 +112,9 @@ namespace Flowered.UI.Controls
             return bitmap;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         protected new void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
         {
             if (PreviewKeyDown != null)
@@ -112,23 +124,36 @@ namespace Flowered.UI.Controls
             }
         }
 
-        private void webBrowser_DocumentCompleted(object sender,
-            WebBrowserDocumentCompletedEventArgs e)
-        {
-            Focus();
-        }
-
-        private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            OnPreviewKeyDown(e);
-        }
-
+        /// <summary>
+        ///
+        /// </summary>
         private void transparentPanel_MouseMove(object sender, MouseEventArgs e)
         {
             OnMouseMove(e);
         }
 
-        // public new event MouseEventHandler MouseMove;
+        /// <summary>
+        ///
+        /// </summary>
+        private void webBrowser_DocumentCompleted(object sender,
+            WebBrowserDocumentCompletedEventArgs e)
+        {
+            WebBrowser navigated = sender as WebBrowser;
+            if (navigated == null)
+            {
+                return;
+            }
+
+            Focus();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            OnPreviewKeyDown(e);
+        }
 
         #endregion Methods
     }

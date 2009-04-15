@@ -36,6 +36,14 @@ namespace Flowered.UI.SimpleClient
 
         #region Methods
 
+        static FormMain CreateMainForm()
+        {
+            FormMain formMain = new FormMain();
+            Application.ApplicationExit += new EventHandler(formMain.OnApplicationExit);
+
+            return formMain;
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -56,14 +64,6 @@ namespace Flowered.UI.SimpleClient
                 string methodName = MethodBase.GetCurrentMethod().Name;
                 Logger.Exception(methodName, exception);
             }
-        }
-
-        static FormMain CreateMainForm()
-        {
-            FormMain formMain = new FormMain();
-            Application.ApplicationExit += new EventHandler(formMain.OnApplicationExit);
-
-            return formMain;
         }
 
         #endregion Methods

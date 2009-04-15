@@ -25,16 +25,11 @@ namespace Flowered.UI.Controls
 
     public class TransparentPanel : Panel
     {
-        #region Constructors
-
-        public TransparentPanel()
-        {
-        }
-
-        #endregion Constructors
-
         #region Properties
 
+        /// <summary>
+        ///
+        /// </summary>
         protected override CreateParams CreateParams
         {
             get
@@ -49,6 +44,9 @@ namespace Flowered.UI.Controls
 
         #region Methods
 
+        /// <summary>
+        ///
+        /// </summary>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             // Do not paint background.

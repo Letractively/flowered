@@ -16,6 +16,7 @@
 
 #endregion Header
 
+
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace Flowered.UI.SimpleClient
@@ -59,13 +60,49 @@ namespace Flowered.UI.SimpleClient
 
         #endregion Constructors
 
+        #region Delegates
+
+        private delegate void RefreshWebBrowserCallback(
+            WebBrowserRefreshOption webBrowserRefreshOption);
+
+        #endregion Delegates
+
         #region Methods
 
+        /// <summary>
+        ///
+        /// </summary>
+        public void OnApplicationExit(object sender, EventArgs e)
+        {
+            try
+            {
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Info(methodName, "Application shut down");
+            }
+            catch (NotSupportedException exception)
+            {
+                string methodName = MethodBase.GetCurrentMethod().Name;
+                Logger.Exception(methodName, exception);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         private void FormMain_Shown(object sender, EventArgs e)
         {
             ReadSettings();
             SetMode(settings.Interactive);
             ProcessAddress(settings.Address);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void FormMain_SizeChanged(object sender, EventArgs e)
+        {
+            webBrowser.Invoke(new RefreshWebBrowserCallback(RefreshWebBrowser),
+                new object[] {WebBrowserRefreshOption.Completely});
         }
 
         /// <summary>
@@ -222,6 +259,29 @@ namespace Flowered.UI.SimpleClient
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        private void RefreshWebBrowser(WebBrowserRefreshOption webBrowserRefreshOption)
+        {
+            webBrowser.Refresh(webBrowserRefreshOption);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void SetMode(bool intercative)
+        {
+            webBrowser.Buried = !intercative;
+            miInteractive.Checked = settings.Interactive;
+
+            Text = string.Format("{1} {0}", Application.ProductName,
+                intercative ? "Interactive" : "Non-interactive");
+
+            string methodName = MethodBase.GetCurrentMethod().Name;
+            Logger.Info(methodName, string.Format("Interactive = {0}", intercative));
+        }
+
+        /// <summary>
         /// Toggles from windows mode into fullscreen mode and vice versa.
         /// </summary>
         /// <param name="form"></param>
@@ -233,28 +293,42 @@ namespace Flowered.UI.SimpleClient
             if (!settings.Interactive)
             {
                 timedCursor.Enabled = screenManager.Fullscreen;
-                tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ? screenManager.Fullscreen : false;
+                tmrSnapshot.Enabled = (tmrSnapshot.Interval > 0) ?
+                    screenManager.Fullscreen : false;
             }
 
-            webBrowser.Refresh(WebBrowserRefreshOption.Normal);
+            webBrowser.Invoke(new RefreshWebBrowserCallback(RefreshWebBrowser),
+                new object[] { WebBrowserRefreshOption.Completely });
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miAbout_Click(object sender, EventArgs e)
         {
             FormAbout formAbout = new FormAbout();
             formAbout.ShowDialog(this);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miFullscreen_Click(object sender, EventArgs e)
         {
             ToogleFullScreenMode(this);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miInteractive_Click(object sender, EventArgs e)
         {
             miInteractive.Checked = !miInteractive.Checked;
@@ -265,11 +339,18 @@ namespace Flowered.UI.SimpleClient
             SetMode(settings.Interactive);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miRefresh_Click(object sender, EventArgs e)
         {
-            webBrowser.Refresh(WebBrowserRefreshOption.Normal);
+            webBrowser.Invoke(new RefreshWebBrowserCallback(RefreshWebBrowser),
+                new object[] { WebBrowserRefreshOption.Completely });
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miSetUrl_Click(object sender, EventArgs e)
         {
             string oldAddress = webBrowser.Url.ToString();
@@ -284,57 +365,63 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         private void miSnapshot_Click(object sender, EventArgs e)
         {
             ProcessSnapshot();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        private void tmrRefresh_Tick(object sender, EventArgs e)
+        {
+            webBrowser.Invoke(new RefreshWebBrowserCallback(RefreshWebBrowser),
+                new object[] { WebBrowserRefreshOption.IfExpired });
+
+            string methodName = MethodBase.GetCurrentMethod().Name;
+            Logger.Info(methodName, "Refresh timer elapsed");
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         private void tmrSnapshot_Tick(object sender, EventArgs e)
         {
             ProcessSnapshot();
         }
 
-        private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            if (e.KeyCode == Keys.F11)
-            {
-                ToogleFullScreenMode(this);
-            }
-        }
-
-        #endregion Methods
-
+        /// <summary>
+        ///
+        /// </summary>
         private void webBrowser_MouseMove(object sender, MouseEventArgs e)
         {
             timedCursor.Show();
         }
 
-        private void SetMode(bool intercative)
+        /// <summary>
+        ///
+        /// </summary>
+        private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            webBrowser.Buried = !intercative;
-            miInteractive.Checked = settings.Interactive;
-
-            Text = string.Format("{1} {0}", Application.ProductName,
-                intercative ? "Interactive" : "Non-interactive");
-        }
-
-        private void tmrRefresh_Tick(object sender, EventArgs e)
-        {
-            webBrowser.Refresh(WebBrowserRefreshOption.IfExpired);
-        }
-
-        public void OnApplicationExit(object sender, EventArgs e)
-        {
-            try
+            switch (e.KeyCode)
             {
-                string methodName = MethodBase.GetCurrentMethod().Name;
-                Logger.Info(methodName, "Application shut down");
-            }
-            catch (NotSupportedException exception)
-            {
-                string methodName = MethodBase.GetCurrentMethod().Name;
-                Logger.Exception(methodName, exception);
+                case Keys.F11:
+                    ToogleFullScreenMode(this);
+                    break;
+
+                case Keys.F5:
+                    webBrowser.Invoke(new RefreshWebBrowserCallback(RefreshWebBrowser),
+                        new object[] { WebBrowserRefreshOption.Completely });
+                    break;
+
+                default:
+                    break;
             }
         }
+
+        #endregion Methods
     }
 }
