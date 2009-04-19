@@ -1,16 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>Be Flowered</title>
-    <!-- <link rel="stylesheet" href="/static/css/flowered.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
+    <title>Flowered</title>
+    
+    <link rel="stylesheet" href="/static/css/jquery-ui.css" type="text/css" charset="utf-8">
+    <link rel="stylesheet" href="/static/css/flowered.css" type="text/css" charset="utf-8">
       
 	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
 	<script>
-		google.load('maps', '2');
-		google.load('jquery', '1.3.2');
-		google.load("jqueryui", "1.7.1");
+	  google.load('maps', '2');
+	  google.load('jquery', '1.3.2');
+	  google.load("jqueryui", "1.7.1");
 	</script>
 
     <script type="text/javascript">
@@ -20,38 +22,39 @@
         'initial_longitude': {{ initial_longitude }},
         'initial_zoom': {{ initial_zoom }},
         'update_interval': 5000,
-        'error_interval': 30000
+        'error_interval': 30000,
+        'current_flower': 'f00'
       };
     </script>
-	
-    <script src="/static/js/flowered.js" type="text/javascript"></script>
+
     <script src="/static/js/marker.js" type="text/javascript"></script>
+	<script src="./static/js/toolbar.js" type="text/javascript"></script>
+    <script src="/static/js/flowered.js" type="text/javascript"></script>
+
     <script>
 	  $(document).ready(function() {
 	    $().initializeInteractiveMap();
 	  });
-    </script>   
+    </script> 
+	
   </head>
-  <body style="height:100%;margin:0">
-    <!-- <div id="container"> -->
-      <!-- <div id="head"> -->
-        <!-- <h1><a href="/">Be Flowered (under construction)</a></h1> -->
-        <!-- <div id="topnav"></div> -->
-      <!-- </div> -->
-      <!-- <div id="body"> -->
-        <div id="map" style="width: 100%; height: 100%"></div>
-        <noscript><b>JavaScript must be enabled in order for you to use BeFlowered.</b> 
-	      However, it seems JavaScript is either disabled or not supported by your browser. 
-	      To view BeFlowered, enable JavaScript by changing your browser options, and then 
-	      try again.
-	    </noscript>
-      <!-- </div> -->
-      <!-- <div id="foot"> -->
-        <!-- <span>Version {{ current_version_id }}</span> | -->
-        <!-- <a href="">Blog</a> | -->
-        <!-- <a href="">Help</a> | -->
-        <!-- <a href="">Impress</a> -->
-      <!-- </div> -->
-    <!-- </div>-->
+  <body>
+  
+    <noscript><b>JavaScript must be enabled in order for you to use Flowered.</b><br /><br /> 
+       However, it seems JavaScript is either disabled or not supported by your browser.<br />
+       To view Flowered, enable JavaScript by changing your browser options, and then 
+       try again.
+    </noscript>
+	
+    <div id="toolbar" class="fg-toolbar-flowered fg-buttonset fg-buttonset-single ui-state-opacity-85">
+	  <img id="f00" src="/static/images/toolbar-f00.png" class="fg-button ui-state-default ui-corner-left ui-state-active"></img>
+	  <img id="f01" src="/static/images/toolbar-f01.png" class="fg-button ui-state-default"></img>
+	  <img id="f02" src="/static/images/toolbar-f02.png" class="fg-button ui-state-default"></img>
+	  <img id="f03" src="/static/images/toolbar-f03.png" class="fg-button ui-state-default"></img>
+	  <img id="f04" src="/static/images/toolbar-f04.png" class="fg-button ui-state-default"></img>
+	  <img id="f05" src="/static/images/toolbar-f05.png" class="fg-button ui-state-default ui-corner-right"></img>
+    </div>
+    <div id="map" class="map"></div>
+	
   </body>
 </html>
