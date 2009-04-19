@@ -23,3 +23,4 @@ class Mark(db.Model):
   timestamp = db.DateTimeProperty(auto_now_add = True)
   geopt = db.GeoPtProperty()
   type = db.StringProperty()
+  project = db.StringProperty()
