@@ -27,16 +27,17 @@
     this.id = id;
     this.point = new GLatLng(lat, lng);
     this.type = type;
+    this.project = FLOWERED_VARS['project_id'];
        
     // var icon = new GIcon(G_DEFAULT_ICON);
     // this.marker = new GMarker(this.point, { icon: icon, draggable: true });
-    this.marker = new GMarker(this.point, { draggable: true }); 
+    /* this.marker = new GMarker(this.point, { draggable: true }); 
     // console.log('path=%s', FLOWERED_IMAGES[this.type].marker);    
     map.addOverlay(this.marker);
-    this.marker.setImage('/static/images/f00.png');
+    this.marker.setImage('/static/images/f00.png'); */
     
-    /* var flower = FLOWERED_IMAGES[this.type]; 
-    var icon = new GIcon(G_DEFAULT_ICON);
+    var flower = FLOWERED_IMAGES[this.type]; 
+    var icon = new GIcon(); // G_DEFAULT_ICON);
     icon.image = flower.image;
     icon.shadow = flower.shadow;
     icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
@@ -45,7 +46,7 @@
      
     var markerOptions = { icon: icon, draggable: true};
     this.marker = new GMarker(this.point, markerOptions);
-    map.addOverlay(this.marker); */
+    map.addOverlay(this.marker);
   
     // map.addOverlay(new GMarker(this.point, icon));
     
@@ -118,7 +119,8 @@
     	 'id': this.id,
          'latitude': this.point.lat(),
          'longitude': this.point.lng(),
-         'type': this.type
+         'type': this.type,
+         'project': this.project
        },
        timeout: 5000
 //        error: function() { 
@@ -388,10 +390,11 @@
       // Initialize the map
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
-      map.addControl(new GMapTypeControl());     
+      map.setMapType(G_SATELLITE_MAP);
+      
+      // map.addControl(new GMapTypeControl());     
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
-      // map.setMapType(G_SATELLITE_MAP);
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
