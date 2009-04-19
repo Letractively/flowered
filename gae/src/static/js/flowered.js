@@ -28,16 +28,9 @@
     this.point = new GLatLng(lat, lng);
     this.type = type;
     this.project = FLOWERED_VARS['project_id'];
-       
-    // var icon = new GIcon(G_DEFAULT_ICON);
-    // this.marker = new GMarker(this.point, { icon: icon, draggable: true });
-    /* this.marker = new GMarker(this.point, { draggable: true }); 
-    // console.log('path=%s', FLOWERED_IMAGES[this.type].marker);    
-    map.addOverlay(this.marker);
-    this.marker.setImage('/static/images/f00.png'); */
-    
+         
     var flower = FLOWERED_IMAGES[this.type]; 
-    var icon = new GIcon(); // G_DEFAULT_ICON);
+    var icon = new GIcon();
     icon.image = flower.image;
     icon.shadow = flower.shadow;
     icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
@@ -48,32 +41,15 @@
     this.marker = new GMarker(this.point, markerOptions);
     map.addOverlay(this.marker);
   
-    // map.addOverlay(new GMarker(this.point, icon));
-    
-//    this.marker = new GMarker(this.point, {draggable: true});
-//    map.addOverlay(this.marker);
-//    this.marker.setIcon(this.icon);
-    
-//    this.name = num++;
-//    this.nametag = new NameTag(this);
-//    map.addOverlay(this.nametag);
- 
-    // Handle drag events for this Marker's marker.
-//    GEvent.addListener(this.marker, 'drag', function() {
-//       me.nametag.redraw();
-//    });
-
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.    
     GEvent.addListener(this.marker, 'dragend', function() {
 	  me.update();
-	  // me.nametag.redraw();
 	});
 	// Handle right click events for this Marks's marker. Note that this fires off
 	// an Ajax call deleting the mark.   
 	GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
 	  map.removeOverlay(me.marker);
-	  // map.removeOverlay(me.nametag);
 	  me.remove();
 	  // window.marker.splice(id, 1);
 	});
@@ -96,20 +72,6 @@
    * Makes an Ajax call to add the markers's position to the Flowered DB and
    * cache.
    */
-//  Marker.prototype.add = function() {
-//    $.post('/event/add', {
-//    	'id': this.id,
-//        'latitude': this.point.lat(),
-//        'longitude': this.point.lng(),
-//        'type': this.type
-//    });
-//  };
-
-  /**
-   * Adds this marker to the Flowered DB and cache.
-   * Makes an Ajax call to add the markers's position to the Flowered DB and
-   * cache.
-   */
   Marker.prototype.add = function() {
     $.ajax({
        type: 'POST',
@@ -123,10 +85,6 @@
          'project': this.project
        },
        timeout: 5000
-//        error: function() { 
-//    	  // alert('fail!');
-//          this.add();
-//    	}
      });
   }; 
 
@@ -136,9 +94,6 @@
    * cache.
    */
   Marker.prototype.remove = function() {
-	//$.post('/event/delete', {
-	//    'id': this.id
-	//});
     $.ajax({
        type: 'POST',
        url: '/event/delete',
@@ -150,22 +105,12 @@
     });
   };  
 
-  /* $("#msg").ajaxError(function(event, request, settings){
-    $(this).append("<li>Error requesting page " + settings.url + "</li>");
-    alert();
-  }); */
-  
   /**
    * Removes this marker from the Flowered DB and cache.
    * Makes an Ajax call to update the markers's position from the Flowered DB and
    * cache.
    */
   Marker.prototype.update = function() {
-    // $.post('/event/move', {
-    //    'id': this.id,
-    //    'latitude': this.marker.getLatLng().lat(),
-    //    'longitude': this.marker.getLatLng().lng()
-    // });
     $.ajax({
        type: 'POST',
        url: '/event/move',
@@ -178,55 +123,6 @@
        timeout: 5000
     });
   };    
-
-  /**
-   * The name tag associated with a given marker, typically displayed
-   * underneath its map marker.
-   * @param {marker} The Marker object to associate this chat bubble with.
-   * @constructor
-   * @extends GOverlay
-   */
-//  function NameTag(marker) {
-//    this.marker = marker;
-//  };
-//  NameTag.prototype = new GOverlay();
-  
-  /**
-   * Initializes the NameTag, injecting its DOM elements on demand.
-   * @param {map} The map to initialize the NameTag on.
-   */
-//  NameTag.prototype.initialize = function(map) {
-//    this.nameTagDiv = $('<div />').addClass('nametag');
-//    this.nameSpan = $('<span>' + this.marker.name + '</span>');
-//    this.nameTagDiv.append(this.nameSpan);
-//    $(map.getPane(G_MAP_FLOAT_PANE)).append(this.nameTagDiv);
-//    var me = this;
-//  };
-  
-  /**
-   * Redraws the NameTag, typically used during map interaction.
-   * @param {boolean} force Whether to force a redraw.
-   */  
-//  NameTag.prototype.redraw = function(force) {
-//    var point = map.fromLatLngToDivPixel(this.marker.marker.getPoint());
-//    this.nameTagDiv.css('left', point.x);
-//    this.nameTagDiv.css('top', point.y);
-//    this.nameTagDiv.css('z-index', 150 + point.y);
-//  };
-  
-  /**
-   * Show this NameTag.
-   */
-//  NameTag.prototype.show = function() {
-//    this.nameTagDiv.show();
-//  };
-  
-  /**
-   * Hide this NameTag.
-   */
-//  NameTag.prototype.hide = function() {
-//    this.nameTagDiv.hide();
-//  };  
   
   /**
    * Creates a random key.
@@ -292,7 +188,6 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
-        // map.removeOverlay(remover.nametag);
         //window.marker.splice(remove.id, 1);
       }
     }
@@ -377,36 +272,35 @@
         '&max_latitude=', max.lat(),
         '&max_longitude=', max.lng()
       ].join(''),
-      timeout: 5000,
+      timeout: 20000,
       success: initialSuccess,
       error: initialError
     });
   }  
-   
-  // window.onload = function() { 
+ 
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
       
-      // Initialize the map
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
       map.setMapType(G_SATELLITE_MAP);
-      
-      // map.addControl(new GMapTypeControl());     
+       
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
-
+     
       GEvent.clearListeners(map.getDragObject(), 'dblclick');
       GEvent.addListener(map, 'click', function(overlay, point) {
-        var marker = new Marker(
-          createRandomKey(24),
-          point.lat(),
-          point.lng(),
-          'f00');
-        marker.add();
+    	if (point) {
+          var marker = new Marker(
+            createRandomKey(24),
+            point.lat(),
+            point.lng(),
+            FLOWERED_VARS['current_flower']);
+          marker.add();
+    	}
       });     
       GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {
     	if (overlay) {
@@ -436,7 +330,6 @@
   $.fn.initializeStandaloneMap = function() {
     if (GBrowserIsCompatible()) {
 
-    	// Initialize the map
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
       map.setMapType(G_SATELLITE_MAP);
@@ -455,12 +348,12 @@
     } 
   };
   
-  // $("#msg").ajaxError(function(event, request, settings){
-  //   $(this).append("<li>Error requesting page " + settings.url + "</li>");
-  // });
- 
   window.onunload = function() {
     GUnload();
   };
 
+  // $("#msg").ajaxError(function(event, request, settings){
+  //   $(this).append("<li>Error requesting page " + settings.url + "</li>");
+  // });
+  
 })(jQuery);
