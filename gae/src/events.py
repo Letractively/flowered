@@ -136,7 +136,7 @@ class InitialHandler(webapp.RequestHandler):
   
   """Handles user requests for updated lists of events.
   
-  UpdateHandler only accepts "get" events, sent via web forms. It expects each
+  InitialHandler only accepts "get" events, sent via web forms. It expects each
   request to include "min_latitude", "min_longitude", "max_latitude",
   "max_longitude", "zoom", and "since" fields.
   """
@@ -212,6 +212,7 @@ class AddHandler(webapp.RequestHandler):
     event.geopt = db.GeoPt(float(self.request.get('latitude')),
                            float(self.request.get('longitude')))
     event.type = str(self.request.get('type'))
+    event.project = str(self.request.get('project'))
     event.put()
 
     # Append to the add cache, so we don't need to wait on a refresh.

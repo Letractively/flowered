@@ -4,10 +4,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Be Flowered</title>
-    <!-- <link rel="stylesheet" href="/static/css/flowered.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
-    <!-- <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g" type="text/javascript"></script> -->
-    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script> -->
-   
+
 	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
 	<script>
 		google.load('maps', '2');
@@ -16,16 +13,17 @@
 
     <script type="text/javascript">
       FLOWERED_VARS = {
-        'initial_latitude': '{{ initial_latitude }}',
-        'initial_longitude': '{{ initial_longitude }}',
-        'initial_zoom': 15,
+        'project_id': '{{ project_id }}',
+        'initial_latitude': {{ initial_latitude }},
+        'initial_longitude': {{ initial_longitude }},
+        'initial_zoom': {{ initial_zoom }},
         'update_interval': 5000,
         'error_interval': 30000
       };
     </script>
 	
-    <script src="/static/js/flowered.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/marker.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="/static/js/flowered.js" type="text/javascript"></script>
+    <script src="/static/js/marker.js" type="text/javascript"></script> 
     <script>
 	  $(document).ready(function() {
 	    $().initializeStandaloneMap();
