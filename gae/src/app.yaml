@@ -1,5 +1,5 @@
 application: beflowered
-version: 1
+version: 2
 runtime: python
 api_version: 1
 
@@ -30,12 +30,13 @@ handlers:
 - url: /event/.*
   script: events.py
 
-- url: /.*
-  script: flowered.py
-
-- url: /standalone/.*
-  script: flowered.py
-  
 - url: /admin/.*
   script: $PYTHON_LIB/google/appengine/ext/admin
   login: admin
+
+- url: /log/.*
+  script: db_log.py
+  login: admin
+
+- url: /.*
+  script: flowered.py
