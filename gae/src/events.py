@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Handlers for Geochat user events.
+"""Handlers for Flowered user events.
 
 Contains several RequestHandler subclasses used to handle put and get
 operations, along with any helper functions. This script is designed to be
-run directly as a WSGI application, and within Geochat handles all URLs
+run directly as a WSGI application, and within Flowered handles all URLs
 under /event.
 
   UpdateHandler: Handles user requests for updated lists of events.
@@ -149,16 +149,16 @@ class InitialHandler(webapp.RequestHandler):
     max_longitude = float(self.request.get('max_longitude'))
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    if (max_latitude - min_latitude) > 1:
-      max_latitude = min_latitude + 1
-    if (max_longitude - min_longitude) > 1:
-      max_longitude = min_longitude + 1
+    #if (max_latitude - min_latitude) > 1:
+    #  max_latitude = min_latitude + 1
+    #if (max_longitude - min_longitude) > 1:
+    #  max_longitude = min_longitude + 1
      
     # Sync the add cache.      
     query = datamodel.Mark.gql('WHERE geopt > :min_geopt AND geopt < :max_geopt ',
                                min_geopt = db.GeoPt(min_latitude, min_longitude),
                                max_geopt = db.GeoPt(max_latitude, max_longitude))
-    add_list = list(query.fetch(100))  
+    add_list = list(query.fetch(1000))  
     
     add_events = []
     for entry in add_list:
@@ -258,9 +258,12 @@ def RefreshCache():
     last_sync = datetime.datetime.now()
  
     # Trim the move cache.
-    add_cache = add_cache[-100:]
-    move_cache = move_cache[-100:]
-    remove_cache = remove_cache[-100:]
+    #add_cache = add_cache[-100:]
+    #move_cache = move_cache[-100:]
+    #remove_cache = remove_cache[-100:]
+    add_cache = add_cache[:500]
+    move_cache = move_cache[:500]
+    remove_cache = remove_cache[:500]
     
  
 def main():
