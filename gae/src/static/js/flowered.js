@@ -8,9 +8,8 @@
 
   var map = null;
   var lastUpdate = 0;
-  var num = 0;
 
-  window.marker = {}
+  window.marker = {};
 
   /**
    * Represents each person active within Flowered.
@@ -44,14 +43,13 @@
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.    
     GEvent.addListener(this.marker, 'dragend', function() {
-	  me.update();
+      me.update();
 	});
 	// Handle right click events for this Marks's marker. Note that this fires off
 	// an Ajax call deleting the mark.   
-	GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
-	  map.removeOverlay(me.marker);
-	  me.remove();
-	  // window.marker.splice(id, 1);
+    GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
+      map.removeOverlay(me.marker);
+      me.remove();
 	});
   };
  
@@ -136,7 +134,7 @@
 	  random += chars.charAt(position);
     }
 	return random;
-  }
+  };
   
   /**
    * A callback for updates containing add events.
@@ -165,7 +163,7 @@
     for (var i = 0; i < moves.length; ++i) {
       var move = moves[i];
       if (!window.marker[move.id]) {
-        new Marker(
+        var marker = new Marker(
            move.id,
            move.geopt.lat,
            move.geopt.lon,
@@ -175,7 +173,7 @@
         mover.move(move.geopt.lat, move.geopt.lon);        
       }
     }
-  }
+  };
 
   /**
    * A callback for updates containing remove events.
@@ -188,10 +186,9 @@
       if (window.marker[remove.id]) {
         var remover = window.marker[remove.id];
         map.removeOverlay(remover.marker);
-        //window.marker.splice(remove.id, 1);
       }
     }
-  }
+  };
   
   /**
    * A callback for when an update request succeeds.
@@ -201,19 +198,19 @@
   window.updateSuccess = function(json) {
     var data = eval('(' + json + ')');
     lastUpdate = data.timestamp;
-    addCallback(data);
-    moveCallback(data);
-    removeCallback(data);
-    window.setTimeout(update, FLOWERED_VARS['update_interval'])
-  }
+    window.addCallback(data);
+    window.moveCallback(data);
+    window.removeCallback(data);
+    window.setTimeout(window.update, FLOWERED_VARS['update_interval']);
+  };
   
   /**
    * A callback for when updates fail. Presents an error to the user and
    * forces a lengthier delay between updates.
    */
   window.updateError = function() {
-    window.setTimeout(update, FLOWERED_VARS['error_interval'])
-  }
+    window.setTimeout(window.update, FLOWERED_VARS['error_interval']);
+  };
 
   /**
    * The main update handler, used to query the Flowered DB and cache for
@@ -236,10 +233,10 @@
         '&since=', lastUpdate
       ].join(''),
       timeout: 5000,
-      success: updateSuccess,
-      error: updateError
+      success: window.updateSuccess,
+      error: window.updateError
     });
-  }
+  };
 
   /**
    * A callback for when an update request succeeds.
@@ -248,15 +245,15 @@
    */
   window.initialSuccess = function(json) {
     var data = eval('(' + json + ')');
-    addCallback(data);
-  }
+    window.addCallback(data);
+  };
   
   /**
    * A callback for when updates fail. Presents an error to the user and
    * forces a lengthier delay between updates.
    */
   window.initialError = function() {
-  }
+  };
   
   window.initial = function() {
 	var bounds = map.getBounds();
@@ -273,10 +270,10 @@
         '&max_longitude=', max.lng()
       ].join(''),
       timeout: 20000,
-      success: initialSuccess,
-      error: initialError
+      success: window.initialSuccess,
+      error: window.initialError
     });
-  }  
+  };
  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
@@ -311,7 +308,7 @@
 	    }
 	  });
       GEvent.addListener(map, 'moveend', function(point, src, overlay) {
-    	  initial();
+    	  window.initial();
   	  });
       
       var latitude = FLOWERED_VARS['initial_latitude'];
@@ -319,7 +316,7 @@
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
             
-      update();
+      window.update();
     }
     // display a warning if the browser was not compatible 
     else { 
@@ -339,8 +336,8 @@
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
       
-      initial();
-      update();
+      window.initial();
+      window.update();
     }
     // display a warning if the browser was not compatible 
     else { 
