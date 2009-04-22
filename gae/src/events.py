@@ -149,21 +149,18 @@ class InitialHandler(webapp.RequestHandler):
     max_longitude = float(self.request.get('max_longitude'))
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    #if (max_latitude - min_latitude) > 1:
-    #  max_latitude = min_latitude + 1
-    #if (max_longitude - min_longitude) > 1:
-    #  max_longitude = min_longitude + 1
+    if (max_latitude - min_latitude) > 1:
+      max_latitude = min_latitude + 1
+    if (max_longitude - min_longitude) > 1:
+      max_longitude = min_longitude + 1
      
-    # Sync the add cache.      
+    # Sync the add cache.
+    min_geopt = db.GeoPt(min_latitude, min_longitude)
+    max_geopt = db.GeoPt(max_latitude, max_longitude)
     query = datamodel.Mark.gql('WHERE geopt > :min_geopt AND geopt < :max_geopt ',
-                               min_geopt = db.GeoPt(min_latitude, min_longitude),
-                               max_geopt = db.GeoPt(max_latitude, max_longitude))
-    add_list = list(query.fetch(1000))  
-    
-    add_events = []
-    for entry in add_list:
-      add_events.append(entry)  
-              
+                               min_geopt = min_geopt, max_geopt = max_geopt)
+    add_events = query.fetch(1000)
+             
     output = {
         'timestamp': time.time(),
         'adds': add_events
