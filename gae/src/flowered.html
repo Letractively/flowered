@@ -5,9 +5,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>beflowered</title>
     
-    <link rel="stylesheet" href="/static/css/jquery-ui-min.css" type="text/css" charset="utf-8">
-    <link rel="stylesheet" href="/static/css/flowered-min.css" type="text/css" charset="utf-8">
-      
+    <link rel="stylesheet" href="/static/css/jquery-ui.min.css" type="text/css" charset="utf-8">
+    <link rel="stylesheet" href="/static/css/flowered.min.css" type="text/css" charset="utf-8">
+    
 	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
 	<script>
 	  google.load('maps', '2');
@@ -23,16 +23,18 @@
         'initial_zoom': {{ initial_zoom }},
         'update_interval': 5000,
         'error_interval': 30000,
+        'initial_interval': 15000,
         'current_flower': 'f00'
       };
     </script>
 
-    <script type="text/javascript" src="/static/js/marker-min.js"></script>
-	<script type="text/javascript" src="/static/js/toolbar-min.js"></script>
-    <script type="text/javascript" src="/static/js/flowered-min.js"></script>
+    <script type="text/javascript" src="/static/js/marker.min.js"></script>
+	<script type="text/javascript" src="/static/js/toolbar.min.js"></script>
+    <script type="text/javascript" src="/static/js/flowered.min.js"></script>
 
     <script>
 	  $(document).ready(function() {
+	    $("#toolbar").noContext();
 	    $().initializeInteractiveMap();
 	  });
     </script> 

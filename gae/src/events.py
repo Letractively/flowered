@@ -77,7 +77,7 @@ class UpdateHandler(webapp.RequestHandler):
     min_longitude = float(self.request.get('min_longitude'))
     max_latitude = float(self.request.get('max_latitude'))
     max_longitude = float(self.request.get('max_longitude'))
-    zoom = self.request.get('zoom')
+    # zoom = self.request.get('zoom')
     if self.request.get('since') == '':
       since = 0
     else:
@@ -85,10 +85,10 @@ class UpdateHandler(webapp.RequestHandler):
     since_datetime = datetime.datetime.fromtimestamp(since)
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    if (max_latitude - min_latitude) > 1:
-      max_latitude = min_latitude + 1
-    if (max_longitude - min_longitude) > 1:
-      max_longitude = min_longitude + 1
+    #if (max_latitude - min_latitude) > 1:
+    #  max_latitude = min_latitude + 1
+    #if (max_longitude - min_longitude) > 1:
+    #  max_longitude = min_longitude + 1
       
     add_events = []
     move_events = []
@@ -138,7 +138,7 @@ class InitialHandler(webapp.RequestHandler):
   
   InitialHandler only accepts "get" events, sent via web forms. It expects each
   request to include "min_latitude", "min_longitude", "max_latitude",
-  "max_longitude", "zoom", and "since" fields.
+  and "max_longitude" fields.
   """
   
   def get(self):
@@ -149,10 +149,10 @@ class InitialHandler(webapp.RequestHandler):
     max_longitude = float(self.request.get('max_longitude'))
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    if (max_latitude - min_latitude) > 1:
-      max_latitude = min_latitude + 1
-    if (max_longitude - min_longitude) > 1:
-      max_longitude = min_longitude + 1
+    #if (max_latitude - min_latitude) > 1:
+    #  max_latitude = min_latitude + 1
+    #if (max_longitude - min_longitude) > 1:
+    #  max_longitude = min_longitude + 1
      
     # Sync the add cache.
     min_geopt = db.GeoPt(min_latitude, min_longitude)
