@@ -35,6 +35,22 @@ $(function(){
     $(this).addClass("ui-state-opacity-100"); 
   }, function() { 
     $(this).removeClass("ui-state-opacity-100"); 
-  })
+  });
+  
+  // Based on jQuery Right-Click Plugin 1.0.1 code by Cory S.N. LaViska
+  // A Beautiful Site (http://abeautifulsite.net/)
+  // Original copyright notice: This plugin is dual-licensed under the
+  // GNU General Public License and the MIT License
+  // and is copyright 2008 A Beautiful Site, LLC. 
+  $.extend($.fn, {
+    noContext: function() {
+      $(this).each( function() {
+        $(this)[0].oncontextmenu = function() {
+          return false;
+        }
+      });
+      return $(this);
+    }
+  });
 });
 	
