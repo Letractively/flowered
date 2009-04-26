@@ -246,6 +246,7 @@
   window.initialSuccess = function(json) {
     var data = eval('(' + json + ')');
     window.addCallback(data);
+    window.setTimeout(window.initial, 0);
   };
   
   /**
@@ -253,6 +254,7 @@
    * forces a lengthier delay between updates.
    */
   window.initialError = function() {
+    window.setTimeout(window.initial, FLOWERED_VARS['initial_interval']);
   };
   
   window.initial = function() {
@@ -349,7 +351,7 @@
     GUnload();
   };
 
-  // $("#msg").ajaxError(function(event, request, settings){
+  // $("#msg").ajaxError(function(event, request, settings) {
   //   $(this).append("<li>Error requesting page " + settings.url + "</li>");
   // });
   
