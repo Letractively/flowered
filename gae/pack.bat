@@ -1,3 +1,5 @@
+@ECHO OFF
+
 REM Copyright ©2009 Daniel Schubert
 REM 
 REM Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,7 @@ REM WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 REM See the License for the specific language governing permissions and
 REM limitations under the License.
 
-@ECHO OFF
+@ECHO ON
 @IF %ERRORLEVEL% NEQ 0 PAUSE & EXIT
 ECHO %1
 
