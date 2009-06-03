@@ -278,17 +278,24 @@
  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
-      
+           
+      var mapOptions = {
+        googleBarOptions : {
+    	  showOnLoad : true,
+          style : 'new',
+        }
+      };
       var mapDiv = document.getElementById('map');
-      map = new GMap2(mapDiv);
+      map = new GMap2(mapDiv, mapOptions);
       map.setMapType(G_SATELLITE_MAP);
-       
+      //map.setUIToDefault();
+     
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
-     
+      
       GEvent.clearListeners(map.getDragObject(), 'dblclick');
       GEvent.addListener(map, 'click', function(overlay, point) {
     	if (point) {
@@ -316,6 +323,12 @@
       var longitude = FLOWERED_VARS['initial_longitude'];
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
+      
+      var searchbox = FLOWERED_VARS['show_searchbox'];
+      if (searchbox) {
+    	  map.enableGoogleBar();
+      }
+      console.log('searchbox=%s', searchbox);
             
       window.update();
     }
