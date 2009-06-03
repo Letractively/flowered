@@ -18,6 +18,9 @@ REM limitations under the License.
 @IF %ERRORLEVEL% NEQ 0 PAUSE & EXIT
 ECHO %1
 
+REM Pack javascript and css files before
+CALL .\pack.bat
+
 REM Upload to Google App Engine
 C:\Programme\Google\google_appengine\appcfg.py update .\src\
 
