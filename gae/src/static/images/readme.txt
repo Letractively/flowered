@@ -1,0 +1,1 @@
+Map icon shadows created with "Google Maps Icon Shadowmaker" from Erwin Bolwidt (http://www.cycloloco.com/shadowmaker/).
