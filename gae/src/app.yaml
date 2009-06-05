@@ -33,10 +33,7 @@ handlers:
 - url: /admin/.*
   script: $PYTHON_LIB/google/appengine/ext/admin
   login: admin
-
-- url: /log/.*
-  script: db_log.py
-  login: admin
+  secure: always
 
 - url: /.*
   script: flowered.py
