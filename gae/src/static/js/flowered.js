@@ -1,7 +1,7 @@
 
 /**
  * @fileoverview Provides the core JavaScript functionality for the Flowered
- *   application.
+ *               application.
  */
 
 (function($) {
@@ -12,12 +12,16 @@
   window.marker = {};
 
   /**
-   * Represents each person active within Flowered.
-   * @param {string} id The person's ID.
-   * @param {number} latitude The person's starting latitude.
-   * @param {number} longitude The person's starting longitude.
-   * @constructor
-   */
+	 * Represents each person active within Flowered.
+	 * 
+	 * @param {string}
+	 *            id The person's ID.
+	 * @param {number}
+	 *            latitude The person's starting latitude.
+	 * @param {number}
+	 *            longitude The person's starting longitude.
+	 * @constructor
+	 */
   var Marker = function(id, lat, lng, type) {
 
     var me = this;
@@ -27,37 +31,73 @@
     this.point = new GLatLng(lat, lng);
     this.type = type;
     this.project = FLOWERED_VARS['project_id'];
-         
-    var flower = FLOWERED_IMAGES[this.type]; 
-    var icon = new GIcon();
-    icon.image = flower.image;
-    icon.shadow = flower.shadow;
-    icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
-    icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
-    icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
-     
-    var markerOptions = { icon: icon, draggable: true};
+       
+    var markerOptions = { icon: me.createIcon(), draggable: me.isDraggable() };
     this.marker = new GMarker(this.point, markerOptions);
     map.addOverlay(this.marker);
   
     // Handle drop events for this marker's marker. Note that this fires off
-    // an Ajax call updating the user's location.    
-    GEvent.addListener(this.marker, 'dragend', function() {
+    // an Ajax call updating the user's location.
+    GEvent.addListener(this.marker, 'dragend', function() {  	
       me.update();
 	});
-	// Handle right click events for this Marks's marker. Note that this fires off
-	// an Ajax call deleting the mark.   
+	// Handle right click events for this Marker's marker. Note that this fires
+	// off
+	// an Ajax call deleting the mark.
     GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
-      map.removeOverlay(me.marker);
-      me.remove();
-	});
+      if (me.isDeleteable())
+      {
+        map.removeOverlay(me.marker);
+        me.remove();
+      }
+ 	});
   };
  
+  /** Creates a new marker icon.
+    * 
+	* @return {GIcon}
+	*             The newly created icon.
+	*/
+  Marker.prototype.createIcon = function() {
+	var flower = FLOWERED_IMAGES[this.type];   
+	var icon = new GIcon();
+	icon.image = flower.image;
+	icon.shadow = flower.shadow;
+	icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
+	icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
+	icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
+	return icon;
+  }  
+  
+  /** Return if the marker is deleteable.
+    *
+    * @return {Bool}
+    *             Returns t deleteable property of the marker.
+	* 
+	*/
+  Marker.prototype.isDeleteable = function() {
+    var flower = FLOWERED_IMAGES[this.type];
+	return flower.properties.deleteable;
+  }
+  
+  /** Return if the marker is draggable.
+	*
+	* @return {Bool}
+    *             Returns the draggable property of the marker.
+	*/
+  Marker.prototype.isDraggable = function() {
+	var flower = FLOWERED_IMAGES[this.type];
+	return flower.properties.draggable;
+}
+  
   /**
-   * Move this marker to the specified latitude and longitude.
-   * @param {number} lat The latitude to move to.
-   * @param {number} lng The longitude to move to.
-   */  
+	* Move this marker to the specified latitude and longitude.
+	* 
+	* @param {number}
+	*            lat The latitude to move to.
+	* @param {number}
+	*            lng The longitude to move to.
+	*/  
   Marker.prototype.move = function(lat, lng) {
     if (this.point.lat() != lat || this.point.lng() != lng) {
       this.point = new GLatLng(lat, lng);
@@ -66,10 +106,9 @@
   };
   
   /**
-   * Adds this marker to the Flowered DB and cache.
-   * Makes an Ajax call to add the markers's position to the Flowered DB and
-   * cache.
-   */
+	* Adds this marker to the Flowered DB and cache. Makes an Ajax call to add
+	* the markers's position to the Flowered DB and cache.
+	*/
   Marker.prototype.add = function() {
     $.ajax({
        type: 'POST',
@@ -87,10 +126,9 @@
   }; 
 
   /**
-   * Removes this marker from the Flowered DB and cache.
-   * Makes an Ajax call to remove the markers's position in the Flowered DB and
-   * cache.
-   */
+	* Removes this marker from the Flowered DB and cache. Makes an Ajax call to
+	* remove the markers's position in the Flowered DB and cache.
+	*/
   Marker.prototype.remove = function() {
     $.ajax({
        type: 'POST',
@@ -104,10 +142,9 @@
   };  
 
   /**
-   * Removes this marker from the Flowered DB and cache.
-   * Makes an Ajax call to update the markers's position from the Flowered DB and
-   * cache.
-   */
+	* Removes this marker from the Flowered DB and cache. Makes an Ajax call to
+	* update the markers's position from the Flowered DB and cache.
+	*/
   Marker.prototype.update = function() {
     $.ajax({
        type: 'POST',
@@ -123,9 +160,11 @@
   };    
   
   /**
-   * Creates a random key.
-   * @param {length} length of the key to create plus 4 additional tokens.
-   */
+	* Creates a random key.
+	* 
+	* @param {length}
+	*            length of the key to create plus 4 additional tokens.
+	*/
   var createRandomKey = function(length) {
 	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	var random = 'key:';
@@ -137,9 +176,11 @@
   };
   
   /**
-   * A callback for updates containing add events.
-   * @param {Object} data A JSON object containing event data.
-   */
+	* A callback for updates containing add events.
+	* 
+	* @param {Object}
+	*            data A JSON object containing event data.
+	*/
   window.addCallback = function(data) {	  
     var adds = data.adds;    
     for (var i = 0; i < adds.length; ++i) {
@@ -155,9 +196,11 @@
   };
   
   /**
-   * A callback for updates containing move events.
-   * @param {Object} data A JSON object containing event data.
-   */
+   	* A callback for updates containing move events.
+	* 
+	* @param {Object}
+	*            data A JSON object containing event data.
+	*/
   window.moveCallback = function(data) {
     var moves = data.moves;
     for (var i = 0; i < moves.length; ++i) {
@@ -176,9 +219,11 @@
   };
 
   /**
-   * A callback for updates containing remove events.
-   * @param {Object} data A JSON object containing event data.
-   */
+	* A callback for updates containing remove events.
+	* 
+	* @param {Object}
+	*            data A JSON object containing event data.
+	*/
   window.removeCallback = function(data) {
     var removes = data.removes;
     for (var i = 0; i < removes.length; ++i) {
@@ -191,10 +236,12 @@
   };
   
   /**
-   * A callback for when an update request succeeds.
-   * @param {string} json JSON data to be evaluated and passed on to event
-   *   callbacks.
-   */
+	* A callback for when an update request succeeds.
+	* 
+	* @param {string}
+	*            json JSON data to be evaluated and passed on to event
+	*            callbacks.
+	*/
   window.updateSuccess = function(json) {
     var data = eval('(' + json + ')');
     lastUpdate = data.timestamp;
@@ -205,18 +252,18 @@
   };
   
   /**
-   * A callback for when updates fail. Presents an error to the user and
-   * forces a lengthier delay between updates.
-   */
+	* A callback for when updates fail. Presents an error to the user and
+	* forces a lengthier delay between updates.
+	*/
   window.updateError = function() {
     window.setTimeout(window.update, FLOWERED_VARS['error_interval']);
   };
 
   /**
-   * The main update handler, used to query the Flowered DB and cache for
-   * updated events. Successful queries pass the results on to the
-   * chatCallback and moveCallback functions.
-   */
+	* The main update handler, used to query the Flowered DB and cache for
+	* updated events. Successful queries pass the results on to the
+	* chatCallback and moveCallback functions.
+	*/
   window.update = function() {
     var bounds = map.getBounds();
     var min = bounds.getSouthWest();
@@ -239,19 +286,21 @@
   };
 
   /**
-   * A callback for when an update request succeeds.
-   * @param {string} json JSON data to be evaluated and passed on to event
-   *   callbacks.
-   */
+	* A callback for when an update request succeeds.
+	* 
+	* @param {string}
+	*            json JSON data to be evaluated and passed on to event
+	*            callbacks.
+	*/
   window.initialSuccess = function(json) {
     var data = eval('(' + json + ')');
     window.addCallback(data);
   };
   
   /**
-   * A callback for when updates fail. Presents an error to the user and
-   * forces a lengthier delay between updates.
-   */
+	* A callback for when updates fail. Presents an error to the user and
+	* forces a lengthier delay between updates.
+	*/
   window.initialError = function() {
     // window.setTimeout(window.initial, FLOWERED_VARS['initial_interval']);
   };
@@ -288,7 +337,7 @@
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv, mapOptions);
       map.setMapType(G_SATELLITE_MAP);
-      //map.setUIToDefault();
+      // map.setUIToDefault();
      
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
@@ -324,15 +373,18 @@
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
       
-      var searchbox = FLOWERED_VARS['show_searchbox'];
-      if (searchbox) {
+      var searchbox = String(FLOWERED_VARS['show_searchbox'].toLowerCase());
+      if (searchbox == 'true') {
+    	  // console.log('strings match');
     	  map.enableGoogleBar();
+      } else {
+    	  // console.log('strings don\'t match');
       }
-      console.log('searchbox=%s', searchbox);
+      // console.log('searchbox=%s', searchbox);
             
       window.update();
     }
-    // display a warning if the browser was not compatible 
+    // display a warning if the browser was not compatible
     else { 
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
@@ -353,7 +405,7 @@
       window.initial();
       window.update();
     }
-    // display a warning if the browser was not compatible 
+    // display a warning if the browser was not compatible
     else { 
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
@@ -364,7 +416,7 @@
   };
 
   // $("#msg").ajaxError(function(event, request, settings) {
-  //   $(this).append("<li>Error requesting page " + settings.url + "</li>");
+  // $(this).append("<li>Error requesting page " + settings.url + "</li>");
   // });
   
 })(jQuery);

@@ -65,7 +65,7 @@ class MainHandler(webapp.RequestHandler):
       'initial_latitude': 53.625706,
       'initial_longitude': 11.416855,
       'initial_zoom': 15,
-      'show_searchbox': self.request.get('searchbox'),
+      'show_searchbox': show_searchbox,
       'current_version_id' : self.version()
     }
 
