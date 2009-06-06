@@ -94,11 +94,6 @@ class StandaloneHandler(webapp.RequestHandler):
 
   def get(self):
 
-    if self.request.get('searchbox') == '':
-      show_searchbox = 'false'
-    else:
-      show_searchbox = self.request.get('searchbox').lower()
-
     template_data = {}
         
     template_data = {
@@ -106,8 +101,6 @@ class StandaloneHandler(webapp.RequestHandler):
       'initial_latitude': 53.625706,
       'initial_longitude': 11.416855,
       'initial_zoom': 15,
-      'show_searchbox': show_searchbox,
-      'current_version_id' : self.version()
     }
 
     template_path = os.path.join(os.path.dirname(__file__), 'standalone.html')

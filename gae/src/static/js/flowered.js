@@ -31,9 +31,19 @@
     this.point = new GLatLng(lat, lng);
     this.type = type;
     this.project = FLOWERED_VARS['project_id'];
+    this.flower = FLOWERED_IMAGES[this.type];
        
-    var markerOptions = { icon: me.createIcon(), draggable: me.isDraggable() };
+    function importanceOrder (marker,b) {
+      return GOverlay.getZIndex(marker.getPoint().lat()) + marker.importance*1000000;
+    }
+    
+    var markerOptions = {
+      icon: me.createIcon(),
+      draggable: me.isDraggable(),
+      zIndexProcess: importanceOrder
+    };
     this.marker = new GMarker(this.point, markerOptions);
+    this.marker.importance = this.flower.properties.zindex;
     map.addOverlay(this.marker);
   
     // Handle drop events for this marker's marker. Note that this fires off
@@ -67,12 +77,18 @@
 	icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
 	icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
 	return icon;
-  }  
+  }
+  
+  /* Marker.prototype.getOrder = function(marker,b) {
+	var flowerz = $().FLOWERED_IMAGES[this.type];
+    console.log("z-order=%d", flowerz.properties.deleteable);
+	return 1;
+  } */
   
   /** Return if the marker is deleteable.
     *
     * @return {Bool}
-    *             Returns t deleteable property of the marker.
+    *             Returns the deleteable property of the marker.
 	* 
 	*/
   Marker.prototype.isDeleteable = function() {
@@ -337,7 +353,6 @@
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv, mapOptions);
       map.setMapType(G_SATELLITE_MAP);
-      // map.setUIToDefault();
      
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
