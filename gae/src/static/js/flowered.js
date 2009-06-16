@@ -347,7 +347,7 @@
       var mapOptions = {
         googleBarOptions : {
     	  showOnLoad : true,
-          style : 'new',
+          style : 'new'
         }
       };
       var mapDiv = document.getElementById('map');
