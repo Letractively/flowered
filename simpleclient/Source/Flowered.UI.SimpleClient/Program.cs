@@ -36,14 +36,6 @@ namespace Flowered.UI.SimpleClient
 
         #region Methods
 
-        static FormMain CreateMainForm()
-        {
-            FormMain formMain = new FormMain();
-            Application.ApplicationExit += new EventHandler(formMain.OnApplicationExit);
-
-            return formMain;
-        }
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -57,7 +49,7 @@ namespace Flowered.UI.SimpleClient
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(Program.CreateMainForm());
+                Application.Run(new FormMain());
             }
             catch (Exception exception)
             {

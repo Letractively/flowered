@@ -109,19 +109,19 @@
             // 
             this.miSetUrl.Image = global::Flowered.App.SimpleClient.Properties.Resources.world_edit;
             this.miSetUrl.Name = "miSetUrl";
-            this.miSetUrl.Size = new System.Drawing.Size(152, 22);
+            this.miSetUrl.Size = new System.Drawing.Size(138, 22);
             this.miSetUrl.Text = "Set &URL...";
             this.miSetUrl.Click += new System.EventHandler(this.miSetUrl_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(135, 6);
             // 
             // miInteractive
             // 
             this.miInteractive.Name = "miInteractive";
-            this.miInteractive.Size = new System.Drawing.Size(152, 22);
+            this.miInteractive.Size = new System.Drawing.Size(138, 22);
             this.miInteractive.Text = "&Interactive";
             this.miInteractive.Click += new System.EventHandler(this.miInteractive_Click);
             // 
@@ -178,10 +178,6 @@
             // 
             this.tmrSnapshot.Tick += new System.EventHandler(this.tmrSnapshot_Tick);
             // 
-            // tmrRefresh
-            // 
-            this.tmrRefresh.Tick += new System.EventHandler(this.tmrRefresh_Tick);
-            // 
             // webBrowser
             // 
             this.webBrowser.Buried = true;
@@ -206,7 +202,6 @@
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FormMain";
             this.Text = "Flowered";
-            this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();

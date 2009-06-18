@@ -33,21 +33,7 @@ namespace Flowered.App.SimpleClient
 
         private static ErrorProvider errorProvider = new ErrorProvider();
 
-        // see: http://geekswithblogs.net/casualjim/archive/2005/12/01/61722.aspx
-        private string validationExpression = 
-            // @"^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?" +
-            @"^(?#Protocol)(?:http(?:s?)\:\/\/|~/|/)?" +
-            @"(?#Username:Password)(?:\w+:\w+@)?" +
-            @"(?#Domains)((?:\w+)|" +
-            @"(?#Subdomains)(?:(?:[-\w]+\.)+" +
-            @"(?#TopLevel Domains)" +
-            @"(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2})))" +
-            @"(?#Port)(?::[\d]{1,5})?" +
-            @"(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?" +
-            @"(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|" +
-            @"%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|" +
-            @"%[a-f\d]{2})*)*)*" +
-            @"(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$";
+        private string validationExpression = @"(?<protocol>http(s)?|ftp)://(?<server>([A-Za-z0-9-]+\.)*(?<basedomain>[A-Za-z0-9-]+\.[A-Za-z0-9]+))+((/?)(?<path>(?<dir>[A-Za-z0-9\._\-]+)(/){0,1}[A-Za-z0-9.-/]*)){0,1}";
 
         #endregion Fields
 
@@ -79,13 +65,11 @@ namespace Flowered.App.SimpleClient
 
         #region Methods
 
-        /// <summary>
-        ///
-        /// </summary>
         public new void Validate()
         {
-            string errorMessage = string.Empty;
             bool isValid = EvaluateIsValid();
+
+            string errorMessage = string.Empty;
             if (!isValid)
             {
                 errorMessage = "Input is not a valid URL!";
@@ -95,9 +79,6 @@ namespace Flowered.App.SimpleClient
             btnSet.Enabled = isValid;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         protected bool EvaluateIsValid()
         {
             if (tbUrl.Text.Trim() == string.Empty)
@@ -110,33 +91,21 @@ namespace Flowered.App.SimpleClient
             return isMatch;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void FormSetUrl_Load(object sender, EventArgs e)
         {
             Validate();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void InitializeValidatingHandler()
         {
             tbUrl.Validating += new CancelEventHandler(ValidatingHandler);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void ValidatingHandler(object sender, CancelEventArgs e)
         {
             Validate();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void tbUrl_TextChanged(object sender, EventArgs e)
         {
             Validate();

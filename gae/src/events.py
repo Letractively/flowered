@@ -1,5 +1,4 @@
 
-# Copyright 2009 Daniel Schubert
 # Copyright 2008 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Handlers for Flowered user events.
+"""Handlers for Geochat user events.
 
 Contains several RequestHandler subclasses used to handle put and get
 operations, along with any helper functions. This script is designed to be
-run directly as a WSGI application, and within Flowered handles all URLs
+run directly as a WSGI application, and within Geochat handles all URLs
 under /event.
 
   UpdateHandler: Handles user requests for updated lists of events.
@@ -27,6 +26,9 @@ under /event.
   RefreshCache(): Checks the age of the cache, and updates if necessary.
 """
 
+# TODO Cache sync problems.
+# TODO Problem with duplicate messages.
+# TODO Spam controls.
 
 import datetime
 import logging
@@ -47,11 +49,11 @@ sync_interval = datetime.timedelta(0, 10)
 # A datetime indicating the last time the chat cache was synced from the DB.
 last_sync = datetime.datetime.now() - sync_interval
 
-# A list storing the add cache.
-add_cache = []
-
 # A list storing the move cache.
 move_cache = []
+
+# A list storing the add cache.
+add_cache = []
 
 # A list storing the delete cache.
 remove_cache = []
@@ -77,7 +79,7 @@ class UpdateHandler(webapp.RequestHandler):
     min_longitude = float(self.request.get('min_longitude'))
     max_latitude = float(self.request.get('max_latitude'))
     max_longitude = float(self.request.get('max_longitude'))
-    # zoom = self.request.get('zoom')
+    zoom = self.request.get('zoom')
     if self.request.get('since') == '':
       since = 0
     else:
@@ -85,10 +87,10 @@ class UpdateHandler(webapp.RequestHandler):
     since_datetime = datetime.datetime.fromtimestamp(since)
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    #if (max_latitude - min_latitude) > 1:
-    #  max_latitude = min_latitude + 1
-    #if (max_longitude - min_longitude) > 1:
-    #  max_longitude = min_longitude + 1
+    if (max_latitude - min_latitude) > 1:
+      max_latitude = min_latitude + 1
+    if (max_longitude - min_longitude) > 1:
+      max_longitude = min_longitude + 1
       
     add_events = []
     move_events = []
@@ -136,9 +138,9 @@ class InitialHandler(webapp.RequestHandler):
   
   """Handles user requests for updated lists of events.
   
-  InitialHandler only accepts "get" events, sent via web forms. It expects each
+  UpdateHandler only accepts "get" events, sent via web forms. It expects each
   request to include "min_latitude", "min_longitude", "max_latitude",
-  and "max_longitude" fields.
+  "max_longitude", "zoom", and "since" fields.
   """
   
   def get(self):
@@ -149,18 +151,21 @@ class InitialHandler(webapp.RequestHandler):
     max_longitude = float(self.request.get('max_longitude'))
     
     # Restrict latitude/longitude to restrict bulk downloads.
-    #if (max_latitude - min_latitude) > 1:
-    #  max_latitude = min_latitude + 1
-    #if (max_longitude - min_longitude) > 1:
-    #  max_longitude = min_longitude + 1
+    if (max_latitude - min_latitude) > 1:
+      max_latitude = min_latitude + 1
+    if (max_longitude - min_longitude) > 1:
+      max_longitude = min_longitude + 1
      
-    # Sync the add cache.
-    min_geopt = db.GeoPt(min_latitude, min_longitude)
-    max_geopt = db.GeoPt(max_latitude, max_longitude)
+    # Sync the add cache.      
     query = datamodel.Mark.gql('WHERE geopt > :min_geopt AND geopt < :max_geopt ',
-                               min_geopt = min_geopt, max_geopt = max_geopt)
-    add_events = query.fetch(1000)
-             
+                               min_geopt = db.GeoPt(min_latitude, min_longitude),
+                               max_geopt = db.GeoPt(max_latitude, max_longitude))
+    add_list = list(query.fetch(100))  
+    
+    add_events = []
+    for entry in add_list:
+      add_events.append(entry)  
+              
     output = {
         'timestamp': time.time(),
         'adds': add_events
@@ -209,7 +214,6 @@ class AddHandler(webapp.RequestHandler):
     event.geopt = db.GeoPt(float(self.request.get('latitude')),
                            float(self.request.get('longitude')))
     event.type = str(self.request.get('type'))
-    event.project = str(self.request.get('project'))
     event.put()
 
     # Append to the add cache, so we don't need to wait on a refresh.
@@ -218,7 +222,7 @@ class AddHandler(webapp.RequestHandler):
 class DeleteHandler(webapp.RequestHandler):
 
   def post(self):
-    global remove_cache
+    global remove_cache  
 
     # Get the mark to delete and return if not exists.
     mark = datamodel.Mark.get_by_key_name(self.request.get('id'))
@@ -244,6 +248,7 @@ def RefreshCache():
   
   global sync_interval
   global last_sync
+  #global chat_cache
   global add_cache
   global move_cache
   global remove_cache
@@ -255,12 +260,9 @@ def RefreshCache():
     last_sync = datetime.datetime.now()
  
     # Trim the move cache.
-    #add_cache = add_cache[-100:]
-    #move_cache = move_cache[-100:]
-    #remove_cache = remove_cache[-100:]
-    add_cache = add_cache[:500]
-    move_cache = move_cache[:500]
-    remove_cache = remove_cache[:500]
+    add_cache = add_cache[-100:]
+    move_cache = move_cache[-100:]
+    remove_cache = remove_cache[-100:]
     
  
 def main():
@@ -270,7 +272,7 @@ def main():
   This method is called each time the script is launched, and also has the
   effect of enabling caching for global variables.
   """
-  # logging.getLogger().setLevel(logging.DEBUG)
+  
   application = webapp.WSGIApplication(
       [
         ('/event/initial', InitialHandler),
