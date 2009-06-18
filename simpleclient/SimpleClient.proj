@@ -19,7 +19,7 @@
 		
 		<ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
 		<SourceRoot>$(ProjectRoot)\Source</SourceRoot>
-		<VersionFile>$(ProjectRoot)\VERSION</VersionFile>
+		<VersionFile>$(ProjectRoot)\Version.txt</VersionFile>
 		
 		<RootNamespace>Flowered.UI.SimpleClient</RootNamespace>	
 		<VersionUpdateFile>$(SourceRoot)\$(RootNamespace)\Properties\AssemblyInfo.cs</VersionUpdateFile>

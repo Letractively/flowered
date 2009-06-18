@@ -34,7 +34,7 @@ namespace Flowered.App.SimpleClient
         private static ErrorProvider errorProvider = new ErrorProvider();
 
         // see: http://geekswithblogs.net/casualjim/archive/2005/12/01/61722.aspx
-        private string validationExpression = 
+        private string validationExpression =
             // @"^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?" +
             @"^(?#Protocol)(?:http(?:s?)\:\/\/|~/|/)?" +
             @"(?#Username:Password)(?:\w+:\w+@)?" +
@@ -79,9 +79,6 @@ namespace Flowered.App.SimpleClient
 
         #region Methods
 
-        /// <summary>
-        ///
-        /// </summary>
         public new void Validate()
         {
             string errorMessage = string.Empty;
@@ -95,9 +92,6 @@ namespace Flowered.App.SimpleClient
             btnSet.Enabled = isValid;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         protected bool EvaluateIsValid()
         {
             if (tbUrl.Text.Trim() == string.Empty)
@@ -110,33 +104,21 @@ namespace Flowered.App.SimpleClient
             return isMatch;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void FormSetUrl_Load(object sender, EventArgs e)
         {
             Validate();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void InitializeValidatingHandler()
         {
             tbUrl.Validating += new CancelEventHandler(ValidatingHandler);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void ValidatingHandler(object sender, CancelEventArgs e)
         {
             Validate();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void tbUrl_TextChanged(object sender, EventArgs e)
         {
             Validate();

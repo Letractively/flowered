@@ -41,9 +41,6 @@ namespace Flowered.App.SimpleClient
 
         #region Methods
 
-        /// <summary>
-        ///
-        /// </summary>
         private void FormAbout_Load(object sender, EventArgs e)
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -55,9 +52,6 @@ namespace Flowered.App.SimpleClient
             rtbCredits.Text = copyright;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void rtbCredits_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             Process.Start(e.LinkText);
