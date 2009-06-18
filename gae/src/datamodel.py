@@ -24,9 +24,3 @@ class Mark(db.Model):
   geopt = db.GeoPtProperty()
   type = db.StringProperty()
   project = db.StringProperty()
-
-class Service(db.Model):
-  name = db.StringProperty()
-  user = db.StringProperty()
-  password = db.StringProperty()
-  active = db.BooleanProperty()
