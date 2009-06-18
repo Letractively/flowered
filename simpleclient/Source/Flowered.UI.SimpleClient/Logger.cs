@@ -36,9 +36,6 @@ namespace Flowered.UI.SimpleClient
 
         #region Methods
 
-        /// <summary>
-        ///
-        /// </summary>
         public static void Exception(string methodName, Exception exception)
         {
             if (log.IsErrorEnabled)
@@ -51,9 +48,6 @@ namespace Flowered.UI.SimpleClient
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         public static void Info(string methodName, string message)
         {
             if (log.IsInfoEnabled)

@@ -46,9 +46,6 @@ namespace Flowered.UI.Controls
 
         #region Properties
 
-        /// <summary>
-        ///
-        /// </summary>
         public bool Enabled
         {
             get
@@ -62,9 +59,6 @@ namespace Flowered.UI.Controls
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         public int Timeout
         {
             get
@@ -81,9 +75,6 @@ namespace Flowered.UI.Controls
 
         #region Methods
 
-        /// <summary>
-        ///
-        /// </summary>
         public void Show()
         {
             if (enabled)
@@ -98,9 +89,6 @@ namespace Flowered.UI.Controls
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private void timer_Tick(object sender, EventArgs e)
         {
             if (enabled)
