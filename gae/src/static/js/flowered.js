@@ -7,6 +7,7 @@
 (function($) {
 
   var map = null;
+  var localSearch = null;
   var lastUpdate = 0;
 
   window.marker = {};
@@ -340,18 +341,35 @@
       error: window.initialError
     });
   };
+
+  // bind a search control to the map
+  $.fn.toggleLocalSearch = function() {
+    if (map) {
+      if (localSearch) {
+        map.removeControl(localSearch);
+        localSearch = null;
+      } else {
+    	var options = {
+          searchFormHint: 'Search beflowered!',
+  	      suppressInitialResultSelection: true
+  		};
+    	localSearch = new google.elements.LocalSearch(options);
+    	map.addControl(localSearch);  
+      }
+    }
+  };
  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
            
-      var mapOptions = {
+      /* var mapOptions = {
         googleBarOptions : {
     	  showOnLoad : true,
           style : 'new'
         }
-      };
+      }; */
       var mapDiv = document.getElementById('map');
-      map = new GMap2(mapDiv, mapOptions);
+      map = new GMap2(mapDiv);
       map.setMapType(G_SATELLITE_MAP);
      
       map.addControl(new GLargeMapControl());
@@ -388,13 +406,13 @@
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
       
-      var searchbox = String(FLOWERED_VARS['show_searchbox'].toLowerCase());
+      /* var searchbox = String(FLOWERED_VARS['show_searchbox'].toLowerCase());
       if (searchbox == 'true') {
     	  // console.log('strings match');
     	  map.enableGoogleBar();
       } else {
     	  // console.log('strings don\'t match');
-      }
+      } */
       // console.log('searchbox=%s', searchbox);
             
       window.update();
@@ -425,7 +443,7 @@
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
   };
-  
+   
   window.onunload = function() {
     GUnload();
   };
