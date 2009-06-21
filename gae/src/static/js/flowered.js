@@ -361,13 +361,7 @@
  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
-           
-      /* var mapOptions = {
-        googleBarOptions : {
-    	  showOnLoad : true,
-          style : 'new'
-        }
-      }; */
+
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
       map.setMapType(G_SATELLITE_MAP);
@@ -405,16 +399,7 @@
       var longitude = FLOWERED_VARS['initial_longitude'];
       var zoom = FLOWERED_VARS['initial_zoom'];
       map.setCenter(new GLatLng(latitude, longitude), zoom);
-      
-      /* var searchbox = String(FLOWERED_VARS['show_searchbox'].toLowerCase());
-      if (searchbox == 'true') {
-    	  // console.log('strings match');
-    	  map.enableGoogleBar();
-      } else {
-    	  // console.log('strings don\'t match');
-      } */
-      // console.log('searchbox=%s', searchbox);
-            
+                 
       window.update();
     }
     // display a warning if the browser was not compatible
