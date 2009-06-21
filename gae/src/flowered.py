@@ -42,8 +42,7 @@ import json
 logging.info('Loading %s, app version = %s',
   __name__, os.getenv('CURRENT_VERSION_ID'))
 
-class MainHandler(webapp.RequestHandler):
-  
+class MainHandler(webapp.RequestHandler):  
   """Handles requests to /
   
   MainHandler handles requests for the server root, presenting the main user
@@ -51,13 +50,7 @@ class MainHandler(webapp.RequestHandler):
   of the heavy lifting occuring client-side through JavaScript linked there.
   """
 
-  def get(self):
-  
-    if self.request.get('searchbox') == '':
-      show_searchbox = 'false'
-    else:
-      show_searchbox = self.request.get('searchbox').lower()
-      
+  def get(self): 
     template_data = {}
     
     template_data = {
@@ -65,18 +58,17 @@ class MainHandler(webapp.RequestHandler):
       'initial_latitude': 53.625706,
       'initial_longitude': 11.416855,
       'initial_zoom': 15,
-      'show_searchbox': show_searchbox,
       'current_version_id' : self.version()
     }
 
-    template_path = os.path.join(os.path.dirname(__file__), 'flowered.html')
+    template_path = os.path.join(os.path.dirname(__file__), 'templates', 'flowered.html')
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data))
  
-  def version(self):
-      
+  def version(self):     
     current_version = os.getenv('CURRENT_VERSION_ID')
     version = string.split(current_version, '.') 
+    
     if len(version) >= 2:
         return string.lower(version[0])
     else:
@@ -84,7 +76,6 @@ class MainHandler(webapp.RequestHandler):
         
 
 class StandaloneHandler(webapp.RequestHandler):
-  
   """Handles requests to /standalone
   
   MainHandler handles requests for the server root, presenting the main user
@@ -93,7 +84,6 @@ class StandaloneHandler(webapp.RequestHandler):
   """
 
   def get(self):
-
     template_data = {}
         
     template_data = {
@@ -103,32 +93,29 @@ class StandaloneHandler(webapp.RequestHandler):
       'initial_zoom': 15,
     }
 
-    template_path = os.path.join(os.path.dirname(__file__), 'standalone.html')
+    template_path = os.path.join(os.path.dirname(__file__), 'templates', 'standalone.html')
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data)) 
 
 class RedirectHandler(webapp.RequestHandler):
-
   """Handles requests to /
 
   RedirectHandler handles requests for the server root, presenting the main user
   interface for Flowered and redirects the user to the appropiate sub project
   """
 
-  def get(self):
-    
+  def get(self):   
     self.redirect('/schwerin')
 
 
 def main():
-
+  # logging.getLogger().setLevel(logging.DEBUG)   
   application = webapp.WSGIApplication([
-     ('/schwerin/standalone.*', StandaloneHandler),
-     ('/schwerin.*', MainHandler),
-     ('/.*', RedirectHandler)],
-     debug = True)
+    ('/schwerin/standalone.*', StandaloneHandler),
+    ('/schwerin.*', MainHandler),
+    ('/.*', RedirectHandler)
+    ], debug = True)
   run_wsgi_app(application)
-  
   
 if __name__ == '__main__':
   main()
