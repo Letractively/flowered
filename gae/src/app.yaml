@@ -4,17 +4,6 @@ runtime: python
 api_version: 1
 
 handlers:
-
-- url: /robots.txt
-  static_files: robots.txt
-  mime_type: text/plain
-  upload: robots.txt
-  
-- url: /favicon.ico
-  static_files: static/images/favicon.ico
-  mime_type: image/ico
-  upload: static/images/favicon.ico
-
 - url: /static/css
   static_dir: static/css
   mime_type: text/css
@@ -27,13 +16,40 @@ handlers:
   static_dir: static/images
   mime_type: image/png
 
-- url: /event/.*
-  script: events.py
+- url: /favicon\.ico
+  static_files: static/favicon.ico
+  mime_type: image/ico
+  upload: static/favicon.ico
 
+- url: /robots\.txt
+  static_files: static/robots.txt
+  mime_type: text/plain
+  upload: static/robots.txt  
+  
 - url: /admin/.*
   script: $PYTHON_LIB/google/appengine/ext/admin
   login: admin
   secure: always
 
+- url: /event/.*
+  script: events.py
+
 - url: /.*
   script: flowered.py
+  
+skip_files: |
+ ^(.*/)?(
+ (app\.yaml)|
+ (app\.yml)|
+ (index\.yaml)|
+ (index\.yml)|
+ (#.*#)|
+ (.*~)|
+ (.*\.py[co])|
+ (.*/RCS/.*)|
+ (\..*)|
+ (.*/.svn/.*)|
+ (LICENSE)|
+ (README)|
+ (readme\.txt)|
+ )$
