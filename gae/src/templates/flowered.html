@@ -22,17 +22,7 @@
       // Place init code here instead of $(document).ready()	  
       google.setOnLoadCallback(function() {
 	    $("#toolbar").noContext();
-	    $().initializeInteractiveMap();
-	    
-	    // listens for any navigation keypress activity
-		$(document).keypress(function(e) {
-			switch(e.which) {
-				// user presses the "#" key
-				case 35: console.debug("user presses the \"#\" key");
-                         $().toggleLocalSearch();
-                         break;
-			}
-		});	    
+	    $().initializeInteractiveMap();	    
       });
 	</script>
 
