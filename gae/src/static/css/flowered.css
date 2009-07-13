@@ -1,4 +1,4 @@
-﻿/* flowered.css */
+/* flowered.css */
 
 * { margin: 0em; padding: 0em; }
 
@@ -25,7 +25,7 @@ button.fg-button { width:auto; overflow:visible; }
 .fg-buttonset .fg-button { float: left; }
 
 .fg-buttonset-single .fg-button, 
-.fg-buttonset-multi .fg-button { margin-right: -1px;}
+.fg-buttonset-multi .fg-button { margin-right: -1px; }
 
 .fg-toolbar { padding: .5em; margin: 0;  }
 .fg-toolbar .fg-buttonset { margin-right:1.5em; padding-left: 1px; }
@@ -34,7 +34,7 @@ button.fg-button { width:auto; overflow:visible; }
 .fg-toolbar-flowered { position:relative; top: 25px; left: 80px; z-index: 5; }
 
 .ui-state-opacity-85 { opacity: 0.85; filter: alpha(opacity=85); }
-.ui-state-opacity-100 { opacity: 1; filter: alpha(opacity=100);}
+.ui-state-opacity-100 { opacity: 1; filter: alpha(opacity=100); }
  
 /*
  * IDS
