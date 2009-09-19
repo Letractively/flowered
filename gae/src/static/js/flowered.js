@@ -364,7 +364,8 @@
 
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
-      map.setMapType(G_SATELLITE_MAP);
+      map.setMapType(G_NORMAL_MAP);
+      // map.setMapType(G_SATELLITE_MAP);
      
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());

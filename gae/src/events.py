@@ -217,13 +217,13 @@ class AddHandler(webapp.RequestHandler):
     
     # Add mark to datastore.
     try:
-      event.put()
+      mark.put()
     except CapabilityDisabledError:
       # fail gracefully here 
       pass
 
     # Append to the add cache, so we don't need to wait on a refresh.
-    add_cache.append(event) 
+    add_cache.append(mark) 
     
 class DeleteHandler(webapp.RequestHandler):
   def post(self):
@@ -266,13 +266,13 @@ def RefreshCache():
   if last_sync < now - sync_interval:  
     last_sync = datetime.datetime.now()
  
-    # Trim the move cache.
-    #add_cache = add_cache[-100:]
-    #move_cache = move_cache[-100:]
-    #remove_cache = remove_cache[-100:]
-    add_cache = add_cache[:500]
-    move_cache = move_cache[:500]
-    remove_cache = remove_cache[:500]
+    # Trim the caches.
+    add_cache = add_cache[-100:]
+    move_cache = move_cache[-100:]
+    remove_cache = remove_cache[-100:]
+    #add_cache = add_cache[:500]
+    #move_cache = move_cache[:500]
+    #remove_cache = remove_cache[:500]
     
  
 def main():
