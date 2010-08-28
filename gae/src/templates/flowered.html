@@ -9,17 +9,20 @@
     <link rel="stylesheet" type="text/css" href="/static/css/flowered.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
-	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
-	<!-- <script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSD04uQPAlhIL_LW3q5aXmUyTegUBR3FqtFelRzLRml7H8UJgab1iddoQ"></script> -->
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSswtZSgxViiXnIf6uA4x_6BX_ghBQChz3UNGOObBJk32Jxjsn5wCHNJA"></script>
+	<!-- <script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script> -->
 	<script>
 	  google.load('maps', '2');
+	  google.load('elements', '1', {
+	    packages : ['localsearch']
+	  });
 	  google.load('jquery', '1.3.2');
 	  google.load('jqueryui', '1.7.1');
 	  
       // Place init code here instead of $(document).ready()	  
       google.setOnLoadCallback(function() {
 	    $("#toolbar").noContext();
-	    $().initializeInteractiveMap();
+	    $().initializeInteractiveMap();	    
       });
 	</script>
 
@@ -29,7 +32,6 @@
         'initial_latitude': {{ initial_latitude }},
         'initial_longitude': {{ initial_longitude }},
         'initial_zoom': {{ initial_zoom }},
-        'show_searchbox': '{{ show_searchbox }}',
         'update_interval': 5000,
         'error_interval': 30000,
         'initial_interval': 15000,

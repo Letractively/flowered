@@ -37,7 +37,8 @@ import datamodel
 import json
 
 from google.appengine.api import users
-from google.appengine.ext import db
+from google.appengine.ext import db 
+from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
@@ -58,7 +59,6 @@ remove_cache = []
 
 
 class UpdateHandler(webapp.RequestHandler):
-  
   """Handles user requests for updated lists of events.
   
   UpdateHandler only accepts "get" events, sent via web forms. It expects each
@@ -78,10 +78,12 @@ class UpdateHandler(webapp.RequestHandler):
     max_latitude = float(self.request.get('max_latitude'))
     max_longitude = float(self.request.get('max_longitude'))
     # zoom = self.request.get('zoom')
+    
     if self.request.get('since') == '':
       since = 0
     else:
       since = float(self.request.get('since'))
+      
     since_datetime = datetime.datetime.fromtimestamp(since)
     
     # Restrict latitude/longitude to restrict bulk downloads.
@@ -133,7 +135,6 @@ class UpdateHandler(webapp.RequestHandler):
 
 
 class InitialHandler(webapp.RequestHandler):
-  
   """Handles user requests for updated lists of events.
   
   InitialHandler only accepts "get" events, sent via web forms. It expects each
@@ -142,7 +143,6 @@ class InitialHandler(webapp.RequestHandler):
   """
   
   def get(self):
-
     min_latitude = float(self.request.get('min_latitude'))
     min_longitude = float(self.request.get('min_longitude'))
     max_latitude = float(self.request.get('max_latitude'))
@@ -171,7 +171,6 @@ class InitialHandler(webapp.RequestHandler):
   
 
 class MoveHandler(webapp.RequestHandler):
-  
   """Handles user movement events.
   
   MoveHandler only provides a post method for receiving new user co-ordinates,
@@ -187,11 +186,17 @@ class MoveHandler(webapp.RequestHandler):
     if mark == None:      
       return
 
-    # Update current mark's position and timestamp
+    # Update current mark's position and timestamp.
     mark.timestamp = datetime.datetime.now()
     mark.geopt = db.GeoPt(float(self.request.get('latitude')),
                           float(self.request.get('longitude')))
-    mark.put()
+    
+    try:
+      mark.put()
+    except CapabilityDisabledError:
+      # fail gracefully here 
+      pass
+  
     #logging.info('#### move=' + str(mark.geopt))
      
     # Append to the move cache, so we don't need to wait for a refresh.
@@ -199,24 +204,28 @@ class MoveHandler(webapp.RequestHandler):
     move_cache.append(mark)
 
 class AddHandler(webapp.RequestHandler):
-
   def post(self):
     global add_cache
     
-    # Create and insert the a new mark event.
-    event = datamodel.Mark(key_name = self.request.get('id'))
-    event.timestamp = datetime.datetime.now()
-    event.geopt = db.GeoPt(float(self.request.get('latitude')),
+    # Create new mark.
+    mark = datamodel.Mark(key_name = self.request.get('id'))
+    mark.timestamp = datetime.datetime.now()
+    mark.geopt = db.GeoPt(float(self.request.get('latitude')),
                            float(self.request.get('longitude')))
-    event.type = str(self.request.get('type'))
-    event.project = str(self.request.get('project'))
-    event.put()
+    mark.type = str(self.request.get('type'))
+    mark.project = str(self.request.get('project'))
+    
+    # Add mark to datastore.
+    try:
+      mark.put()
+    except CapabilityDisabledError:
+      # fail gracefully here 
+      pass
 
     # Append to the add cache, so we don't need to wait on a refresh.
-    add_cache.append(event) 
+    add_cache.append(mark) 
     
 class DeleteHandler(webapp.RequestHandler):
-
   def post(self):
     global remove_cache
 
@@ -225,8 +234,12 @@ class DeleteHandler(webapp.RequestHandler):
     if mark == None:      
       return
 
-    # Delete mark from datastore
-    db.delete(mark)
+    # Delete mark from datastore.
+    try:
+      db.delete(mark)
+    except CapabilityDisabledError:
+      # fail gracefully here 
+      pass
 
     # Append to the delete cache, so we don't need to wait for a refresh.
     mark.timestamp = datetime.datetime.now()
@@ -234,7 +247,6 @@ class DeleteHandler(webapp.RequestHandler):
     remove_cache.append(mark)
              
 def RefreshCache():
-  
   """Check the freshness of chat and move caches, and refresh if necessary.
   
   RefreshCache relies on the globals "sync_interval" and "last_sync" to
@@ -254,32 +266,29 @@ def RefreshCache():
   if last_sync < now - sync_interval:  
     last_sync = datetime.datetime.now()
  
-    # Trim the move cache.
-    #add_cache = add_cache[-100:]
-    #move_cache = move_cache[-100:]
-    #remove_cache = remove_cache[-100:]
-    add_cache = add_cache[:500]
-    move_cache = move_cache[:500]
-    remove_cache = remove_cache[:500]
+    # Trim the caches.
+    add_cache = add_cache[-100:]
+    move_cache = move_cache[-100:]
+    remove_cache = remove_cache[-100:]
+    #add_cache = add_cache[:500]
+    #move_cache = move_cache[:500]
+    #remove_cache = remove_cache[:500]
     
  
 def main():
-  
   """Main method called when the script is executed directly.
   
   This method is called each time the script is launched, and also has the
   effect of enabling caching for global variables.
   """
   # logging.getLogger().setLevel(logging.DEBUG)
-  application = webapp.WSGIApplication(
-      [
-        ('/event/initial', InitialHandler),
-        ('/event/add', AddHandler),
-        ('/event/move', MoveHandler),
-        ('/event/delete', DeleteHandler),
-        ('/event/update', UpdateHandler),
-      ],
-      debug = True)
+  application = webapp.WSGIApplication([
+    ('/event/initial', InitialHandler),
+    ('/event/add', AddHandler),
+    ('/event/move', MoveHandler),
+    ('/event/delete', DeleteHandler),
+    ('/event/update', UpdateHandler),
+    ], debug = True)
   run_wsgi_app(application)
 
 if __name__ == '__main__':

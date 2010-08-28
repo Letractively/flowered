@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from google.appengine.ext import db
 
 """Database models used in the Flowered application.
@@ -24,9 +25,3 @@ class Mark(db.Model):
   geopt = db.GeoPtProperty()
   type = db.StringProperty()
   project = db.StringProperty()
-
-class Service(db.Model):
-  name = db.StringProperty()
-  user = db.StringProperty()
-  password = db.StringProperty()
-  active = db.BooleanProperty()
