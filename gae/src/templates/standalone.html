@@ -9,12 +9,15 @@
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
 	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
-	<script>
-		google.load('maps', '2', {other_params: 'sensor=false&region=US'});
+	<script type="text/javascript">
+	//<![CDATA[
+		google.load('maps', '2');
 		google.load('jquery', '1.4.2');
+	//]]>
 	</script>
 
     <script type="text/javascript">
+    //<![CDATA[
       FLOWERED_VARS = {
         'project_id': '{{ project_id }}',
         'initial_latitude': {{ initial_latitude }},
@@ -24,15 +27,18 @@
         'error_interval': 30000,
         'initial_interval': 15000
       };
+    //]]>
     </script>
 
     <script type="text/javascript" src="/static/js/marker.min.js""></script> 	
     <script type="text/javascript" src="/static/js/flowered.min.js"></script>
     
-    <script>
+    <script type="text/javascript">
+    //<![CDATA[
 	  $(document).ready(function() {
 	    $().initializeStandaloneMap();
 	  });
+	//]]>
     </script>
     
   </head>
