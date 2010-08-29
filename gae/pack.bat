@@ -24,4 +24,8 @@ java -jar .\tools\yuicompressor-2.4.2.jar --type js -o .\src\static\js\flowered.
 java -jar .\tools\yuicompressor-2.4.2.jar --type js -o .\src\static\js\marker.min.js .\src\static\js\marker.js
 java -jar .\tools\yuicompressor-2.4.2.jar --type js -o .\src\static\js\toolbar.min.js .\src\static\js\toolbar.js
 
+REM .\tools\Packer.exe -o .\src\static\js\flowered.min.js .\src\static\js\flowered.js
+REM .\tools\Packer.exe -o .\src\static\js\marker.min.js .\src\static\js\marker.js
+REM .\tools\Packer.exe -o .\src\static\js\toolbar.min.js .\src\static\js\toolbar.js
+
 @IF %ERRORLEVEL% NEQ 0 PAUSE
