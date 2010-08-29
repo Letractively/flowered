@@ -9,15 +9,14 @@
     <link rel="stylesheet" type="text/css" href="/static/css/flowered.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
-	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSswtZSgxViiXnIf6uA4x_6BX_ghBQChz3UNGOObBJk32Jxjsn5wCHNJA"></script>
-	<!-- <script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script> -->
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAijz3DGPyJM3BV8YsEgUXuxSoYz0BNeq2-FqRafArhYgM7fR_cBRmPqxabbhk1w5jWnK6LpOyClBL0g"></script>
 	<script>
-	  google.load('maps', '2');
+	  google.load('maps', '2', {other_params: 'sensor=false&region=US'});
 	  google.load('elements', '1', {
 	    packages : ['localsearch']
 	  });
-	  google.load('jquery', '1.3.2');
-	  google.load('jqueryui', '1.7.1');
+	  google.load('jquery', '1.4.2');
+	  google.load('jqueryui', '1.8.4');
 	  
       // Place init code here instead of $(document).ready()	  
       google.setOnLoadCallback(function() {
