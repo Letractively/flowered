@@ -1,7 +1,7 @@
 
 /**
  * @fileoverview Provides the core JavaScript functionality for the Flowered
- *               application.
+ *               application based on Google Maps V2 API.
  */
 
 (function($) {
@@ -359,6 +359,15 @@
     }
   };
  
+  $.fn.centerMap = function() {
+  	if (map) {
+  	  var latitude = FLOWERED_VARS['initial_latitude'];
+        var longitude = FLOWERED_VARS['initial_longitude'];    
+        var zoom = FLOWERED_VARS['initial_zoom'];
+        map.setCenter(new GLatLng(latitude, longitude), zoom);
+  	}	  
+  }
+  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
 
@@ -367,8 +376,9 @@
       // map.setMapType(G_NORMAL_MAP);
       map.setMapType(G_SATELLITE_MAP);
      
-      map.addControl(new GLargeMapControl());
-      map.addControl(new GScaleControl());
+      map.addControl(new GLargeMapControl());     
+//      var pos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(10,10)); 
+//      map.addControl(new GScaleControl(), pos);
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
@@ -396,20 +406,21 @@
     	  window.initial();
   	  });
       
-      var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];
-      var zoom = FLOWERED_VARS['initial_zoom'];
-      map.setCenter(new GLatLng(latitude, longitude), zoom);
+      $().centerMap();
                  
       window.update();
       
 	  // listens for any navigation keypress activity
       $(document).keypress(function(e) {
-        switch(e.which) {
-          // user has pressed the "#" key to toggle local search
-          case 35: console.debug("Current user has pressed the \"#\" key");
+        switch(e.keyCode ) {
+          case 35: // '#'
+        	console.debug("Current user has pressed the \"#\" key");
             $().toggleLocalSearch();
-            break; 
+            break;
+          case 99: // 'c'
+        	console.debug("Current user has pressed the \"c\" key");
+        	$().centerMap();
+        	break;
         }
       });
       
@@ -426,10 +437,7 @@
       // map.setMapType(G_NORMAL_MAP);
       map.setMapType(G_SATELLITE_MAP);
      
-      var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];    
-      var zoom = FLOWERED_VARS['initial_zoom'];
-      map.setCenter(new GLatLng(latitude, longitude), zoom);
+      $().centerMap();
       
       window.initial();
       window.update();
