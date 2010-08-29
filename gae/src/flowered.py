@@ -74,11 +74,10 @@ class MainHandler(webapp.RequestHandler):
     else:
         return 'n/a'
         
-
 class StandaloneHandler(webapp.RequestHandler):
   """Handles requests to /standalone
   
-  MainHandler handles requests for the server root, presenting the main user
+  StandaloneHandler handles requests for the server root, presenting the main user
   interface for Flowered. It relies on the flowered.html template, with most
   of the heavy lifting occuring client-side through JavaScript linked there.
   """
@@ -91,11 +90,50 @@ class StandaloneHandler(webapp.RequestHandler):
       'initial_latitude': 53.625706,
       'initial_longitude': 11.416855,
       'initial_zoom': 15,
+      'current_version_id' : 6
     }
 
     template_path = os.path.join(os.path.dirname(__file__), 'templates', 'standalone.html')
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data)) 
+
+
+class WorldHandler(webapp.RequestHandler):
+  """Handles requests to /world
+  
+  WorldHandler handles requests for the server root, presenting the main user
+  interface for Flowered. It relies on the flowered.html template, with most
+  of the heavy lifting occuring client-side through JavaScript linked there.
+  """
+
+  def get(self):
+    if self.request.get('ll') == '':
+      initial_location = '52.523405, 13.4114'
+      initial_latitude, _, initial_longitude = initial_location.partition(",")
+    else:
+      initial_location = self.request.get('ll').lower()      
+      initial_latitude, _, initial_longitude = initial_location.partition(",")
+     
+    if self.request.get('z') == '':
+      initial_zoom = 15
+    else:
+      initial_zoom = self.request.get('z').lower()      
+
+    # javascript:void(prompt('',gApplication.getMap().getCenter()))
+      
+    template_data = {}
+        
+    template_data = {
+      'project_id': 'schwerin',
+      'initial_latitude': initial_latitude,
+      'initial_longitude': initial_longitude,
+      'initial_zoom': initial_zoom,
+    }
+
+    template_path = os.path.join(os.path.dirname(__file__), 'templates', 'flowered.html')
+    self.response.headers['Content-Type'] = 'text/html'
+    self.response.out.write(template.render(template_path, template_data))
+
 
 class RedirectHandler(webapp.RequestHandler):
   """Handles requests to /
@@ -105,7 +143,7 @@ class RedirectHandler(webapp.RequestHandler):
   """
 
   def get(self):   
-    self.redirect('/schwerin')
+    self.redirect('/world')
 
 
 def main():
@@ -113,6 +151,7 @@ def main():
   application = webapp.WSGIApplication([
     ('/schwerin/standalone.*', StandaloneHandler),
     ('/schwerin.*', MainHandler),
+    ('/world.*', WorldHandler),
     ('/.*', RedirectHandler)
     ], debug = True)
   run_wsgi_app(application)
