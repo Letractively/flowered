@@ -364,8 +364,8 @@
 
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
-      map.setMapType(G_NORMAL_MAP);
-      // map.setMapType(G_SATELLITE_MAP);
+      // map.setMapType(G_NORMAL_MAP);
+      map.setMapType(G_SATELLITE_MAP);
      
       map.addControl(new GLargeMapControl());
       map.addControl(new GScaleControl());
@@ -406,8 +406,8 @@
 	  // listens for any navigation keypress activity
       $(document).keypress(function(e) {
         switch(e.which) {
-          // user presses the "#" key
-          case 35: console.debug("user presses the \"#\" key");
+          // user has pressed the "#" key to toggle local search
+          case 35: console.debug("Current user has pressed the \"#\" key");
             $().toggleLocalSearch();
             break; 
         }
@@ -423,8 +423,8 @@
 
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
-      map.setMapType(G_NORMAL_MAP);
-      // map.setMapType(G_SATELLITE_MAP);
+      // map.setMapType(G_NORMAL_MAP);
+      map.setMapType(G_SATELLITE_MAP);
      
       var latitude = FLOWERED_VARS['initial_latitude'];
       var longitude = FLOWERED_VARS['initial_longitude'];    
