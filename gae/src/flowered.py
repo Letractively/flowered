@@ -151,7 +151,6 @@ class WorldHandler(BaseRequestHandler):
   """
 
   def get(self):
-    # self.render_to_response('52.523405, 13.4114', 15, 'flowered.html')
     self.render_to_response('world')
 
 
