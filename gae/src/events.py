@@ -159,7 +159,7 @@ class InitialHandler(webapp.RequestHandler):
     max_geopt = db.GeoPt(max_latitude, max_longitude)
     query = datamodel.Mark.gql('WHERE geopt > :min_geopt AND geopt < :max_geopt ',
                                min_geopt = min_geopt, max_geopt = max_geopt)
-    add_events = query.fetch(100)
+    add_events = query.fetch(500)
              
     output = {
         'timestamp': time.time(),
