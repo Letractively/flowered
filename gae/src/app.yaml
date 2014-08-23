@@ -1,4 +1,4 @@
-application: beflowered
+application: beflowered-hrd
 version: 9
 runtime: python
 api_version: 1
