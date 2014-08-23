@@ -1,12 +1,13 @@
 
 /**
  * @fileoverview Provides the core JavaScript functionality for the Flowered
- *               application.
+ *               application based on Google Maps V2 API.
  */
 
 (function($) {
 
   var map = null;
+  var localSearch = null;
   var lastUpdate = 0;
 
   window.marker = {};
@@ -340,22 +341,44 @@
       error: window.initialError
     });
   };
+
+  // bind a search control to the map
+  $.fn.toggleLocalSearch = function() {
+    if (map) {
+      if (localSearch) {
+        map.removeControl(localSearch);
+        localSearch = null;
+      } else {
+    	var options = {
+          searchFormHint: 'Search beflowered!',
+  	      suppressInitialResultSelection: true
+  		};
+    	localSearch = new google.elements.LocalSearch(options);
+    	map.addControl(localSearch);  
+      }
+    }
+  };
  
+  $.fn.centerMap = function() {
+  	if (map) {
+  	  var latitude = FLOWERED_VARS['initial_latitude'];
+        var longitude = FLOWERED_VARS['initial_longitude'];    
+        var zoom = FLOWERED_VARS['initial_zoom'];
+        map.setCenter(new GLatLng(latitude, longitude), zoom);
+  	}	  
+  }
+  
   $.fn.initializeInteractiveMap = function() {
     if (GBrowserIsCompatible()) {
-           
-      var mapOptions = {
-        googleBarOptions : {
-    	  showOnLoad : true,
-          style : 'new'
-        }
-      };
+
       var mapDiv = document.getElementById('map');
-      map = new GMap2(mapDiv, mapOptions);
+      map = new GMap2(mapDiv);
+      // map.setMapType(G_NORMAL_MAP);
       map.setMapType(G_SATELLITE_MAP);
      
-      map.addControl(new GLargeMapControl());
-      map.addControl(new GScaleControl());
+      map.addControl(new GLargeMapControl());     
+//      var pos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(10,10)); 
+//      map.addControl(new GScaleControl(), pos);
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
@@ -383,24 +406,25 @@
     	  window.initial();
   	  });
       
-      var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];
-      var zoom = FLOWERED_VARS['initial_zoom'];
-      map.setCenter(new GLatLng(latitude, longitude), zoom);
-      
-      var searchbox = String(FLOWERED_VARS['show_searchbox'].toLowerCase());
-      if (searchbox == 'true') {
-    	  // console.log('strings match');
-    	  map.enableGoogleBar();
-      } else {
-    	  // console.log('strings don\'t match');
-      }
-      // console.log('searchbox=%s', searchbox);
-            
+      $().centerMap();
+                 
       window.update();
-    }
-    // display a warning if the browser was not compatible
-    else { 
+      
+	  // listens for any navigation keypress activity
+      $(document).keypress(function(e) {
+        switch(e.keyCode ) {
+          case 35: // '#'
+        	console.debug("Current user has pressed the \"#\" key");
+            $().toggleLocalSearch();
+            break;
+          case 99: // 'c'
+        	console.debug("Current user has pressed the \"c\" key");
+        	$().centerMap();
+        	break;
+        }
+      });
+      
+    } else { // display a warning if the browser was not compatible
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
   };
@@ -410,22 +434,19 @@
 
       var mapDiv = document.getElementById('map');
       map = new GMap2(mapDiv);
+      // map.setMapType(G_NORMAL_MAP);
       map.setMapType(G_SATELLITE_MAP);
      
-      var latitude = FLOWERED_VARS['initial_latitude'];
-      var longitude = FLOWERED_VARS['initial_longitude'];    
-      var zoom = FLOWERED_VARS['initial_zoom'];
-      map.setCenter(new GLatLng(latitude, longitude), zoom);
+      $().centerMap();
       
       window.initial();
       window.update();
-    }
-    // display a warning if the browser was not compatible
-    else { 
+      
+    } else { // display a warning if the browser was not compatible
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
     } 
   };
-  
+   
   window.onunload = function() {
     GUnload();
   };

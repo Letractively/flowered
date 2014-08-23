@@ -20,8 +20,10 @@ Contains the MainHandler, which handles root requests to the server, along
 with several other template-driven pages that don't have any significant DB
 interaction.
 
-  MainHandler: Handles requests to /
-  StandaloneHandler: Handles requests to /standalone
+  SchwerinMainHandler: Handles requests to /schwerin
+  SchwerinStandaloneHandler: Handles requests to /schwerin/standalone
+  WorldMainHandler: Handles requests to /world
+  WorldStandaloneHandler: Handles requests to /world/standalone
 """
 
 import datetime
@@ -42,73 +44,129 @@ import json
 logging.info('Loading %s, app version = %s',
   __name__, os.getenv('CURRENT_VERSION_ID'))
 
-class MainHandler(webapp.RequestHandler):
-  
-  """Handles requests to /
-  
-  MainHandler handles requests for the server root, presenting the main user
+# Set to true if we want to have our webapp print stack traces, etc
+_DEBUG = True
+
+
+class BaseRequestHandler(webapp.RequestHandler):
+  """Handles all requests
+    
+  BaseRequestHandler handles requests for the server root, presenting the main user
   interface for Flowered. It relies on the flowered.html template, with most
   of the heavy lifting occuring client-side through JavaScript linked there.
   """
-
-  def get(self):
   
-    if self.request.get('searchbox') == '':
-      show_searchbox = 'false'
+  # The different project output types we support: locations,
+  # zoom level and template file names
+  _PROJECT_TYPES = {
+    'world': ['52.523405, 13.4114', '15', 'flowered.html'],
+    'standalone_world': ['52.523405, 13.4114', '15', 'standalone.html'],
+    'schwerin': ['53.625706, 11.416855', '15', 'flowered.html'],
+    'standalone_schwerin': ['53.625706, 11.416855', '15', 'standalone.html'],}
+
+  def render_to_response(self, project_name):
+          
+    # Choose a template based on the project name
+    if project_name not in BaseRequestHandler._PROJECT_TYPES:
+      project_name = 'world'
+    project_data = BaseRequestHandler._PROJECT_TYPES[project_name]
+
+    # Decode project data    
+    location = project_data[0]
+    zoom = project_data[1]
+    template_file = project_data[2]
+      
+    # Read location data or use default value
+    if self.request.get('ll') == '':
+      initial_location = location
+      initial_latitude, _, initial_longitude = initial_location.partition(",")
     else:
-      show_searchbox = self.request.get('searchbox').lower()
+      initial_location = self.request.get('ll').lower()      
+      initial_latitude, _, initial_longitude = initial_location.partition(",")
+     
+    # Read zoom level or use default value
+    if self.request.get('z') == '':
+      initial_zoom = zoom
+    else:
+      initial_zoom = self.request.get('z').lower()      
+
+    # javascript:void(prompt('',gApplication.getMap().getCenter()))
       
     template_data = {}
-    
+        
+    # Assembly template data
     template_data = {
-      'project_id': 'schwerin',
-      'initial_latitude': 53.625706,
-      'initial_longitude': 11.416855,
-      'initial_zoom': 15,
-      'show_searchbox': show_searchbox,
-      'current_version_id' : self.version()
+      'project_id': project_name,
+      'initial_latitude': initial_latitude,
+      'initial_longitude': initial_longitude,
+      'initial_zoom': initial_zoom,
+      'current_version_id' : self.version(),
     }
 
-    template_path = os.path.join(os.path.dirname(__file__), 'flowered.html')
+    # Apply data to site templates
+    template_path = os.path.join(os.path.dirname(__file__), 'templates', template_file)
     self.response.headers['Content-Type'] = 'text/html'
     self.response.out.write(template.render(template_path, template_data))
- 
-  def version(self):
-      
+    
+  def version(self):     
     current_version = os.getenv('CURRENT_VERSION_ID')
     version = string.split(current_version, '.') 
+    
     if len(version) >= 2:
         return string.lower(version[0])
     else:
         return 'n/a'
-        
 
-class StandaloneHandler(webapp.RequestHandler):
+
+class SchwerinHandler(BaseRequestHandler):
+  """Handles requests to /schwerin
   
-  """Handles requests to /standalone
-  
-  MainHandler handles requests for the server root, presenting the main user
+  WorldHandler handles requests for the server root, presenting the main user
   interface for Flowered. It relies on the flowered.html template, with most
   of the heavy lifting occuring client-side through JavaScript linked there.
   """
 
   def get(self):
+    self.render_to_response('schwerin')
 
-    template_data = {}
-        
-    template_data = {
-      'project_id': 'schwerin',
-      'initial_latitude': 53.625706,
-      'initial_longitude': 11.416855,
-      'initial_zoom': 15,
-    }
 
-    template_path = os.path.join(os.path.dirname(__file__), 'standalone.html')
-    self.response.headers['Content-Type'] = 'text/html'
-    self.response.out.write(template.render(template_path, template_data)) 
+class StandaloneSchwerinHandler(BaseRequestHandler):
+  """Handles requests to /schwerin/standalone
+  
+  WorldHandler handles requests for the server root, presenting the main user
+  interface for Flowered. It relies on the flowered.html template, with most
+  of the heavy lifting occuring client-side through JavaScript linked there.
+  """
+
+  def get(self):
+    self.render_to_response('standalone_schwerin')
+    
+
+class WorldHandler(BaseRequestHandler):
+  """Handles requests to /world
+  
+  WorldHandler handles requests for the server root, presenting the main user
+  interface for Flowered. It relies on the flowered.html template, with most
+  of the heavy lifting occuring client-side through JavaScript linked there.
+  """
+
+  def get(self):
+    self.render_to_response('world')
+
+
+class StandaloneWorldHandler(BaseRequestHandler):
+  """Handles requests to /world/standalone
+  
+  WorldHandler handles requests for the server root, presenting the main user
+  interface for Flowered. It relies on the flowered.html template, with most
+  of the heavy lifting occuring client-side through JavaScript linked there.
+  """
+
+  def get(self):
+    self.render_to_response('standalone_world')
+
 
 class RedirectHandler(webapp.RequestHandler):
-
   """Handles requests to /
 
   RedirectHandler handles requests for the server root, presenting the main user
@@ -116,19 +174,19 @@ class RedirectHandler(webapp.RequestHandler):
   """
 
   def get(self):
-    
-    self.redirect('/schwerin')
+    self.redirect('/world')
 
 
 def main():
-
+  # logging.getLogger().setLevel(logging.DEBUG)   
   application = webapp.WSGIApplication([
-     ('/schwerin/standalone.*', StandaloneHandler),
-     ('/schwerin.*', MainHandler),
-     ('/.*', RedirectHandler)],
-     debug = True)
+    ('/schwerin/standalone.*', StandaloneSchwerinHandler),
+    ('/schwerin.*', SchwerinHandler),
+    ('/world/standalone.*', StandaloneWorldHandler),
+    ('/world.*', WorldHandler),
+    ('/.*', RedirectHandler)
+    ], debug = _DEBUG)
   run_wsgi_app(application)
-  
   
 if __name__ == '__main__':
   main()

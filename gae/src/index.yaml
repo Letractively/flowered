@@ -3,11 +3,6 @@ indexes:
   properties:
   - name: geopt
     direction: asc
-  
-- kind: Mark
-  properties:
-  - name: geopt
-    direction: asc
   - name: project
     direction: desc
 
