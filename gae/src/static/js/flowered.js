@@ -13,16 +13,16 @@
   window.marker = {};
 
   /**
-	 * Represents each person active within Flowered.
-	 * 
-	 * @param {string}
-	 *            id The person's ID.
-	 * @param {number}
-	 *            latitude The person's starting latitude.
-	 * @param {number}
-	 *            longitude The person's starting longitude.
-	 * @constructor
-	 */
+   * Represents each person active within Flowered.
+   * 
+   * @param {string}
+   *            id The person's ID.
+   * @param {number}
+   *            latitude The person's starting latitude.
+   * @param {number}
+   *            longitude The person's starting longitude.
+   * @constructor
+   */
   var Marker = function(id, lat, lng, type) {
 
     var me = this;
@@ -49,72 +49,70 @@
   
     // Handle drop events for this marker's marker. Note that this fires off
     // an Ajax call updating the user's location.
-    GEvent.addListener(this.marker, 'dragend', function() {  	
+    GEvent.addListener(this.marker, 'dragend', function() {   
       me.update();
-	});
-	// Handle right click events for this Marker's marker. Note that this fires
-	// off
-	// an Ajax call deleting the mark.
-    GEvent.addListener(this.marker, 'fwd_singlerightclick', function() {
-      if (me.isDeleteable())
-      {
+  });
+  // Handle double click events for this Marker's marker. Note that this fires
+  // off an Ajax call deleting the mark.
+    GEvent.addListener(this.marker, 'fwd_dblclick', function() {
+      if (me.isDeleteable()) {
         map.removeOverlay(me.marker);
         me.remove();
       }
- 	});
+  });
   };
  
   /** Creates a new marker icon.
     * 
-	* @return {GIcon}
-	*             The newly created icon.
-	*/
+  * @return {GIcon}
+  *             The newly created icon.
+  */
   Marker.prototype.createIcon = function() {
-	var flower = FLOWERED_IMAGES[this.type];   
-	var icon = new GIcon();
-	icon.image = flower.image;
-	icon.shadow = flower.shadow;
-	icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
-	icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
-	icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
-	return icon;
+    var flower = FLOWERED_IMAGES[this.type];   
+    var icon = new GIcon();
+    icon.image = flower.image;
+    icon.shadow = flower.shadow;
+    icon.iconSize = new GSize(flower.iconSize.width, flower.iconSize.height);
+    icon.shadowSize = new GSize(flower.shadowSize.width, flower.shadowSize.height);
+    icon.iconAnchor = new GPoint(flower.anchor.x, flower.anchor.y);
+    return icon;
   }
   
   /* Marker.prototype.getOrder = function(marker,b) {
-	var flowerz = $().FLOWERED_IMAGES[this.type];
+  var flowerz = $().FLOWERED_IMAGES[this.type];
     console.log("z-order=%d", flowerz.properties.deleteable);
-	return 1;
+  return 1;
   } */
   
   /** Return if the marker is deleteable.
     *
     * @return {Bool}
     *             Returns the deleteable property of the marker.
-	* 
-	*/
+  * 
+  */
   Marker.prototype.isDeleteable = function() {
     var flower = FLOWERED_IMAGES[this.type];
-	return flower.properties.deleteable;
+    return flower.properties.deleteable;
   }
   
   /** Return if the marker is draggable.
-	*
-	* @return {Bool}
+  *
+  * @return {Bool}
     *             Returns the draggable property of the marker.
-	*/
+  */
   Marker.prototype.isDraggable = function() {
-	var flower = FLOWERED_IMAGES[this.type];
-	return flower.properties.draggable;
-}
+    var flower = FLOWERED_IMAGES[this.type];
+    return flower.properties.draggable;
+  }
   
   /**
-	* Move this marker to the specified latitude and longitude.
-	* 
-	* @param {number}
-	*            lat The latitude to move to.
-	* @param {number}
-	*            lng The longitude to move to.
-	*/  
+  * Move this marker to the specified latitude and longitude.
+  * 
+  * @param {number}
+  *            lat The latitude to move to.
+  * @param {number}
+  *            lng The longitude to move to.
+  */  
   Marker.prototype.move = function(lat, lng) {
     if (this.point.lat() != lat || this.point.lng() != lng) {
       this.point = new GLatLng(lat, lng);
@@ -123,16 +121,16 @@
   };
   
   /**
-	* Adds this marker to the Flowered DB and cache. Makes an Ajax call to add
-	* the markers's position to the Flowered DB and cache.
-	*/
+  * Adds this marker to the Flowered DB and cache. Makes an Ajax call to add
+  * the markers's position to the Flowered DB and cache.
+  */
   Marker.prototype.add = function() {
     $.ajax({
        type: 'POST',
        url: '/event/add',
        cache: false,
        data: {
-    	 'id': this.id,
+       'id': this.id,
          'latitude': this.point.lat(),
          'longitude': this.point.lng(),
          'type': this.type,
@@ -143,9 +141,9 @@
   }; 
 
   /**
-	* Removes this marker from the Flowered DB and cache. Makes an Ajax call to
-	* remove the markers's position in the Flowered DB and cache.
-	*/
+  * Removes this marker from the Flowered DB and cache. Makes an Ajax call to
+  * remove the markers's position in the Flowered DB and cache.
+  */
   Marker.prototype.remove = function() {
     $.ajax({
        type: 'POST',
@@ -159,9 +157,9 @@
   };  
 
   /**
-	* Removes this marker from the Flowered DB and cache. Makes an Ajax call to
-	* update the markers's position from the Flowered DB and cache.
-	*/
+  * Removes this marker from the Flowered DB and cache. Makes an Ajax call to
+  * update the markers's position from the Flowered DB and cache.
+  */
   Marker.prototype.update = function() {
     $.ajax({
        type: 'POST',
@@ -177,28 +175,28 @@
   };    
   
   /**
-	* Creates a random key.
-	* 
-	* @param {length}
-	*            length of the key to create plus 4 additional tokens.
-	*/
+  * Creates a random key.
+  * 
+  * @param {length}
+  *            length of the key to create plus 4 additional tokens.
+  */
   var createRandomKey = function(length) {
-	var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-	var random = 'key:';
-	for (var i = 0; i < length; i++) {
-	  var position = Math.floor(Math.random() * (chars.length - 1));
-	  random += chars.charAt(position);
+    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    var random = 'key:';
+    for (var i = 0; i < length; i++) {
+      var position = Math.floor(Math.random() * (chars.length - 1));
+      random += chars.charAt(position);
     }
-	return random;
+    return random;
   };
   
   /**
-	* A callback for updates containing add events.
-	* 
-	* @param {Object}
-	*            data A JSON object containing event data.
-	*/
-  window.addCallback = function(data) {	  
+  * A callback for updates containing add events.
+  * 
+  * @param {Object}
+  *            data A JSON object containing event data.
+  */
+  window.addCallback = function(data) {   
     var adds = data.adds;    
     for (var i = 0; i < adds.length; ++i) {
       var add = adds[i];
@@ -213,11 +211,11 @@
   };
   
   /**
-   	* A callback for updates containing move events.
-	* 
-	* @param {Object}
-	*            data A JSON object containing event data.
-	*/
+    * A callback for updates containing move events.
+  * 
+  * @param {Object}
+  *            data A JSON object containing event data.
+  */
   window.moveCallback = function(data) {
     var moves = data.moves;
     for (var i = 0; i < moves.length; ++i) {
@@ -236,11 +234,11 @@
   };
 
   /**
-	* A callback for updates containing remove events.
-	* 
-	* @param {Object}
-	*            data A JSON object containing event data.
-	*/
+  * A callback for updates containing remove events.
+  * 
+  * @param {Object}
+  *            data A JSON object containing event data.
+  */
   window.removeCallback = function(data) {
     var removes = data.removes;
     for (var i = 0; i < removes.length; ++i) {
@@ -253,12 +251,12 @@
   };
   
   /**
-	* A callback for when an update request succeeds.
-	* 
-	* @param {string}
-	*            json JSON data to be evaluated and passed on to event
-	*            callbacks.
-	*/
+  * A callback for when an update request succeeds.
+  * 
+  * @param {string}
+  *            json JSON data to be evaluated and passed on to event
+  *            callbacks.
+  */
   window.updateSuccess = function(json) {
     var data = eval('(' + json + ')');
     lastUpdate = data.timestamp;
@@ -269,18 +267,18 @@
   };
   
   /**
-	* A callback for when updates fail. Presents an error to the user and
-	* forces a lengthier delay between updates.
-	*/
+  * A callback for when updates fail. Presents an error to the user and
+  * forces a lengthier delay between updates.
+  */
   window.updateError = function() {
     window.setTimeout(window.update, FLOWERED_VARS['error_interval']);
   };
 
   /**
-	* The main update handler, used to query the Flowered DB and cache for
-	* updated events. Successful queries pass the results on to the
-	* chatCallback and moveCallback functions.
-	*/
+  * The main update handler, used to query the Flowered DB and cache for
+  * updated events. Successful queries pass the results on to the
+  * chatCallback and moveCallback functions.
+  */
   window.update = function() {
     var bounds = map.getBounds();
     var min = bounds.getSouthWest();
@@ -303,31 +301,31 @@
   };
 
   /**
-	* A callback for when an update request succeeds.
-	* 
-	* @param {string}
-	*            json JSON data to be evaluated and passed on to event
-	*            callbacks.
-	*/
+  * A callback for when an update request succeeds.
+  * 
+  * @param {string}
+  *            json JSON data to be evaluated and passed on to event
+  *            callbacks.
+  */
   window.initialSuccess = function(json) {
     var data = eval('(' + json + ')');
     window.addCallback(data);
   };
   
   /**
-	* A callback for when updates fail. Presents an error to the user and
-	* forces a lengthier delay between updates.
-	*/
+  * A callback for when updates fail. Presents an error to the user and
+  * forces a lengthier delay between updates.
+  */
   window.initialError = function() {
     // window.setTimeout(window.initial, FLOWERED_VARS['initial_interval']);
   };
   
   window.initial = function() {
-	var bounds = map.getBounds();
-	var min = bounds.getSouthWest();
-	var max = bounds.getNorthEast();
-	$.ajax({
-	  type: 'GET',
+  var bounds = map.getBounds();
+  var min = bounds.getSouthWest();
+  var max = bounds.getNorthEast();
+  $.ajax({
+    type: 'GET',
       url: '/event/initial',
       cache: false,
       data: [
@@ -349,23 +347,23 @@
         map.removeControl(localSearch);
         localSearch = null;
       } else {
-    	var options = {
+      var options = {
           searchFormHint: 'Search beflowered!',
-  	      suppressInitialResultSelection: true
-  		};
-    	localSearch = new google.elements.LocalSearch(options);
-    	map.addControl(localSearch);  
+          suppressInitialResultSelection: true
+      };
+      localSearch = new google.elements.LocalSearch(options);
+      map.addControl(localSearch);  
       }
     }
   };
  
   $.fn.centerMap = function() {
-  	if (map) {
-  	  var latitude = FLOWERED_VARS['initial_latitude'];
+    if (map) {
+      var latitude = FLOWERED_VARS['initial_latitude'];
         var longitude = FLOWERED_VARS['initial_longitude'];    
         var zoom = FLOWERED_VARS['initial_zoom'];
         map.setCenter(new GLatLng(latitude, longitude), zoom);
-  	}	  
+    }   
   }
   
   $.fn.initializeInteractiveMap = function() {
@@ -377,52 +375,52 @@
       map.setMapType(G_SATELLITE_MAP);
      
       map.addControl(new GLargeMapControl());     
-//      var pos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(10,10)); 
-//      map.addControl(new GScaleControl(), pos);
+      // var pos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(10,10)); 
+      // map.addControl(new GScaleControl(), pos);
 
       map.enableContinuousZoom();     
       map.disableDoubleClickZoom();
       
-      GEvent.clearListeners(map.getDragObject(), 'dblclick');
+      // GEvent.clearListeners(map.getDragObject(), 'dblclick');
       GEvent.addListener(map, 'click', function(overlay, point) {
-    	if (point) {
+      if (point) {
           var marker = new Marker(
             createRandomKey(24),
             point.lat(),
             point.lng(),
             FLOWERED_VARS['current_flower']);
           marker.add();
-    	}
+      }
       });     
-      GEvent.addListener(map, 'singlerightclick', function(point, src, overlay) {
-    	if (overlay) {
-	      if (overlay instanceof GMarker) {
-	    	// forward event to marker
-	        GEvent.trigger(overlay, 'fwd_singlerightclick');
-	      }
-	    }
-	  });
-      GEvent.addListener(map, 'moveend', function(point, src, overlay) {
-    	  window.initial();
-  	  });
+      GEvent.addListener(map, 'dblclick', function(point, src, overlay) {
+      if (overlay) {
+        if (overlay instanceof GMarker) {
+          // forward event to marker
+          GEvent.trigger(overlay, 'fwd_dblclick');
+        }
+      }
+    });
+    GEvent.addListener(map, 'moveend', function(point, src, overlay) {
+      window.initial();
+    });
+    
+    $().centerMap();
+               
+    window.update();
       
-      $().centerMap();
-                 
-      window.update();
-      
-	  // listens for any navigation keypress activity
-      $(document).keypress(function(e) {
-        switch(e.keyCode ) {
-          case 35: // '#'
-        	console.debug("Current user has pressed the \"#\" key");
+    // listens for any navigation keypress activity
+    $(document).keypress(function(e) {
+      switch(e.keyCode ) {
+        case 35: // '#'
+          console.debug("Current user has pressed the \"#\" key");
             $().toggleLocalSearch();
             break;
-          case 99: // 'c'
-        	console.debug("Current user has pressed the \"c\" key");
-        	$().centerMap();
-        	break;
-        }
-      });
+        case 99: // 'c'
+          console.debug("Current user has pressed the \"c\" key");
+          $().centerMap();
+          break;
+      }
+    });
       
     } else { // display a warning if the browser was not compatible
       alert("Sorry, the Google Maps API is not compatible with this browser"); 
